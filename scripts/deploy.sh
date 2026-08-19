@@ -21,7 +21,9 @@
 #
 # Anything already set in the environment wins over .env, so a one-off run can override without
 # editing the file. The private key itself is read from
-# ~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8, which is where the uploader looks.
+# ~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8. It signs as well as uploads: xcodebuild
+# authenticates with it to issue the certificate and profile, so no Apple ID has to be signed in
+# to Xcode.
 
 set -euo pipefail
 
@@ -88,9 +90,26 @@ command -v xcodegen >/dev/null || die "xcodegen is not installed — brew instal
 command -v xcodebuild >/dev/null || die "xcodebuild is not on PATH — install the Xcode command line tools"
 
 [ -n "${ASC_TEAM_ID:-}" ] || die "ASC_TEAM_ID is not set — cp .env.example .env and fill it in."
+[ "$ASC_TEAM_ID" != "ABCDE12345" ] || die "ASC_TEAM_ID is still the example value — put your real ten-character Team ID in .env (developer.apple.com/account → Membership details)."
 
 ICON="FoodMap/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
 [ -f "$ICON" ] || die "No app icon at $ICON — run: swift Tools/MakeAppIcon.swift $ICON"
+
+# xcodebuild has to authenticate to Apple before -allowProvisioningUpdates can create the
+# certificate and download the profile. On a machine with no Apple ID in Xcode's Accounts pane
+# that means the same App Store Connect API key the upload uses; without it the archive fails
+# with "No Accounts" and "No profiles for …". The key needs the App Manager role to be allowed
+# to issue a distribution certificate.
+
+[ -n "${ASC_KEY_ID:-}" ] || die "ASC_KEY_ID is not set — see .env.example"
+[ -n "${ASC_ISSUER_ID:-}" ] || die "ASC_ISSUER_ID is not set — see .env.example"
+
+KEY_FILE="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+[ "$DRY_RUN" -eq 1 ] || [ -f "$KEY_FILE" ] || die "No API key at $KEY_FILE — it can only be downloaded once, from App Store Connect → Users and Access → Integrations"
+
+AUTH=(-authenticationKeyPath "$KEY_FILE"
+      -authenticationKeyID "$ASC_KEY_ID"
+      -authenticationKeyIssuerID "$ASC_ISSUER_ID")
 
 # .env holds a live key id; catch it before it reaches a remote.
 if git ls-files --error-unmatch .env >/dev/null 2>&1; then
@@ -151,7 +170,7 @@ run xcodebuild -project "$PROJECT" \
     -destination 'generic/platform=iOS' \
     -archivePath "$ARCHIVE" \
     DEVELOPMENT_TEAM="$ASC_TEAM_ID" \
-    -allowProvisioningUpdates \
+    -allowProvisioningUpdates "${AUTH[@]}" \
     -quiet \
     archive
 
@@ -187,7 +206,7 @@ run xcodebuild -exportArchive \
     -archivePath "$ARCHIVE" \
     -exportOptionsPlist "$OPTIONS" \
     -exportPath "$EXPORT_DIR" \
-    -allowProvisioningUpdates \
+    -allowProvisioningUpdates "${AUTH[@]}" \
     -quiet
 
 IPA="$EXPORT_DIR/$SCHEME.ipa"
@@ -206,11 +225,6 @@ if [ "$UPLOAD" -eq 0 ]; then
 fi
 
 step "Uploading to App Store Connect"
-[ -n "${ASC_KEY_ID:-}" ] || die "ASC_KEY_ID is not set — see .env.example"
-[ -n "${ASC_ISSUER_ID:-}" ] || die "ASC_ISSUER_ID is not set — see .env.example"
-
-KEY_FILE="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
-[ "$DRY_RUN" -eq 1 ] || [ -f "$KEY_FILE" ] || die "No API key at $KEY_FILE — it can only be downloaded once, from App Store Connect → Users and Access → Integrations"
 
 run xcrun altool --upload-app -f "$IPA" -t ios \
     --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"

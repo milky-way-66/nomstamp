@@ -92,9 +92,19 @@ You already have the account, so this is a checklist rather than a tutorial.
    needed for paid apps; the free-app agreement must be *Active*. Nothing uploads until it is.
 2. **Roles.** You need Account Holder, Admin, or App Manager to create an app record, and Admin or
    App Manager to manage TestFlight.
-3. **Certificates and profiles.** Let Xcode manage these. In Xcode → *Settings* → *Accounts*, add
-   your Apple ID, select the team, and *Manage Certificates* → **+** → *Apple Distribution* if none
-   exists. Automatic signing then creates the App Store provisioning profile on demand.
+3. **Certificates and profiles.** Let automatic signing manage these. There are two ways to give
+   it an identity to work with, and `scripts/deploy.sh` needs neither Xcode open:
+
+   - **API key (what the script uses).** The App Store Connect key in `.env` is passed to
+     `xcodebuild` as `-authenticationKeyPath/-ID/-IssuerID`, so `-allowProvisioningUpdates` can
+     issue the distribution certificate and download the profile by itself. The key must hold the
+     **App Manager** role — a Developer-role key can upload but cannot create a certificate.
+   - **A signed-in Apple ID.** Xcode → *Settings* → *Accounts*, add your Apple ID, select the team,
+     *Manage Certificates* → **+** → *Apple Distribution*. Needed only if you archive from the
+     Xcode UI rather than the script.
+
+   With neither, an archive fails at once with *No Accounts: Add a new account in Accounts
+   settings* followed by *No profiles for `com.longnv.foodmap.app` were found*.
 
 ### 1.1 Register the bundle identifier
 
@@ -402,6 +412,9 @@ Run through this before every upload.
 |---|---|
 | *Archive* greyed out | Simulator destination selected — choose *Any iOS Device (arm64)* |
 | `No signing certificate "iOS Distribution" found` | Xcode → Settings → Accounts → Manage Certificates → + → Apple Distribution |
+| `No Accounts: Add a new account in Accounts settings` | Nothing authenticated the build to Apple — §1 item 3. Check `AuthKey_<ASC_KEY_ID>.p8` exists and the key has the App Manager role |
+| `No profiles for 'com.longnv.foodmap.app' were found` | Same cause, reported second. Fixing the account error fixes both |
+| Archive fails with `ASC_TEAM_ID is still the example value` | `.env` still holds `ABCDE12345`; put your real Team ID there |
 | `CODE_SIGNING_ALLOWED=NO` errors on archive | §0.1 — the flag is still applying to Release |
 | Signing settings revert | You edited the generated `.xcodeproj`; put them in `project.yml` |
 | Build never leaves *Processing* | Read the account holder's email — Apple explains invalid binaries there only |
