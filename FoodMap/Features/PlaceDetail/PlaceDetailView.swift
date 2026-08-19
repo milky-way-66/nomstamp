@@ -198,24 +198,59 @@ private struct MealCard: View {
     let onRate: (Int) -> Void
     let onDelete: () -> Void
 
+    static let stripSide: CGFloat = 76
+
+    /// The hero comes from the full-size file, not the 240 px square thumbnail: at this width a
+    /// thumbnail is upscaled fourfold, which is the blur the square layout used to hide.
+    @ViewBuilder
+    private func hero(_ photo: Photo) -> some View {
+        if let image = PhotoImageLoader.shared.fullImage(named: photo.filename)
+            ?? PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
+            // Ratio on a clear container, image filling it: setting both a frame and an aspect
+            // ratio on the image itself makes the two rules fight, and the loser is the crop.
+            Color.clear
+                .aspectRatio(Theme.photoAspect, contentMode: .fit)
+                .overlay(
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                )
+                .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
+                .contentShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
+                .onTapGesture { onTapPhoto(photo) }
+                .accessibilityAddTraits(.isButton)
+                .accessibilityLabel("Photograph of this meal")
+        }
+    }
+
     var body: some View {
         PaperCard {
             VStack(alignment: .leading, spacing: Theme.Space.snug) {
-                if !meal.photos.isEmpty {
+                if let first = meal.photos.first {
+                    // The dish is the point of the card, so the first photograph fills its
+                    // width at one editorial ratio. A 132 pt square left two thirds of the card
+                    // empty, which read as a loading failure rather than a layout (ADR-003).
+                    hero(first)
+                }
+                if meal.photos.count > 1 {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: Theme.Space.tight) {
-                            ForEach(meal.photos) { photo in
+                            ForEach(meal.photos.dropFirst()) { photo in
                                 if let image = PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
                                     Image(uiImage: image)
                                         .resizable()
                                         .scaledToFill()
-                                        .frame(width: 132, height: 132)
+                                        .frame(width: Self.stripSide, height: Self.stripSide)
                                         .clipShape(RoundedRectangle(cornerRadius: 8))
+                                        .contentShape(RoundedRectangle(cornerRadius: 8))
                                         .onTapGesture { onTapPhoto(photo) }
                                 }
                             }
                         }
                     }
+                    // The strip may be one photo short of scrolling; without this it jitters
+                    // against the card's inset.
+                    .scrollDisabled(meal.photos.count <= 4)
                 }
 
                 VStack(alignment: .leading, spacing: Theme.Space.hairline) {

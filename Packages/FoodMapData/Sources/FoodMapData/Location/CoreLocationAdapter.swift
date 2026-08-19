@@ -4,23 +4,33 @@ import FoodMapDomain
 
 /// Core Location implementation of `LocationPort`.
 ///
-/// Returns nil rather than throwing when a fix is unavailable, because a denied permission
-/// must degrade the experience and never block logging a meal (UC-1 / E1). GPS itself is
+/// Deliberately thin: every rule about which fixes are usable lives in `LocationFixResolver`,
+/// which is testable without a device. This type only translates Core Location's vocabulary —
+/// authorisation constants, `CLLocation`, delegate callbacks — into the resolver's.
+///
+/// Returns nil rather than throwing when a fix is unavailable, because a denied permission must
+/// degrade the experience and never block logging a meal (UC-1 / E1). GPS itself is
 /// satellite-based, so this keeps working with no data connection.
 public final class CoreLocationAdapter: NSObject, LocationPort, CLLocationManagerDelegate, @unchecked Sendable {
 
     private let manager = CLLocationManager()
-    private let lock = NSLock()
-    private var waiting: [CheckedContinuation<Coordinate?, Never>] = []
-    private var lastFix: CLLocation?
-
-    /// How long to wait for a fix before giving up and letting the user pick a place by hand.
-    private let timeout: TimeInterval
+    private let resolver: LocationFixResolver
 
     public init(timeout: TimeInterval = 6) {
-        self.timeout = timeout
+        let manager = self.manager
+        resolver = LocationFixResolver(
+            timeout: timeout,
+            authorization: { Self.authorization(of: manager.authorizationStatus) },
+            requestPermission: {
+                #if os(iOS)
+                manager.requestWhenInUseAuthorization()
+                #endif
+            },
+            requestFix: { manager.requestLocation() }
+        )
         super.init()
         manager.delegate = self
+        // A request, not a promise: what actually arrives is judged on its reported accuracy.
         manager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
     }
 
@@ -29,13 +39,7 @@ public final class CoreLocationAdapter: NSObject, LocationPort, CLLocationManage
     }
 
     public var isAuthorized: Bool {
-        // `authorizedWhenInUse` does not exist on macOS, where the package is compiled only so
-        // that the rest of the data layer stays testable without a simulator.
-        #if os(iOS)
-        return authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways
-        #else
-        return authorizationStatus == .authorizedAlways
-        #endif
+        Self.authorization(of: authorizationStatus) == .granted
     }
 
     public func requestPermission() {
@@ -44,56 +48,46 @@ public final class CoreLocationAdapter: NSObject, LocationPort, CLLocationManage
         #endif
     }
 
-    public func currentCoordinate() async -> Coordinate? {
-        if let recent = lastFix, recent.timestamp.timeIntervalSinceNow > -60 {
-            return Self.coordinate(from: recent)
-        }
-        guard isAuthorized else { return nil }
-
-        manager.requestLocation()
-        return await withCheckedContinuation { continuation in
-            lock.lock()
-            waiting.append(continuation)
-            lock.unlock()
-
-            Task { [weak self] in
-                try? await Task.sleep(for: .seconds(self?.timeout ?? 6))
-                self?.resumeWaiting(with: self?.lastFix)
-            }
-        }
+    public func currentFix() async -> LocationFix? {
+        await resolver.fix()
     }
 
-    private func resumeWaiting(with location: CLLocation?) {
-        lock.lock()
-        let pending = waiting
-        waiting.removeAll()
-        lock.unlock()
-
-        let coordinate = location.map(Self.coordinate(from:))
-        for continuation in pending {
-            continuation.resume(returning: coordinate)
+    private static func authorization(of status: CLAuthorizationStatus) -> LocationFixResolver.Authorization {
+        switch status {
+        case .notDetermined:
+            return .undecided
+        #if os(iOS)
+        case .authorizedWhenInUse, .authorizedAlways:
+            return .granted
+        #else
+        case .authorizedAlways:
+            return .granted
+        #endif
+        default:
+            // `restricted` and `denied` are both "not going to happen" as far as the user's
+            // meal is concerned.
+            return .denied
         }
-    }
-
-    private static func coordinate(from location: CLLocation) -> Coordinate {
-        Coordinate(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
     }
 
     // MARK: - CLLocationManagerDelegate
 
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let latest = locations.last else { return }
-        lastFix = latest
-        resumeWaiting(with: latest)
+        let reports = locations.map {
+            LocationFixResolver.Report(
+                coordinate: Coordinate(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude),
+                accuracy: $0.horizontalAccuracy,
+                timestamp: $0.timestamp
+            )
+        }
+        Task { await resolver.received(reports) }
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        resumeWaiting(with: lastFix)
+        Task { await resolver.failed() }
     }
 
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if !isAuthorized {
-            resumeWaiting(with: nil)
-        }
+        Task { await resolver.authorizationChanged() }
     }
 }

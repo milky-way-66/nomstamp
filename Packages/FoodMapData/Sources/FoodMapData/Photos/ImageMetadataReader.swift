@@ -23,7 +23,22 @@ public enum ImageMetadataReader {
         guard let exif = properties[kCGImagePropertyExifDictionary] as? [CFString: Any],
               let raw = exif[kCGImagePropertyExifDateTimeOriginal] as? String
         else { return nil }
-        return exifDateFormatter.date(from: raw)
+
+        let formatter = exifDateFormatter
+        // EXIF 2.31 cameras — every recent iPhone — record the offset the photograph was taken
+        // at. Where it is present it is the truth; where it is not, the device's own zone is the
+        // best guess, and it is the one the Photos app makes too (FR-1.3).
+        formatter.timeZone = offset(from: exif) ?? .current
+        return formatter.date(from: raw)
+    }
+
+    /// `OffsetTimeOriginal` looks like "+07:00".
+    private static func offset(from exif: [CFString: Any]) -> TimeZone? {
+        guard let raw = exif[kCGImagePropertyExifOffsetTimeOriginal] as? String else { return nil }
+        let sign = raw.hasPrefix("-") ? -1 : 1
+        let digits = raw.dropFirst().split(separator: ":").compactMap { Int($0) }
+        guard digits.count == 2 else { return nil }
+        return TimeZone(secondsFromGMT: sign * (digits[0] * 3600 + digits[1] * 60))
     }
 
     private static func coordinate(from properties: [CFString: Any]) -> Coordinate? {
@@ -41,16 +56,20 @@ public enum ImageMetadataReader {
             latitude: latitudeRef == "S" ? -latitude : latitude,
             longitude: longitudeRef == "W" ? -longitude : longitude
         )
-        return coordinate.isValid ? coordinate : nil
+        guard coordinate.isValid else { return nil }
+        // Cameras write 0, 0 in place of a missing fix, and the Gulf of Guinea has no phở
+        // (FR-1.17).
+        guard coordinate.latitude != 0 || coordinate.longitude != 0 else { return nil }
+        return coordinate
     }
 
-    /// EXIF timestamps have no time zone, so they are read in the device's current zone —
-    /// the same convention the Photos app uses.
-    private static let exifDateFormatter: DateFormatter = {
+    /// `DateTimeOriginal` is local wall-clock time with no zone of its own, so the zone is
+    /// supplied per photograph by `captureDate`. A fresh formatter each time, because setting the
+    /// zone on a shared one is not safe across concurrent reads.
+    private static var exifDateFormatter: DateFormatter {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
         return formatter
-    }()
+    }
 }

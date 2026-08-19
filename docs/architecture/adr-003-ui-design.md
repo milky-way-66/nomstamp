@@ -175,6 +175,29 @@ The corollary for the journeys: while the sheet is raised, a pin is *present* in
 tree but sits underneath the sheet, so a tap lands on the sheet instead. TC-2-11 drags the sheet
 back to its peek first — the same gesture a reader makes.
 
+## Photographs fill the width they are given, at one ratio
+
+Every photograph in the app is presented the same way: it fills the width of its container at
+`Theme.photoAspect` (3:2), cropped from the centre, with rounded corners. A meal card used to
+show a 132 pt square inside a full-width card, which left two thirds of the card empty and read
+as a photograph that had failed to load rather than as a layout. The review step square-cropped
+the shot the user had just taken, cutting the edges off the dish.
+
+Three details this decision depends on:
+
+- **The ratio goes on a clear container, not on the image.** `Color.clear.aspectRatio(_:.fit)`
+  with the image as an `.overlay` and a `clipShape` around both. Setting a frame *and* an aspect
+  ratio on the image itself makes the two rules fight, and what loses is the crop.
+- **A hero reads from the full-size file, not the thumbnail.** Thumbnails are 240 px squares for
+  map pins; upscaled to a card's width they are visibly soft, which the old square tile hid.
+  `PhotoImageLoader` therefore keeps a second, small cache for full-size images, bounded by pixel
+  cost rather than count.
+- **Extra photographs are a strip below the hero**, 76 pt squares, not equal peers. A meal has one
+  subject and some supporting shots.
+
+3:2 rather than 4:3 because the card lives in a bottom sheet: at 4:3 the dish name and the stars
+fell below the fold at the reading detent.
+
 ## Accessibility (NFR-6)
 - Dynamic Type throughout, including the serif display face; no fixed point sizes.
 - Every pin carries a VoiceOver label: *"Phở Thìn, been here, 2 meals"*.

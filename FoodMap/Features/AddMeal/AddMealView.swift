@@ -167,15 +167,22 @@ struct AddMealView: View {
 
                 VStack(spacing: Theme.Space.loose) {
                     if let data = photoData.last, let image = UIImage(data: data) {
-                        Image(uiImage: image)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 208, height: 208)
+                        // The photograph just taken is the subject of this screen, so it fills
+                        // the width at the same ratio as everywhere else, rather than being
+                        // square-cropped into a 208 pt tile (ADR-003).
+                        Color.clear
+                            .aspectRatio(Theme.photoAspect, contentMode: .fit)
+                            .overlay(
+                                Image(uiImage: image)
+                                    .resizable()
+                                    .scaledToFill()
+                            )
                             .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
                             .overlay(
                                 RoundedRectangle(cornerRadius: Theme.cornerRadius)
                                     .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
                             )
+                            .padding(.horizontal, Theme.screenMargin)
                     }
 
                     VStack(spacing: Theme.Space.snug) {
@@ -404,7 +411,12 @@ struct AddMealView: View {
 
         isResolvingPlace = true
         defer { isResolvingPlace = false }
-        if let suggestion = await dependencies.suggestPlace.execute(around: context?.coordinate) {
+        // The accuracy travels with the coordinate: a fix too coarse to tell neighbouring shops
+        // apart leaves the place unset rather than guessing wrong (FR-1.13).
+        if let suggestion = await dependencies.suggestPlace.execute(
+            around: context?.coordinate,
+            accuracy: context?.accuracy
+        ) {
             target = suggestion.target
             targetName = suggestion.name
         }

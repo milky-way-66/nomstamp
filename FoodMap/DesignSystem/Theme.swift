@@ -90,6 +90,11 @@ enum Theme {
     /// Apple's minimum touch target; pins are never drawn smaller (NFR-6.4).
     static let minimumTouchTarget: CGFloat = 44
 
+    /// Every photograph is presented at one ratio, filling the width it is given and cropped
+    /// from the centre. 3:2 is the photographer's ratio and, unlike 4:3, a card's caption still
+    /// fits above the fold of a bottom sheet (ADR-003).
+    static let photoAspect: CGFloat = 3 / 2
+
     private static func dynamic(_ color: PaletteColor) -> Color {
         Color(UIColor { traits in
             UIColor(rgb: traits.userInterfaceStyle == .dark ? color.dark : color.light)

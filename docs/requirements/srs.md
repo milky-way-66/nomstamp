@@ -89,7 +89,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 |---|---|---|---|
 | FR-1.1 | The user shall log a meal consisting of at least one photograph, a time and a place | UC-1 | TC-1-01 |
 | FR-1.2 | The system shall reject a meal with no photograph | UC-1 | TC-1-01 (rejectsEmptyPhotoList) |
-| FR-1.3 | The system shall derive the meal time from the photograph's own metadata when present, and from the device clock otherwise | UC-1/1a | TC-1-04, TC-1-05 |
+| FR-1.3 | The system shall derive the meal time from the photograph's own metadata when present, and from the device clock otherwise. An EXIF timestamp shall be read in the photograph's own UTC offset when it records one, and in the device's time zone otherwise — never as UTC | UC-1/1a | TC-1-04, TC-1-05, TC-1-20 |
 | FR-1.4 | The system shall let the user override the derived meal time | UC-1 | TC-1-15 |
 | FR-1.5 | The user shall optionally record dish name, rating (1–5), note and price | UC-1 | TC-1-01 |
 | FR-1.6 | Logging a meal shall succeed when location permission is denied | UC-1/E1 | TC-1-03 |
@@ -99,6 +99,11 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-1.10 | Logging shall proceed camera → rating → confirm: the camera shall open immediately on **Add meal**, the score shall be asked once a photo exists, and every derived value shall be editable on the confirm step | UC-1 | TC-1-19 |
 | FR-1.11 | The system shall preselect the place from the meal's coordinate — the nearest saved place within 120 m, else the nearest search candidate within 120 m — without the user choosing one | UC-1/3 | TC-1-16, TC-1-17 |
 | FR-1.12 | A failure or absence of the place directory, or of any coordinate, shall leave the place unset rather than raise an error | UC-1/E1, UC-1/6a | TC-1-18 |
+| FR-1.13 | A device fix shall be used only when its reported horizontal accuracy is valid and no coarser than the 120 m preselection radius; a coarser fix shall count as no coordinate rather than as a guess | UC-1/3, UC-1/E1 | TC-1-21, TC-1-22 |
+| FR-1.14 | A device fix older than 60 s shall not be reused, including when the wait for a new fix times out | UC-1/3 | TC-1-23 |
+| FR-1.15 | While location permission is undecided, the system shall ask for it and await the answer before concluding that no coordinate is available | UC-1/E1 | TC-1-24 |
+| FR-1.16 | Where a meal's photographs disagree, its time and coordinate shall both be taken from the earliest photograph that carries a coordinate | UC-1/1a | TC-1-25 |
+| FR-1.17 | A photographed coordinate of exactly 0°, 0° shall be treated as absent, since cameras write it in place of a missing fix | UC-1/1a | TC-1-26 |
 
 ### FR-2 Photograph storage
 | ID | Requirement | UC | Tests |

@@ -14,6 +14,11 @@ enum JPEGFactory {
         width: Int = 1200,
         height: Int = 900,
         takenAt: Date? = nil,
+        /// The zone the "camera" was in. Cameras write local wall-clock time, so the default is
+        /// the device's own zone — writing UTC here would hide the bug TC-1-20 exists to catch.
+        timeZone: TimeZone = .current,
+        /// Whether to record `OffsetTimeOriginal`, as EXIF 2.31 cameras do.
+        recordOffset: Bool = false,
         latitude: Double? = nil,
         longitude: Double? = nil
     ) -> Data {
@@ -32,10 +37,17 @@ enum JPEGFactory {
             let formatter = DateFormatter()
             formatter.dateFormat = "yyyy:MM:dd HH:mm:ss"
             formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.timeZone = TimeZone(secondsFromGMT: 0)
-            properties[kCGImagePropertyExifDictionary] = [
+            formatter.timeZone = timeZone
+            var exif: [CFString: Any] = [
                 kCGImagePropertyExifDateTimeOriginal: formatter.string(from: takenAt)
-            ] as CFDictionary
+            ]
+            if recordOffset {
+                let minutes = timeZone.secondsFromGMT(for: takenAt) / 60
+                exif[kCGImagePropertyExifOffsetTimeOriginal] = String(
+                    format: "%@%02d:%02d", minutes < 0 ? "-" : "+", abs(minutes) / 60, abs(minutes) % 60
+                )
+            }
+            properties[kCGImagePropertyExifDictionary] = exif as CFDictionary
         }
 
         if let latitude, let longitude {

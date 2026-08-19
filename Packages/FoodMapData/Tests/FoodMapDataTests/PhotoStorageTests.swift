@@ -90,6 +90,41 @@ struct PhotoStorageTests {
         _ = temp
     }
 
+    /// TC-1-20 — EXIF times are wall clock, not UTC (FR-1.3).
+    @Test("an EXIF time is read in the photograph's own zone, and the device's when it has none")
+    func TC_1_20_readsCaptureTimeInItsOwnZone() throws {
+        let (sut, temp) = try makeSUT()
+        // 12:30 lunch in Hanoi. Read as UTC it becomes 19:30, which is dinner.
+        let saigon = try #require(TimeZone(secondsFromGMT: 7 * 3600))
+        let lunch = try #require(
+            DateComponents(
+                calendar: Calendar(identifier: .gregorian), timeZone: saigon,
+                year: 2026, month: 1, day: 2, hour: 12, minute: 30
+            ).date
+        )
+
+        // A camera that records its offset: the answer must not depend on where the phone is now.
+        let withOffset = JPEGFactory.make(takenAt: lunch, timeZone: saigon, recordOffset: true)
+        let readWithOffset = try #require(sut.readMetadata(from: withOffset).takenAt)
+        #expect(abs(readWithOffset.timeIntervalSince(lunch)) < 1)
+
+        // An older camera that records none: the wall clock is read in the device's own zone.
+        let bare = JPEGFactory.make(takenAt: lunch, timeZone: .current)
+        let readBare = try #require(sut.readMetadata(from: bare).takenAt)
+        #expect(abs(readBare.timeIntervalSince(lunch)) < 1)
+        _ = temp
+    }
+
+    /// TC-1-26 — cameras write 0, 0 when they have no fix (FR-1.17).
+    @Test("a GPS block of 0, 0 counts as no coordinate")
+    func TC_1_26_nullIslandIsNoCoordinate() throws {
+        let (sut, temp) = try makeSUT()
+        let data = JPEGFactory.make(latitude: 0, longitude: 0)
+
+        #expect(sut.readMetadata(from: data).coordinate == nil)
+        _ = temp
+    }
+
     @Test("stored photos carry the metadata their file contained")
     func storedPhotoKeepsMetadata() throws {
         let (sut, temp) = try makeSUT()

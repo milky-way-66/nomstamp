@@ -101,4 +101,23 @@ struct SuggestMealPlaceTests {
 
         #expect(suggestion?.target == .existingPlace(near.id))
     }
+
+    /// TC-1-21 — a fix too coarse to tell neighbours apart makes no guess at all (FR-1.13).
+    @Test("A fix coarser than the radius suggests nothing, however close a saved place is")
+    func coarseFixSuggestsNothing() async {
+        let near = Fixture.place(at: Fixture.phoThin)
+        let sut = makeUseCase(places: [near])
+
+        // 40 m away, so it would win outright on distance alone.
+        let coordinate = Fixture.offset(Fixture.phoThin, metresNorth: 40)
+
+        #expect(await sut.execute(around: coordinate, accuracy: 800) == nil)
+        #expect(await sut.execute(around: coordinate, accuracy: -1) == nil, "a negative accuracy means no fix")
+        #expect(await sut.execute(around: coordinate, accuracy: 30)?.target == .existingPlace(near.id))
+        #expect(
+            await sut.execute(around: coordinate, accuracy: SuggestMealPlaceUseCase.radius)?.target
+                == .existingPlace(near.id),
+            "a fix exactly as good as the radius is still usable"
+        )
+    }
 }

@@ -29,8 +29,15 @@ public struct SuggestMealPlaceUseCase: Sendable {
         self.search = search
     }
 
-    public func execute(around coordinate: Coordinate?) async -> PlaceSuggestion? {
+    /// - Parameter accuracy: metres of uncertainty in `coordinate`, or nil when it was
+    ///   photographed and so needs no allowance.
+    public func execute(around coordinate: Coordinate?, accuracy: Double? = nil) async -> PlaceSuggestion? {
         guard let coordinate else { return nil }
+
+        // A fix known only to more than the radius cannot tell two neighbouring shops apart, so
+        // it makes no guess at all: the user would rather search than un-pick a wrong one
+        // (FR-1.13).
+        if let accuracy, accuracy < 0 || accuracy > Self.radius { return nil }
 
         let saved = ((try? places.allPlaces()) ?? [])
             .map { (place: $0, distance: $0.distance(to: coordinate)) }

@@ -120,7 +120,11 @@ struct StubLocation: LocationPort {
             : Coordinate(latitude: 21.0333, longitude: 105.8500)
     }
 
-    func currentCoordinate() async -> Coordinate? { coordinate }
+    /// Ten metres: a good outdoor fix, well inside the preselection radius, so the journeys
+    /// exercise the accuracy gate's pass rather than its refusal (FR-1.13).
+    func currentFix() async -> LocationFix? {
+        LocationFix(coordinate: coordinate, accuracy: 10)
+    }
 }
 
 /// Fixed Vietnamese results, so UI journeys are deterministic and work offline.

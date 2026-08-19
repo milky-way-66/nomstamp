@@ -35,6 +35,9 @@ final class InMemoryPlaceRepository: PlaceRepositoryPort, @unchecked Sendable {
 /// failure — the orphaned-file bug that TC-1-08 and TC-3-04 exist to catch.
 final class FakePhotoStorage: PhotoStoragePort, @unchecked Sendable {
     var metadata = PhotoMetadata()
+    /// Per-image metadata, keyed by the image data, for the cases where photos of one meal
+    /// disagree about when and where it happened (TC-1-25).
+    var metadataByImage: [Data: PhotoMetadata] = [:]
     /// When set, the nth call to `store` throws. 0 means the first call fails.
     var failStoreAtIndex: Int?
 
@@ -66,7 +69,7 @@ final class FakePhotoStorage: PhotoStoragePort, @unchecked Sendable {
     }
 
     func readMetadata(from imageData: Data) -> PhotoMetadata {
-        metadata
+        metadataByImage[imageData] ?? metadata
     }
 
     /// Photos written but not cleaned up — must be empty after a failed save.
@@ -81,8 +84,17 @@ struct FixedClock: ClockPort {
 
 final class FakeLocation: LocationPort, @unchecked Sendable {
     var coordinate: Coordinate?
-    init(_ coordinate: Coordinate? = nil) { self.coordinate = coordinate }
-    func currentCoordinate() async -> Coordinate? { coordinate }
+    /// Metres of uncertainty the fake reports. Ten metres is a good phone fix outdoors.
+    var accuracy: Double = 10
+
+    init(_ coordinate: Coordinate? = nil, accuracy: Double = 10) {
+        self.coordinate = coordinate
+        self.accuracy = accuracy
+    }
+
+    func currentFix() async -> LocationFix? {
+        coordinate.map { LocationFix(coordinate: $0, accuracy: accuracy) }
+    }
 }
 
 final class FakePlaceSearch: PlaceSearchPort, @unchecked Sendable {
@@ -111,6 +123,12 @@ enum Fixture {
     static let hcmcDistrict1 = Coordinate(latitude: 10.7769, longitude: 106.7009)
 
     static let epoch = Date(timeIntervalSince1970: 1_767_225_600) // 2026-01-01T00:00:00Z
+
+    /// A degree of latitude is ~111 km everywhere, which is exact enough for "a few dozen metres
+    /// up the street".
+    static func offset(_ coordinate: Coordinate, metresNorth: Double) -> Coordinate {
+        Coordinate(latitude: coordinate.latitude + metresNorth / 111_000, longitude: coordinate.longitude)
+    }
 
     static func place(
         id: UUID = UUID(),

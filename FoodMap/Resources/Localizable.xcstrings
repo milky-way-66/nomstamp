@@ -758,6 +758,17 @@
         }
       }
     },
+    "Photograph of this meal": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh của bữa ăn này"
+          }
+        }
+      }
+    },
     "Rate this meal": {
       "extractionState": "manual",
       "localizations": {

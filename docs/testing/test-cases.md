@@ -42,6 +42,13 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-1-18 | U | E1, 6a | Given no coordinate, or a search port that throws, when the place is suggested, then the result is nil and no error escapes | **auto** |
 | TC-1-19 | E | main | Given an empty app, when the user taps `+`, takes a photo, taps a star and saves, then the meal is stored with that score and the place was never chosen by hand | **auto** |
 | TC-1-15 | U | FR-1.4 | Given a photo carrying EXIF time, when the user sets the time by hand, then the typed time wins over both the EXIF and the clock | **auto** |
+| TC-1-20 | I | 1a | Given a JPEG whose EXIF time is local wall clock, when metadata is read, then the time is that wall clock in the device's zone — and in the photograph's own offset when `OffsetTimeOriginal` is present | **auto** |
+| TC-1-21 | U | 3 | Given a fix whose accuracy is coarser than the 120 m radius, when the place is suggested, then nothing is preselected even though a saved place is 40 m away | **auto** |
+| TC-1-22 | U | 3 | Given a device fix of invalid or coarse accuracy, when the resolver reports it, then it is discarded and the caller is told there is no coordinate | **auto** |
+| TC-1-23 | U | 3 | Given a fix older than 60 s and a wait that times out, when a coordinate is asked for, then the stale fix is not returned | **auto** |
+| TC-1-24 | U | E1 | Given permission is undecided, when a coordinate is asked for, then permission is requested and the answer is awaited — a later grant yields the fix, a denial yields nil | **auto** |
+| TC-1-25 | U | 1a | Given two photos whose times and coordinates differ, when the context is derived, then both the time and the coordinate come from the earliest photo carrying a coordinate | **auto** |
+| TC-1-26 | I | 1a | Given a JPEG whose GPS block reads 0°, 0°, when metadata is read, then the coordinate is nil | **auto** |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
 > naive implementation leaves an orphaned meal row when the photo write fails.
@@ -205,11 +212,11 @@ the omission is visible rather than forgotten.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 80 test cases** — 56 unit, 11 integration, 13 e2e. The shape is deliberate: the pyramid
+**Total: 87 test cases** — 61 unit, 13 integration, 13 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |
 |---|---|---|---|---|
-| Unit | 56 | 56 | 56 | 70 test functions (`FoodMapDomain` 68, `FoodMapDesign` 2) |
-| Integration | 11 | 11 | 11 | 28 test functions (`FoodMapData`) |
+| Unit | 61 | 61 | 61 | 73 test functions (`FoodMapDomain` 71, `FoodMapDesign` 2) |
+| Integration | 13 | 13 | 13 | 38 test functions (`FoodMapData`) |
 | E2E | 13 | 13 | 13 | 16 XCUITest journeys (`FoodMapUITests`) |
