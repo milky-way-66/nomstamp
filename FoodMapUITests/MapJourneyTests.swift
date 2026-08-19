@@ -39,6 +39,32 @@ final class MapJourneyTests: XCTestCase {
         )
     }
 
+    /// TC-N-15 — the drawn filter tabs behave like the picker they replaced: one selection at a
+    /// time, announced as selected, and the list narrows to that kind (FR-3.8, ADR-005).
+    func test_TC_N_15_drawnFilterTabsSelectAndNarrowTheList() {
+        let app = AppLauncher.launch(seeded: true)
+
+        // Pull the sheet up first: the tabs sit in its header, but the rows they filter are
+        // below the peek fold.
+        XCTAssertTrue(app.staticTexts["Cà phê Giảng"].waitForExistence(timeout: 15))
+        app.raiseSheet()
+
+        let beenHere = app.buttons["Been here"]
+        beenHere.tapWhenReady(timeout: 5)
+
+        XCTAssertTrue(beenHere.isSelected, "The chosen tab must report itself selected (NFR-6)")
+        XCTAssertFalse(app.buttons["All"].isSelected, "Only one tab may be selected at a time")
+
+        XCTAssertTrue(
+            app.staticTexts["Phở Thìn"].waitForExistence(timeout: 5),
+            "A visited place belongs under \"Been here\""
+        )
+        XCTAssertFalse(
+            app.staticTexts["Cà phê Giảng"].exists,
+            "A wishlist place must not survive the \"Been here\" filter"
+        )
+    }
+
     /// TC-3-07 — opening a place moves the map to its pin and stays beside it (FR-4.6).
     func test_TC_3_07_openingAPlaceKeepsTheMapInView() {
         let app = AppLauncher.launch(seeded: true)

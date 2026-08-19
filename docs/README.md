@@ -34,9 +34,9 @@ the specification was wrong, the document is corrected first — never left to d
 | User stories | 3 captured |
 | Use cases | UC-1 … UC-6 written |
 | SRS | draft v0.1, 2 open questions (OPEN-2, OPEN-3) |
-| Test cases | 90 specified (64 unit, 13 integration, 13 e2e) — all automated |
+| Test cases | 91 specified (64 unit, 13 integration, 14 e2e) — all automated |
 | Domain code | **complete and green** — 71 tests, sub-second warm loop, no simulator |
-| Test totals | 131 automated, all passing — 71 domain, 6 design, 38 data, 16 e2e journeys |
+| Test totals | 132 automated, all passing — 71 domain, 6 design, 38 data, 17 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
 | Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |

@@ -31,7 +31,13 @@ struct PlaceSheet: View {
     var body: some View {
         NavigationStack(path: $path) {
             VStack(spacing: 0) {
-                if !model.isEmpty { searchField }
+                if !model.isEmpty {
+                    searchField
+                    // Only once the sheet is up: at the peek the tabs would fill the whole fold and
+                    // push every row off it, and filtering is a question the user asks while
+                    // reading the list, not while looking at the map (design review, 19 Aug).
+                    if !isPeeking { filterTabs }
+                }
                 content
             }
             .background(Theme.paper)
@@ -124,7 +130,6 @@ struct PlaceSheet: View {
             emptyState
         } else {
             List {
-                filterRow
                 ForEach(shown) { place in
                     NavigationLink(value: place) {
                         PlaceRowView(place: place, distance: nil)
@@ -135,6 +140,10 @@ struct PlaceSheet: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(Theme.paper)
+            // At the peek detent the sheet's bottom edge falls in the middle of the first row and
+            // sliced it clean through, which read as a rendering fault. Fading the list into the
+            // page instead says "there is more here" without pretending the fold is not there.
+            .mask(isPeeking ? AnyView(peekFade) : AnyView(Rectangle()))
             .overlay {
                 if shown.isEmpty && !searchText.isEmpty {
                     ContentUnavailableView.search(text: searchText)
@@ -146,22 +155,38 @@ struct PlaceSheet: View {
     /// FR-3.8 — filtering lives here rather than over the map. As a header over the
     /// cartography it cost the map a strip of its height on every screen, to answer a question
     /// the user only asks while reading the list.
-    private var filterRow: some View {
-        Picker("Show", selection: Binding(
-            get: { model.filter },
-            set: { model.filter = $0 }
-        )) {
-            Text("All").tag(MapFilter.all)
-            Text("Been here").tag(MapFilter.visited)
-            Text("Want to try").tag(MapFilter.wishlist)
-        }
-        .pickerStyle(.segmented)
-        .listRowBackground(Theme.paper)
-        .listRowSeparator(.hidden)
-        .listRowInsets(EdgeInsets(
-            top: 0, leading: Theme.screenMargin,
-            bottom: Theme.Space.tight, trailing: Theme.screenMargin
-        ))
+    ///
+    /// Drawn rather than segmented (ADR-005): see `InkTabs`.
+    private var filterTabs: some View {
+        InkTabs(
+            tabs: [
+                .init(value: MapFilter.all, title: "All"),
+                .init(value: MapFilter.visited, title: "Been here"),
+                .init(value: MapFilter.wishlist, title: "Want to try")
+            ],
+            selection: Binding(get: { model.filter }, set: { model.filter = $0 })
+        )
+        .padding(.horizontal, Theme.screenMargin)
+        .background(Theme.paper)
+    }
+
+    /// True while the sheet is at its smallest detent.
+    private var isPeeking: Bool {
+        detent == .height(MapScreen.peekHeight)
+    }
+
+    /// Opaque until the last stretch, then out — long enough to dissolve a row, short enough that
+    /// nothing above the fold looks washed.
+    private var peekFade: some View {
+        LinearGradient(
+            stops: [
+                .init(color: .black, location: 0),
+                .init(color: .black.opacity(0.9), location: 0.35),
+                .init(color: .clear, location: 1)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 
     /// UC-2 / 1a — never a blank screen (NFR-4.3).

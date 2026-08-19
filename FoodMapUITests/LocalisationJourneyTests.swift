@@ -23,10 +23,11 @@ final class LocalisationJourneyTests: XCTestCase {
         )
         XCTAssertTrue(app.buttons["Thêm bữa"].exists, "\"Add meal\" should be translated")
 
-        // The filter control, and the wishlist/visited wording used on every row.
-        // The filter sits on the map behind the sheet, so it needs its own wait.
+        // The filter tabs, and the wishlist/visited wording used on every row. The tabs live in
+        // the sheet's header once it is up, not at the peek.
+        app.raiseSheet()
         XCTAssertTrue(
-            app.segmentedControls.buttons["Tất cả"].waitForExistence(timeout: 10),
+            app.buttons["Tất cả"].waitForExistence(timeout: 10),
             "The \"All\" filter should be translated"
         )
         XCTAssertTrue(

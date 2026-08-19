@@ -113,20 +113,20 @@ struct MapScreen: View {
             // rather than as "nothing saved yet" (design review, 19 Aug).
             if !model.isEmpty {
                 FloatingActionButton(
-                    systemImage: "location.magnifyingglass",
+                    glyph: .needle,
                     label: "Saved places near me",
                     identifier: "nearMeButton"
                 ) { model.action = .nearMe }
             }
 
             FloatingActionButton(
-                systemImage: "bookmark",
+                glyph: .ribbon,
                 label: "Save a place",
                 identifier: "savePlaceButton"
             ) { model.action = .savePlace }
 
             FloatingActionButton(
-                systemImage: "camera.fill",
+                glyph: .camera,
                 label: "Add meal",
                 identifier: "addMealButton",
                 style: .primary
