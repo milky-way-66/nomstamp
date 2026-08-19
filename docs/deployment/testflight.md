@@ -171,12 +171,18 @@ open FoodMap.xcodeproj
 than half-finishes when something is missing:
 
 ```bash
-export ASC_TEAM_ID=ABCDE12345      # developer.apple.com/account → Membership details
-export ASC_KEY_ID=XXXXXXXXXX       # App Store Connect → Users and Access → Integrations
-export ASC_ISSUER_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+cp .env.example .env               # then fill in the three values it explains
+$EDITOR .env
 
 scripts/deploy.sh --dry-run        # see the whole plan, touch nothing
 scripts/deploy.sh --bump           # bump the build number, test, archive, export, upload
+```
+
+`.env` is gitignored, and the script refuses to run if it ever becomes tracked. Anything already in
+the environment beats the file, so a one-off override needs no edit:
+
+```bash
+ASC_TEAM_ID=OTHER12345 scripts/deploy.sh --no-upload
 ```
 
 It generates the project, runs all four suites, archives Release, exports, uploads, and tags the

@@ -12,14 +12,16 @@
 #   scripts/deploy.sh --no-upload     # archive and export only, then stop
 #   scripts/deploy.sh --dry-run       # print what would happen, touch nothing
 #
-# Credentials, none of which belong in the repository:
+# Credentials come from .env in the repository root, which is gitignored. Copy .env.example and
+# fill it in:
 #
 #   ASC_TEAM_ID     ten characters, developer.apple.com/account → Membership details
 #   ASC_KEY_ID      App Store Connect API key id
 #   ASC_ISSUER_ID   the issuer UUID shown above the key list
 #
-# The key itself is read from ~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8, which is
-# where the uploader looks by default.
+# Anything already set in the environment wins over .env, so a one-off run can override without
+# editing the file. The private key itself is read from
+# ~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8, which is where the uploader looks.
 
 set -euo pipefail
 
@@ -48,6 +50,21 @@ while [ $# -gt 0 ]; do
     shift
 done
 
+# ── credentials ──────────────────────────────────────────────────────────────────────────────────
+# .env is a shell fragment, so it is sourced rather than parsed. Values already in the environment
+# are kept: an explicit ASC_TEAM_ID=… in front of the command overrides the file.
+
+if [ -f .env ]; then
+    ENV_TEAM_ID="${ASC_TEAM_ID:-}"; ENV_KEY_ID="${ASC_KEY_ID:-}"; ENV_ISSUER_ID="${ASC_ISSUER_ID:-}"
+    set -a
+    # shellcheck disable=SC1091
+    . ./.env
+    set +a
+    [ -n "$ENV_TEAM_ID" ] && ASC_TEAM_ID="$ENV_TEAM_ID"
+    [ -n "$ENV_KEY_ID" ] && ASC_KEY_ID="$ENV_KEY_ID"
+    [ -n "$ENV_ISSUER_ID" ] && ASC_ISSUER_ID="$ENV_ISSUER_ID"
+fi
+
 # ── how this script talks ────────────────────────────────────────────────────────────────────────
 
 step() { printf '\n\033[1m▸ %s\033[0m\n' "$1"; }
@@ -70,10 +87,15 @@ step "Preflight"
 command -v xcodegen >/dev/null || die "xcodegen is not installed — brew install xcodegen"
 command -v xcodebuild >/dev/null || die "xcodebuild is not on PATH — install the Xcode command line tools"
 
-[ -n "${ASC_TEAM_ID:-}" ] || die "ASC_TEAM_ID is not set. See the header of this script."
+[ -n "${ASC_TEAM_ID:-}" ] || die "ASC_TEAM_ID is not set — cp .env.example .env and fill it in."
 
 ICON="FoodMap/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
 [ -f "$ICON" ] || die "No app icon at $ICON — run: swift Tools/MakeAppIcon.swift $ICON"
+
+# .env holds a live key id; catch it before it reaches a remote.
+if git ls-files --error-unmatch .env >/dev/null 2>&1; then
+    die ".env is tracked by git — remove it with: git rm --cached .env"
+fi
 
 # A build that cannot be traced back to a commit is a build you cannot fix.
 if [ -n "$(git status --porcelain)" ]; then
@@ -184,8 +206,8 @@ if [ "$UPLOAD" -eq 0 ]; then
 fi
 
 step "Uploading to App Store Connect"
-[ -n "${ASC_KEY_ID:-}" ] || die "ASC_KEY_ID is not set"
-[ -n "${ASC_ISSUER_ID:-}" ] || die "ASC_ISSUER_ID is not set"
+[ -n "${ASC_KEY_ID:-}" ] || die "ASC_KEY_ID is not set — see .env.example"
+[ -n "${ASC_ISSUER_ID:-}" ] || die "ASC_ISSUER_ID is not set — see .env.example"
 
 KEY_FILE="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
 [ "$DRY_RUN" -eq 1 ] || [ -f "$KEY_FILE" ] || die "No API key at $KEY_FILE — it can only be downloaded once, from App Store Connect → Users and Access → Integrations"

@@ -17,3 +17,6 @@ DerivedData/
 
 # Archives, exported .ipa and the generated export options
 build/
+
+# Real credentials for scripts/deploy.sh — .env.example is the committed template
+.env
