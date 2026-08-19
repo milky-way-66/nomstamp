@@ -10,9 +10,20 @@ final class DesignSweep: XCTestCase {
         add(shot)
     }
 
+    /// Pushes the sheet back down to its peek.
+    ///
+    /// The drag starts on the sheet's own header rather than mid-screen: now that the demo map has
+    /// pins on it, a press that starts over the cartography selects a pin and opens a place.
     private func collapseSheet(_ app: XCUIApplication) {
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.10))
-            .press(forDuration: 0.2, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+        let bottom = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95))
+        let field = app.textFields["placeSearchField"]
+        if field.waitForExistence(timeout: 5) {
+            field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                .press(forDuration: 0.2, thenDragTo: bottom)
+        } else {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.10))
+                .press(forDuration: 0.2, thenDragTo: bottom)
+        }
     }
 
     /// The seeded list is newest-first, so a named place may be below the fold: search for it.

@@ -46,7 +46,7 @@ struct PlaceDetailView: View {
                 .padding()
             }
         }
-        .background(Theme.paper)
+        .paperGround()
         // Once the name has scrolled off the page it comes back in the bar, so the reader never
         // loses track of which place they are in (design review, 19 Aug).
         .onScrollGeometryChange(for: Bool.self) { geometry in
@@ -121,6 +121,7 @@ struct PlaceDetailView: View {
                 )
                 // Torn along the bottom, so the paper below is the same sheet the picture is on.
                 .clipShape(TornBottom())
+                .photoGlow(16)
                 .contentShape(Rectangle())
                 .onTapGesture { fullScreenPhoto = photo }
                 .accessibilityAddTraits(.isButton)
@@ -286,6 +287,7 @@ private struct MealCard: View {
                         .scaledToFill()
                 )
                 .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
+                .photoGlow()
                 .contentShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
                 .onTapGesture { onTapPhoto(photo) }
                 .accessibilityAddTraits(.isButton)
@@ -296,7 +298,7 @@ private struct MealCard: View {
     private var mealInk: Color { Theme.ratingInk(meal.rating) }
 
     var body: some View {
-        PaperCard {
+        PaperCard(edge: meal.rating == nil ? nil : mealInk) {
             VStack(alignment: .leading, spacing: Theme.Space.snug) {
                 if showsHero, let first = meal.photos.first {
                     // The dish is the point of the card, so the first photograph fills its
@@ -348,15 +350,6 @@ private struct MealCard: View {
                 }
             }
             .padding(Theme.contentInset)
-        }
-        // Each meal is scored on its own, so each card carries its own ink down its spine.
-        .overlay(alignment: .leading) {
-            if meal.rating != nil {
-                Rectangle()
-                    .fill(mealInk)
-                    .frame(width: 3)
-                    .clipShape(RoundedRectangle(cornerRadius: 2))
-            }
         }
         .contextMenu {
             Button(role: .destructive, action: onDelete) {

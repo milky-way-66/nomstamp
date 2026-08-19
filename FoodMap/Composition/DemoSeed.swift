@@ -67,6 +67,46 @@ enum DemoSeed {
             )
         )
 
+        // San Francisco, because that is where a simulator thinks it is: without these the demo
+        // map is a city with no pins in it, and the stamps — the whole point of the map — never
+        // appear on screen.
+        _ = try? dependencies.logMeal.execute(
+            LogMealRequest(
+                target: .newPlace(PlaceDraft(
+                    name: "Golden Gate Bánh Mì",
+                    address: "1246 Stockton St, Chinatown",
+                    coordinate: Coordinate(latitude: 37.7969, longitude: -122.4079)
+                )),
+                photoData: [jpeg(hue: 0.09)],
+                dishName: "Bánh mì thịt nướng",
+                rating: 5,
+                note: "The bread is baked two doors down."
+            )
+        )
+
+        _ = try? dependencies.logMeal.execute(
+            LogMealRequest(
+                target: .newPlace(PlaceDraft(
+                    name: "Ferry Building Oysters",
+                    address: "1 Ferry Building, Embarcadero",
+                    coordinate: Coordinate(latitude: 37.7955, longitude: -122.3937)
+                )),
+                photoData: [jpeg(hue: 0.55)],
+                dishName: "Half dozen Kumamoto",
+                rating: 3
+            )
+        )
+
+        _ = try? dependencies.savePlace.execute(
+            PlaceDraft(
+                name: "Swan Oyster Depot",
+                address: "1517 Polk St, Nob Hill",
+                coordinate: Coordinate(latitude: 37.7907, longitude: -122.4211),
+                note: "Queue before eleven, Mai says",
+                tags: ["seafood", "San Francisco"]
+            )
+        )
+
         _ = try? dependencies.savePlace.execute(
             PlaceDraft(
                 name: "Cà phê Giảng",
