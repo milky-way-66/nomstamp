@@ -8,12 +8,22 @@ try — both on a map. Photograph a dish where you eat it and the photo becomes 
 ## Status
 
 Domain and data layers complete and fully tested — **74 tests, all green, no simulator
-required**. The app UI is next.
+required**. The iPhone app is built and running. The 5 end-to-end journeys are the
+remaining gap.
 
 ```
 swift test --package-path Packages/FoodMapDomain     # 51 tests, ~0.8s
 swift test --package-path Packages/FoodMapData       # 23 tests, ~0.1s
 RUN_NETWORK_TESTS=1 swift test --package-path Packages/FoodMapData   # + 2 live Apple Maps tests
+```
+
+Run the app with a demo map:
+
+```
+xcodegen generate
+xcodebuild -project FoodMap.xcodeproj -scheme FoodMap \
+  -destination 'platform=iOS Simulator,name=iPhone 17' build
+xcrun simctl launch booted com.foodmap.app -SeedDemoData
 ```
 
 ## Documentation
@@ -39,5 +49,5 @@ docs → test cases → test code → implementation
 ```
 Packages/FoodMapDomain/   Pure Swift. No Apple frameworks. Tests run on macOS.
 Packages/FoodMapData/     Adapters: SwiftData, file system, Apple Maps.
-FoodMap/                  SwiftUI app: views, view models, composition.   (next)
+FoodMap/                  SwiftUI app: views, view models, composition.
 ```

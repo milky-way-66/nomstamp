@@ -38,4 +38,5 @@ the specification was wrong, the document is corrected first — never left to d
 | Test totals | 74 automated, all passing; 5 e2e cases still specified only |
 | UI/UX | decided — travel-journal/editorial, ADR-003 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
-| App target | not started; earlier scaffold removed as it predated ADR-002/003 |
+| App target | **built and running** — 6 screens, verified in the simulator, light and dark |
+| E2E tests | **not started** — the 5 specified journeys are the remaining gap |
