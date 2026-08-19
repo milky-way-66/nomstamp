@@ -1,0 +1,39 @@
+name: FoodMap
+options:
+  bundleIdPrefix: com.foodmap
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+packages:
+  FoodMapDomain:
+    path: Packages/FoodMapDomain
+  FoodMapData:
+    path: Packages/FoodMapData
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGNING_ALLOWED: NO
+targets:
+  FoodMap:
+    type: application
+    platform: iOS
+    sources:
+      - path: FoodMap
+    dependencies:
+      - package: FoodMapDomain
+      - package: FoodMapData
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.foodmap.app
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Food Map
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        # iPhone only, portrait only (SRS 2.3)
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSCameraUsageDescription: "Food Map uses the camera so you can photograph the food you are eating."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Food Map reads photos you choose so you can log meals you photographed earlier."
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Food Map uses your location to find the restaurant you are in and to show saved places near you."

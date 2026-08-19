@@ -3,6 +3,11 @@ import Foundation
 public struct PlaceDistance: Equatable, Sendable {
     public let place: Place
     public let distance: Double
+
+    public init(place: Place, distance: Double) {
+        self.place = place
+        self.distance = distance
+    }
 }
 
 /// "Nothing saved here" and "I don't know where you are" are different answers and must never
