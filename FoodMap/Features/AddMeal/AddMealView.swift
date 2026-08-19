@@ -20,6 +20,10 @@ struct AddMealView: View {
     @State private var targetName: String = ""
     @State private var context: MealContext?
 
+    /// FR-1.4 — set only once the user edits the time by hand; until then the
+    /// photo's EXIF time (or the clock) wins.
+    @State private var editedEatenAt: Date?
+
     @State private var dishName = ""
     @State private var rating: Int?
     @State private var note = ""
@@ -31,6 +35,7 @@ struct AddMealView: View {
             Form {
                 photosSection
                 placeSection
+                timeSection
                 detailsSection
                 if let context, context.derivedFromPhoto {
                     Section {
@@ -53,6 +58,7 @@ struct AddMealView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
+                        .accessibilityIdentifier("saveMealButton")
                         .disabled(!canSave || isSaving)
                 }
             }
@@ -110,6 +116,16 @@ struct AddMealView: View {
                 }
             }
 
+            if AppDependencies.isUITesting {
+                Button {
+                    photoData.append(dependencies.testPhotoData())
+                    Task { await refreshContext() }
+                } label: {
+                    Label("Use a test photo", systemImage: "photo")
+                }
+                .accessibilityIdentifier("useTestPhotoButton")
+            }
+
             if CameraPicker.isAvailable {
                 Button {
                     isShowingCamera = true
@@ -142,6 +158,29 @@ struct AddMealView: View {
                         .lineSpacing(Theme.minimumLineSpacing)
                     Spacer()
                 }
+            }
+        }
+    }
+
+    /// FR-1.4 — the time is suggested, never imposed.
+    private var timeSection: some View {
+        Section("When") {
+            DatePicker(
+                "Eaten at",
+                selection: Binding(
+                    get: { editedEatenAt ?? context?.eatenAt ?? Date() },
+                    set: { editedEatenAt = $0 }
+                ),
+                in: ...Date(),
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            .accessibilityIdentifier("eatenAtPicker")
+            .font(Theme.label(.body))
+
+            if editedEatenAt != nil {
+                Button("Use the photo's time") { editedEatenAt = nil }
+                    .font(Theme.label(.footnote))
+                    .foregroundStyle(Theme.lacquer)
             }
         }
     }
@@ -186,7 +225,7 @@ struct AddMealView: View {
                     dishName: dishName.isEmpty ? nil : dishName,
                     rating: rating,
                     note: note.isEmpty ? nil : note,
-                    eatenAt: context?.eatenAt
+                    eatenAt: editedEatenAt ?? context?.eatenAt
                 )
             )
             onSaved()

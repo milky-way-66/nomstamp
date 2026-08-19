@@ -146,8 +146,15 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 2. App runs UC-1 from the photo step, pre-filling the place.
 3. On save, the place's kind changes from *wishlist* to *visited*; the pin's appearance changes and the original recommendation note is kept.
 
+**Alternate flow**
+- **3a. The last meal is deleted** — the place reverts to a wishlist place rather than
+  disappearing, and the note explaining why it was saved is kept. Because `kind` is derived
+  from whether any meals exist, this needs no separate handling; the test exists so a later
+  refactor to a stored flag cannot silently break it.
+
 **Acceptance criteria**
 - Given a wishlist place, when I log a meal there, then its pin becomes a visited pin showing my photo, and the note I saved is not lost.
+- Given a visited place with one meal, when I delete that meal, then the place remains as a wishlist place with its note intact.
 
 ---
 

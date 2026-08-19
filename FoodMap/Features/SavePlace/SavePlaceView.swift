@@ -14,6 +14,7 @@ struct SavePlaceView: View {
     @State private var note = ""
     @State private var tagText = ""
     @State private var isSearching = false
+    @State private var isSearchPresented = false
     @State private var message: String?
 
     var body: some View {
@@ -38,6 +39,9 @@ struct SavePlaceView: View {
                         ForEach(results) { candidate in
                             Button {
                                 selected = candidate
+                                // Otherwise the search UI keeps the navigation bar — and the
+                                // Save button with it — hidden.
+                                isSearchPresented = false
                             } label: {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(candidate.name)
@@ -63,6 +67,7 @@ struct SavePlaceView: View {
 
                 Section("Why are you saving it?") {
                     TextField("e.g. Lan said try the bún chả", text: $note, axis: .vertical)
+                        .accessibilityIdentifier("placeNoteField")
                         .lineLimit(1...4)
                     TextField("Tags, comma separated", text: $tagText)
                 }
@@ -71,7 +76,7 @@ struct SavePlaceView: View {
             .background(Theme.paper)
             .navigationTitle("Save a place")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search by name")
+            .searchable(text: $searchText, isPresented: $isSearchPresented, prompt: "Search by name")
             .onChange(of: searchText) { _, query in
                 Task { await search(query) }
             }
@@ -81,6 +86,7 @@ struct SavePlaceView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
+                        .accessibilityIdentifier("savePlaceConfirmButton")
                         .disabled(selected == nil)
                 }
             }

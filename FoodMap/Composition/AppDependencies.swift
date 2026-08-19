@@ -14,8 +14,11 @@ final class AppDependencies {
     let places: PlaceRepositoryPort
     let photos: FileSystemPhotoStorage
     let search: PlaceSearchPort
-    let location: CoreLocationAdapter
+    let location: any LocationPort
     let clock: ClockPort
+
+    /// Nil under UI testing, where location is stubbed and there is nothing to ask for.
+    private let coreLocation: CoreLocationAdapter?
 
     // Use cases
     let logMeal: LogMealUseCase
@@ -55,8 +58,16 @@ final class AppDependencies {
         }
         PhotoImageLoader.shared.configure(storage: photos)
 
-        search = Self.isUITesting ? StubPlaceSearch() : AppleMapsPlaceSearchAdapter()
-        location = CoreLocationAdapter()
+        if Self.isUITesting {
+            search = StubPlaceSearch()
+            location = StubLocation()
+            coreLocation = nil
+        } else {
+            search = AppleMapsPlaceSearchAdapter()
+            let adapter = CoreLocationAdapter()
+            location = adapter
+            coreLocation = adapter
+        }
         clock = SystemClock()
 
         logMeal = LogMealUseCase(places: places, photos: photos, clock: clock)
@@ -68,12 +79,38 @@ final class AppDependencies {
         suggestContext = SuggestMealContextUseCase(photos: photos, location: location, clock: clock)
     }
 
+    func requestLocationPermission() {
+        coreLocation?.requestPermission()
+    }
+
+    /// A generated JPEG standing in for the camera, which the simulator does not have.
+    /// Only reachable under `-UITestMode` (ADR-002 §5.3).
+    func testPhotoData() -> Data {
+        DemoSeed.placeholderJPEG(hue: 0.09)
+    }
+
     private static func photosDirectory() -> URL {
         let base = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         // UI test runs get a throwaway directory so journeys never touch real photos.
         let name = isUITesting ? "photos-uitest-\(UUID().uuidString)" : "photos"
         return base.appendingPathComponent(name, isDirectory: true)
     }
+}
+
+/// A fixed position, so "near me" journeys do not depend on real GPS. `-StubLocationFar`
+/// moves the user to Ho Chi Minh City while the saved places stay in Hanoi, which is the
+/// "I am in a city where I saved nothing" case (UC-5 / 2a).
+struct StubLocation: LocationPort {
+    let coordinate: Coordinate
+
+    init() {
+        let far = ProcessInfo.processInfo.arguments.contains("-StubLocationFar")
+        coordinate = far
+            ? Coordinate(latitude: 10.7769, longitude: 106.7009)
+            : Coordinate(latitude: 21.0333, longitude: 105.8500)
+    }
+
+    func currentCoordinate() async -> Coordinate? { coordinate }
 }
 
 /// Fixed Vietnamese results, so UI journeys are deterministic and work offline.

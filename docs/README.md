@@ -32,11 +32,11 @@ the specification was wrong, the document is corrected first — never left to d
 |---|---|
 | User stories | 3 captured |
 | Use cases | UC-1 … UC-6 written |
-| SRS | draft v0.1, 4 open questions |
-| Test cases | 46 specified (33 unit, 8 integration, 5 e2e) |
-| Domain code | **complete and green** — 51 tests, 0.8 s warm loop, no simulator |
-| Test totals | 74 automated, all passing; 5 e2e cases still specified only |
+| SRS | draft v0.1, 2 open questions (OPEN-2, OPEN-3) |
+| Test cases | 51 specified (39 unit, 7 integration, 5 e2e) — all automated |
+| Domain code | **complete and green** — 52 tests, sub-second warm loop, no simulator |
+| Test totals | 84 automated, all passing — 52 unit, 25 integration, 7 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | **built and running** — 6 screens, verified in the simulator, light and dark |
-| E2E tests | **not started** — the 5 specified journeys are the remaining gap |
+| E2E tests | **complete and green** — 7 XCUITest journeys covering all 5 cases, run against stubbed adapters |

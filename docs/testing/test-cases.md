@@ -8,9 +8,11 @@ ImageIO) · `E` end-to-end (XCUITest, stubbed search + GPS + camera).
 
 Status: `spec` = specified, not yet automated · `auto` = an automated test exists and passes.
 
-**As of 2026-08-19:** all 43 unit and all 7 integration cases are automated and green,
-implemented by 74 test functions (the extra ones are edge cases found while writing them).
-The 5 e2e cases remain specified, pending the app target.
+**As of 2026-08-19:** every case at all three levels is automated and green — 39 unit and 7
+integration cases implemented by 77 test functions (the extras are edge cases found while
+writing them), and the 5 e2e cases implemented by 7 XCUITest journeys in `FoodMapUITests`.
+The e2e journeys run against stubbed search, location, photo and storage adapters selected by
+the `-UITestMode` launch argument, so they need no network, no GPS and no camera.
 
 The two live-network tests are opt-in and skipped by default, so the suite is deterministic
 offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
@@ -34,7 +36,8 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-1-11 | I | main | Given a real JPEG, when stored, then a full image and a thumbnail exist on disk and both decode | **auto** |
 | TC-1-12 | I | 1a | Given a JPEG with southern/western hemisphere GPS, when metadata is read, then latitude and longitude are correctly **negated** | **auto** |
 | TC-1-13 | I | 1a | Given a JPEG with no GPS block, when metadata is read, then coordinate is nil and no error is thrown | **auto** |
-| TC-1-14 | E | main | Given an empty app, when the user adds a meal from the fixture photo, then a pin appears on the map | spec |
+| TC-1-14 | E | main | Given an empty app, when the user adds a meal from the fixture photo, then a pin appears on the map | **auto** |
+| TC-1-15 | U | FR-1.4 | Given a photo carrying EXIF time, when the user sets the time by hand, then the typed time wins over both the EXIF and the clock | **auto** |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
 > naive implementation leaves an orphaned meal row when the photo write fails.
@@ -54,7 +57,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-2-07 | U | 3a | Given a place with 2 meals, when the pin thumbnail is chosen, then it is the **most recent** meal's first photo | **auto** |
 | TC-2-08 | U | 5a | Given a visited and a wishlist place, when filtering by `wishlist`, then only the wishlist place is returned | **auto** |
 | TC-2-09 | U | step 4 | Given 200 places in one city, when clustered, then the cluster count stays far below 200 and every place appears in exactly one cluster | **auto** |
-| TC-2-10 | E | 1a | Given no places, when the map opens, then the empty state and its two actions are shown | spec |
+| TC-2-10 | E | 1a | Given no places, when the map opens, then the empty state and its two actions are shown | **auto** |
 
 > TC-2-09's real assertion is **conservation**: no place may be dropped or duplicated by
 > clustering. That is the bug clustering code actually has.
@@ -70,6 +73,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-3-03 | U | step 3 | Given a meal is deleted, when the place is reloaded, then the meal is gone and other meals survive | **auto** |
 | TC-3-04 | I | step 3 | Given a meal with photos is deleted, then its image **files are removed from disk**, not just the rows | **auto** |
 | TC-3-05 | I | step 3 | Given a place is deleted, then its meals and all their photo files are removed | **auto** |
+| TC-3-06 | I | step 3 / FR-4.5 | Given a place, when directions are requested, then a map item is produced carrying that place's name and exact coordinate | **auto** |
 
 > TC-3-04 and TC-3-05 guard a leak that a database-only test cannot see: cascade delete
 > removes rows, but the JPEGs would sit on the user's device forever.
@@ -88,7 +92,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-4-06 | U | 2a | Given the place cannot be found by search, when the user drops a pin and types a name, then a wishlist place is created there | **auto** |
 | TC-4-07 | U | step 4 | Given tags are supplied, when saved, then they are persisted and searchable | **auto** |
 | TC-4-08 | I | — | Given the Apple search adapter, when asked for nearby food places, then it uses a **category filter and never a free-text category word** (network-tagged, excluded by default) | **auto** |
-| TC-4-09 | E | main | Given the user searches a name and saves it, then a wishlist pin appears and its note shows when opened | spec |
+| TC-4-09 | E | main | Given the user searches a name and saves it, then a wishlist pin appears and its note shows when opened | **auto** |
 
 > TC-4-05 is Vietnam-specific and easy to get wrong: users type without diacritics, so
 > `pho thin` and `Phở Thìn` must compare equal.
@@ -106,7 +110,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-5-03 | U | 2a | Given saved places only in Hanoi and the user is in HCMC, when searching nearby, then the result is **empty and successful** — not an error | **auto** |
 | TC-5-04 | U | — | Given no location fix is available, then the outcome is a distinct `locationUnavailable` case, distinguishable from "nothing nearby" | **auto** |
 | TC-5-05 | U | main | Given both visited and wishlist places nearby, then both are returned (travelling users want their old favourites too) | **auto** |
-| TC-5-06 | E | main+2a | Given a seeded city, then a place is listed with its distance; given an empty city, then the explicit "nothing saved near here" message is shown | spec |
+| TC-5-06 | E | main+2a | Given a seeded city, then a place is listed with its distance; given an empty city, then the explicit "nothing saved near here" message is shown | **auto** |
 
 > TC-5-03 vs TC-5-04 is the distinction that makes this feature trustworthy: "you saved
 > nothing here" and "I don't know where you are" must never look the same to the user.
@@ -121,7 +125,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-6-02 | U | step 3 | Given that place had the note "Lan said try the pho", after the transition the note is **still present** | **auto** |
 | TC-6-03 | U | step 3 | Given the transition happened, then the place id is unchanged — it was converted, not replaced | **auto** |
 | TC-6-04 | U | step 3 | Given a visited place, when its only meal is deleted, then it reverts to `wishlist` rather than disappearing | **auto** |
-| TC-6-05 | E | main | Given a wishlist pin, when the user taps "I ate here" and logs a meal, then the pin renders as visited and the note survives | spec |
+| TC-6-05 | E | main | Given a wishlist pin, when the user taps "I ate here" and logs a meal, then the pin renders as visited and the note survives | **auto** |
 
 > TC-6-04 is a flow the use-case document does not mention — deleting the last meal. Because
 > `kind` is derived, reverting is automatic, but the behaviour should be pinned by a test so a
@@ -154,11 +158,11 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 55 test cases** — 43 unit, 7 integration, 5 e2e. The shape is deliberate: the pyramid
+**Total: 51 test cases** — 39 unit, 7 integration, 5 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
-| | Specified | Automated | Passing |
-|---|---|---|---|
-| Unit | 43 | 43 | 43 |
-| Integration | 7 | 7 | 7 |
-| E2E | 5 | 0 | — |
+| | Specified | Automated | Passing | Implemented by |
+|---|---|---|---|---|
+| Unit | 39 | 39 | 39 | 52 test functions (`FoodMapDomain`) |
+| Integration | 7 | 7 | 7 | 25 test functions (`FoodMapData`) |
+| E2E | 5 | 5 | 5 | 7 XCUITest journeys (`FoodMapUITests`) |

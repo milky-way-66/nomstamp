@@ -44,7 +44,7 @@ struct MapScreen: View {
             ClusterSheet(cluster: cluster, dependencies: dependencies, model: model)
         }
         .task {
-            dependencies.location.requestPermission()
+            dependencies.requestLocationPermission()
             model.refresh()
         }
     }

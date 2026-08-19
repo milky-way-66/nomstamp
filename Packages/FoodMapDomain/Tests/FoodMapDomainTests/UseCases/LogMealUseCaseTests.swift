@@ -89,6 +89,26 @@ struct LogMealUseCaseTests {
         #expect(place.meals[0].eatenAt == Fixture.epoch)
     }
 
+    @Test("TC-1-15 a time typed by hand beats both the photo's EXIF and the clock")
+    func TC_1_15_explicitTimeWins() throws {
+        // FR-1.4. The photo says lunch yesterday, the clock says now, and the user says
+        // neither — perhaps they are logging a meal from a photo someone else sent them.
+        let photos = FakePhotoStorage()
+        photos.metadata = PhotoMetadata(takenAt: Fixture.epoch.addingTimeInterval(-86_400))
+        let (sut, _, _) = makeSUT(photos: photos, now: Fixture.epoch)
+        let typed = Fixture.epoch.addingTimeInterval(-3 * 86_400)
+
+        let place = try sut.execute(
+            LogMealRequest(
+                target: .newPlace(PlaceDraft(name: "Phở Thìn", coordinate: Fixture.phoThin)),
+                photoData: [Fixture.imageData],
+                eatenAt: typed
+            )
+        )
+
+        #expect(place.meals[0].eatenAt == typed)
+    }
+
     @Test("TC-1-06 logging at an existing wishlist place creates no second place")
     func TC_1_06_reusesExistingPlace() throws {
         let existing = Fixture.place(name: "Phở Thìn", note: "Lan said try the pho")

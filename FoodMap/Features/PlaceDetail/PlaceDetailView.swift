@@ -1,6 +1,7 @@
 import SwiftUI
 import MapKit
 import FoodMapDomain
+import FoodMapData
 
 /// UC-3 — everything eaten at one place, newest first. For a place not yet visited, the note
 /// explaining why it was saved takes that space instead (UC-3 / 2a).
@@ -82,6 +83,7 @@ struct PlaceDetailView: View {
                 Image(systemName: current.kind == .visited ? "fork.knife" : "bookmark.fill")
                 Text(current.kind == .visited ? "Been here" : "Want to try")
             }
+            .accessibilityIdentifier("placeKindLabel")
             .font(Theme.label(.subheadline))
             .foregroundStyle(current.kind == .visited ? Theme.lacquer : Theme.jade)
 
@@ -127,6 +129,7 @@ struct PlaceDetailView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(Theme.lacquer)
+            .accessibilityIdentifier("iAteHereButton")
         }
     }
 
@@ -172,9 +175,8 @@ struct PlaceDetailView: View {
     }
 
     private func openDirections() {
-        let item = MKMapItem(placemark: MKPlacemark(coordinate: current.coordinate.clCoordinate))
-        item.name = current.name
-        item.openInMaps(launchOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving])
+        // Coordinate handling lives in FoodMapData where it is unit-tested (TC-3-06).
+        PlaceMapItemFactory.openInMaps(current)
     }
 }
 

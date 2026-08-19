@@ -72,11 +72,13 @@ struct PlacePickerView: View {
 
             Section("Not listed?") {
                 TextField("Type the place name", text: $manualName)
+                    .accessibilityIdentifier("manualPlaceNameField")
                     .font(Theme.label(.body))
                 Button {
                     pickManual()
                 } label: {
                     Label("Use my exact spot", systemImage: "mappin.and.ellipse")
+                        .accessibilityIdentifier("useMySpotButton")
                 }
                 .disabled(manualName.trimmingCharacters(in: .whitespaces).isEmpty || around == nil)
 

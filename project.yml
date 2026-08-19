@@ -37,3 +37,27 @@ targets:
         INFOPLIST_KEY_NSCameraUsageDescription: "Food Map uses the camera so you can photograph the food you are eating."
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Food Map reads photos you choose so you can log meals you photographed earlier."
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Food Map uses your location to find the restaurant you are in and to show saved places near you."
+
+  FoodMapUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: FoodMapUITests
+    dependencies:
+      - target: FoodMap
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.foodmap.app.uitests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  FoodMap:
+    build:
+      targets:
+        FoodMap: all
+        FoodMapUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - FoodMapUITests

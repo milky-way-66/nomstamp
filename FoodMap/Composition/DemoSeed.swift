@@ -80,6 +80,8 @@ enum DemoSeed {
 
     /// A plausible food-coloured placeholder, generated rather than bundled so no binary
     /// assets are committed for demo purposes.
+    static func placeholderJPEG(hue: Double) -> Data { jpeg(hue: hue) }
+
     private static func jpeg(hue: Double) -> Data {
         let size = 900
         let context = CGContext(

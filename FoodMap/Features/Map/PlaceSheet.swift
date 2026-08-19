@@ -56,6 +56,7 @@ struct PlaceSheet: View {
             Image(systemName: "magnifyingglass")
                 .foregroundStyle(Theme.inkSecondary)
             TextField("Search your places", text: $searchText)
+                .accessibilityIdentifier("placeSearchField")
                 .font(Theme.label(.body))
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
@@ -85,6 +86,7 @@ struct PlaceSheet: View {
                 isSavingPlace = true
             } label: {
                 Label("Save a place", systemImage: "bookmark")
+                    .accessibilityIdentifier("savePlaceButton")
                     .font(Theme.label(.subheadline))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
@@ -96,6 +98,7 @@ struct PlaceSheet: View {
                 isAddingMeal = true
             } label: {
                 Label("Add meal", systemImage: "camera.fill")
+                    .accessibilityIdentifier("addMealButton")
                     .font(Theme.label(.subheadline))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 11)
@@ -113,6 +116,7 @@ struct PlaceSheet: View {
             .buttonStyle(.bordered)
             .disabled(model.isEmpty)
             .accessibilityLabel("Saved places near me")
+            .accessibilityIdentifier("nearMeButton")
         }
         .padding(.horizontal)
         .padding(.top, 14)
