@@ -1,8 +1,8 @@
-# Shipping Food Map — TestFlight, then the App Store
+# Shipping Nomstamp — TestFlight, then the App Store
 
 From an empty App Store Connect account to a build testers can install, and from there to a
 public release. Written for this repository as it stands on 19 August 2026: XcodeGen, Xcode 26.3,
-iOS 18 deployment target, bundle identifier `com.foodmap.app`.
+iOS 18 deployment target, bundle identifier `com.longnv.foodmap.app`.
 
 Read it once end to end before starting. Steps 1–3 are one-off setup; steps 4–8 are the loop you
 repeat for every build.
@@ -102,16 +102,24 @@ Usually automatic, but do it explicitly so the ID is certainly yours:
 
 <https://developer.apple.com/account/resources/identifiers> → **+** → *App IDs* → *App* →
 
-- Description: `Food Map`
-- Bundle ID: **Explicit** → `com.foodmap.app`
-- Capabilities: leave everything off. Food Map has no push, no iCloud, no sign-in, no backend
+- Description: `Nomstamp`
+- Bundle ID: **Explicit** → `com.longnv.foodmap.app`
+- Capabilities: leave everything off. Nomstamp has no push, no iCloud, no sign-in, no backend
   (SRS: no account, no server). Camera, photo library, and location need only the usage strings
   already in `project.yml`, not entitlements.
 
-`com.foodmap.app` is generic enough that someone may hold it. If it is taken, change
-`PRODUCT_BUNDLE_IDENTIFIER` — and the UI-test bundle ID beside it — to something you own, e.g.
-`com.yourname.foodmap`. Note that the UITest target's identifier (`com.foodmap.app.uitests`) is
-never uploaded and needs no registration.
+The identifier still says `foodmap` while the app is called Nomstamp, and that is fine — nobody
+outside the developer account ever sees a bundle ID. It is under `com.longnv`, a prefix nobody else
+can claim, so registration will not collide. The UITest target's identifier
+(`com.longnv.foodmap.app.uitests`) is never uploaded and needs no registration.
+
+Change it now if the mismatch will bother you later — `com.longnv.nomstamp.app`, plus the UI-test ID
+beside it, then `xcodegen generate`. **After the first upload it is permanent**: a new bundle ID
+means a new app record, and existing installs cannot migrate to it. The store name, by contrast,
+you can change whenever you like.
+
+The bundle ID is permanent once a build is uploaded against it. The **store name** is not — you can
+rename Nomstamp later without touching the identifier.
 
 ---
 
@@ -122,10 +130,10 @@ never uploaded and needs no registration.
 | Field | Value |
 |---|---|
 | Platforms | iOS |
-| Name | `Food Map` — 30 characters max, unique across the entire store |
+| Name | `Nomstamp` — 30 characters max, unique across the entire store. Check it is still free before saving |
 | Primary language | English (U.S.) — Vietnamese is added later as a localisation |
-| Bundle ID | `com.foodmap.app` (pick from the list; it appears once registered) |
-| SKU | Any private string, e.g. `FOODMAP-001`. Never shown to users, never changeable |
+| Bundle ID | `com.longnv.foodmap.app` (pick from the list; it appears once registered) |
+| SKU | Any private string, e.g. `NOMSTAMP-001`. Never shown to users, never changeable |
 | User access | Full Access |
 
 The name is claimed the moment you save it, held for the app for 90 days if unused.
@@ -230,7 +238,7 @@ enough.
 
 ### 4.2 What to actually test on device
 
-The simulator cannot prove these, and every one of them is core to Food Map:
+The simulator cannot prove these, and every one of them is core to Nomstamp:
 
 - Camera capture — the simulator has no camera at all.
 - Real GPS: the position the app trusts (ADR-004), indoors and moving.
@@ -282,7 +290,7 @@ Both localisations need all of this.
 
 ### 5.3 App Privacy
 
-*App Privacy* → *Get Started*. Food Map has a genuinely easy answer:
+*App Privacy* → *Get Started*. Nomstamp has a genuinely easy answer:
 
 > **Do you or your third-party partners collect data from this app?** → **No**
 
@@ -293,20 +301,20 @@ Being asked for camera, photo, and location **permission** is not data collectio
 means transmitting off the device. A wrong *Yes* here is far worse than a right *No*.
 
 A `PrivacyInfo.xcprivacy` manifest is required only when you use certain APIs (file timestamps,
-disk space, user defaults, boot time) or ship third-party SDKs. Food Map ships no third-party SDKs,
+disk space, user defaults, boot time) or ship third-party SDKs. Nomstamp ships no third-party SDKs,
 but if a Release archive is rejected for a missing manifest, add
 `FoodMap/Resources/PrivacyInfo.xcprivacy` declaring the required-reason APIs the error names.
 
 ### 5.4 Export compliance
 
 Asked on every upload unless you set it once in `Info.plist`, which §0.1 does:
-`ITSAppUsesNonExemptEncryption = NO`. Food Map has no networking beyond Apple's own map and search
+`ITSAppUsesNonExemptEncryption = NO`. Nomstamp has no networking beyond Apple's own map and search
 services, and no custom cryptography, so this is correct.
 
 ### 5.5 Age rating
 
 Answer the questionnaire honestly; with no user-generated content shared between users, no web
-view, and no gambling, Food Map lands at 4+.
+view, and no gambling, Nomstamp lands at 4+.
 
 ---
 

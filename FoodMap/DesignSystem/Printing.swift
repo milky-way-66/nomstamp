@@ -59,7 +59,7 @@ extension View {
     /// Applied to ornament and chrome, never to a photograph or a paragraph.
     func misregistered<S: Shape>(
         _ shape: S,
-        ink: Color = Theme.indigo,
+        ink: Color = Theme.printingInk,
         opacity: Double = 0.5
     ) -> some View {
         background(
@@ -101,7 +101,7 @@ private struct PhotoGlow: ViewModifier {
     func body(content: Content) -> some View {
         content
             .shadow(
-                color: scheme == .dark ? Theme.pandan.opacity(0.28) : .black.opacity(0.2),
+                color: scheme == .dark ? Theme.visitedInk.opacity(0.28) : .black.opacity(0.2),
                 radius: radius,
                 y: scheme == .dark ? 0 : 2
             )

@@ -18,7 +18,7 @@ struct StampPin: View {
     /// How the place scored, rounded to the nearest star: the pin is printed in that ink, so the
     /// map shows at a glance which places were worth it (ADR-005).
     private var score: Int? { place?.averageRating.map { Int($0.rounded()) } }
-    private var scoreInk: Color { score == nil ? Theme.pandan : Theme.ratingInk(score) }
+    private var scoreInk: Color { score == nil ? Theme.visitedInk : Theme.ratingInk(score) }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -62,20 +62,20 @@ struct StampPin: View {
                 // rating's own ink around one that earned it.
                 .overlay(StampShape().strokeBorder(scoreInk.opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
                 // Two inks, one slightly off the other: the stamp's frame is printed, not drawn.
-                .misregistered(StampShape(), ink: Theme.indigo, opacity: 0.55)
+                .misregistered(StampShape(), ink: Theme.printingInk, opacity: 0.55)
                 .photoGlow(6)
         } else {
             StampShape()
-                .fill(isVisited ? Theme.pandan.opacity(0.16) : Theme.paperRaised)
+                .fill(isVisited ? Theme.visitedInk.opacity(0.16) : Theme.paperRaised)
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
                     Image(systemName: isVisited ? "fork.knife" : "bookmark.fill")
                         .font(.system(size: size * 0.3, weight: .semibold))
-                        .foregroundStyle(isVisited ? Theme.pandan : Theme.bay)
+                        .foregroundStyle(isVisited ? Theme.visitedInk : Theme.wishlistInk)
                 )
                 .overlay(
                     StampShape().strokeBorder(
-                        isVisited ? scoreInk : Theme.bay,
+                        isVisited ? scoreInk : Theme.wishlistInk,
                         style: StrokeStyle(lineWidth: 2, dash: isVisited ? [] : [4, 3])
                     )
                 )

@@ -209,7 +209,7 @@ struct AddMealView: View {
                     } label: {
                         Text("Skip")
                             .font(Theme.smallCaps(.subheadline))
-                            .foregroundStyle(Theme.bay)
+                            .foregroundStyle(Theme.wishlistInk)
                             .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
                     }
                     .accessibilityLabel("Skip the rating")
@@ -290,7 +290,7 @@ struct AddMealView: View {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 16, weight: .medium))
                         .frame(width: 68, height: 68)
-                        .foregroundStyle(Theme.bay)
+                        .foregroundStyle(Theme.wishlistInk)
                         .background(Theme.paperRaised, in: RoundedRectangle(cornerRadius: 8))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -321,7 +321,7 @@ struct AddMealView: View {
                 HStack(spacing: Theme.Space.tight) {
                     Image(systemName: "mappin.and.ellipse")
                         .font(.system(size: 13))
-                        .foregroundStyle(Theme.pandan)
+                        .foregroundStyle(Theme.visitedInk)
                     // The placeholder is a localized key; a chosen or suggested name is the
                     // provider's own text and stays verbatim.
                     if targetName.isEmpty {
@@ -388,7 +388,7 @@ struct AddMealView: View {
                 if editedEatenAt != nil {
                     Button("Use the photo's time") { editedEatenAt = nil }
                         .font(Theme.label(.footnote))
-                        .foregroundStyle(Theme.pandan)
+                        .foregroundStyle(Theme.visitedInk)
                 }
             } label: {
                 HStack(spacing: Theme.Space.tight) {

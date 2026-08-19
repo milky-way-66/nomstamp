@@ -16,6 +16,9 @@ final class AppDependencies {
     let search: PlaceSearchPort
     let location: any LocationPort
     let clock: ClockPort
+    let weather: WeatherPort
+    /// Which printing the app is in today (ADR-006).
+    let appearanceStore: AppearanceStore
 
     /// Nil under UI testing, where location is stubbed and there is nothing to ask for.
     private let coreLocation: CoreLocationAdapter?
@@ -64,13 +67,18 @@ final class AppDependencies {
             search = StubPlaceSearch()
             location = StubLocation()
             coreLocation = nil
+            // Journeys must not depend on the weather in Cupertino: with no reading, the
+            // appearance comes from the date, and `-ForceSkin` pins it outright.
+            weather = UnavailableWeather()
         } else {
             search = AppleMapsPlaceSearchAdapter()
             let adapter = CoreLocationAdapter()
             location = adapter
             coreLocation = adapter
+            weather = WeatherKitAdapter()
         }
         clock = SystemClock()
+        appearanceStore = AppearanceStore(weather: weather, location: location, clock: clock)
 
         logMeal = LogMealUseCase(places: places, photos: photos, clock: clock)
         savePlace = SavePlaceUseCase(places: places, clock: clock)
@@ -167,4 +175,9 @@ struct StubPlaceSearch: PlaceSearchPort {
             PlaceMatcher.normalized($0.name).contains(PlaceMatcher.normalized(trimmed))
         }
     }
+}
+
+/// The sky, when there is no point asking: UI tests, and anywhere WeatherKit is not entitled.
+struct UnavailableWeather: WeatherPort {
+    func snapshot(at coordinate: Coordinate) async -> WeatherSnapshot? { nil }
 }

@@ -44,8 +44,8 @@ struct InkTabs<Value: Hashable>: View {
                         .overlay(alignment: .bottom) {
                             if isSelected {
                                 BrushRule()
-                                    .fill(Theme.pandan)
-                                    .misregistered(BrushRule(), ink: Theme.indigo, opacity: 0.45)
+                                    .fill(Theme.visitedInk)
+                                    .misregistered(BrushRule(), ink: Theme.printingInk, opacity: 0.45)
                                     .frame(height: 4)
                                     .offset(y: 8)
                                     .matchedGeometryEffect(id: "stroke", in: chip)

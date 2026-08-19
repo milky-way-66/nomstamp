@@ -15,7 +15,7 @@ struct PlaceRowView: View {
     var index: Int?
 
     private var score: Int? { place.averageRating.map { Int($0.rounded()) } }
-    private var kindInk: Color { place.kind == .visited ? Theme.ratingInk(score) : Theme.bay }
+    private var kindInk: Color { place.kind == .visited ? Theme.ratingInk(score) : Theme.wishlistInk }
 
     var body: some View {
         HStack(alignment: .top, spacing: Theme.Space.snug) {
@@ -107,21 +107,21 @@ struct PlaceRowView: View {
                 .clipShape(StampShape())
                 .overlay(StampShape().strokeBorder(Theme.paperRaised, lineWidth: 2))
                 .overlay(StampShape().strokeBorder(Theme.ratingInk(score).opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
-                .misregistered(StampShape(), ink: Theme.indigo, opacity: 0.4)
+                .misregistered(StampShape(), ink: Theme.printingInk, opacity: 0.4)
                 .photoGlow(7)
                 .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) / 2))
         } else {
             StampShape()
-                .fill(Theme.bay.opacity(0.12))
+                .fill(Theme.wishlistInk.opacity(0.12))
                 .frame(width: Self.stampSide, height: Self.stampSide)
                 .overlay(
                     FoodMark(glyph: .ribbon)
                         .inked(1.7)
-                        .foregroundStyle(Theme.bay)
+                        .foregroundStyle(Theme.wishlistInk)
                         .padding(Self.stampSide * 0.3)
                 )
                 .overlay(
-                    StampShape().strokeBorder(Theme.bay.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
+                    StampShape().strokeBorder(Theme.wishlistInk.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
                 )
                 .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) / 2))
         }

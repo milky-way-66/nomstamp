@@ -1,7 +1,7 @@
 import AppKit
 import CoreGraphics
 
-// Food Map's app icon: the stamp that the whole interface is built around (ADR-005),
+// Nomstamp's app icon: the stamp that the whole interface is built around (ADR-005),
 // printed in two inks on pandan green.
 
 let S: CGFloat = 1024

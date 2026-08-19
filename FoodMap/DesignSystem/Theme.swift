@@ -17,24 +17,36 @@ enum Theme {
     static let inkSecondary = dynamic(Palette.inkSecondary)
     static let rule = dynamic(Palette.rule)
 
-    /// Pandan — the green everything sweet is cooked in. Places you have been, and the actions
-    /// that add to the map.
-    static let pandan = dynamic(Palette.pandan)
-    /// Bay, for places you still want to try.
-    static let bay = dynamic(Palette.bay)
+    // MARK: The current printing (ADR-006)
+    //
+    // The three accents below are not constants: the press is re-inked by the sky and by the day,
+    // so they read from whichever skin is current. `AppearanceStore` sets it once, at the root,
+    // and rebuilds the interface — nothing else may write it.
+
+    /// The skin the app is printed in right now.
+    ///
+    /// A stored global rather than an environment value on purpose: every one of the thirty-odd
+    /// views that draws chrome reads these tokens, and threading a skin through all of them would
+    /// be an enormous change for something that is, by construction, the same everywhere on screen.
+    /// Redraw is handled at the root instead (see `AppearanceStore`).
+    nonisolated(unsafe) static var skin: Skin = .default
+
+    /// Places you have been, and the actions that add to the map.
+    static var visitedInk: Color { dynamic(skin.visitedInk) }
+    /// Places you still want to try.
+    static var wishlistInk: Color { dynamic(skin.wishlistInk) }
     /// The printing ink (ADR-005): ornaments, stamp frames, and the second layer of a
     /// misregistration. Never an accent — it does not mean anything on its own.
-    static let indigo = dynamic(Palette.indigo)
+    static var printingInk: Color { dynamic(skin.printingInk) }
 
-    /// Text drawn *on* a pandan or bay fill. Not white in dark mode: the dark-mode fills are
-    /// light, so white on them is 3.03:1, below AA (TC-N-07).
-    static let onPandan = dynamic(Palette.onPandan)
-    static let onBay = dynamic(Palette.onBay)
+    /// Text drawn *on* an accent fill. Not white in dark mode: the dark-mode fills are light, so
+    /// white on them is 3.03:1, below AA (TC-N-07).
+    static var onAccent: Color { dynamic(skin.onAccent) }
 
     static func accent(for kind: PlaceKindStyle) -> Color {
         switch kind {
-        case .visited: return pandan
-        case .wishlist: return bay
+        case .visited: return visitedInk
+        case .wishlist: return wishlistInk
         }
     }
 
@@ -79,7 +91,7 @@ enum Theme {
 
     /// The ink the cartography is printed in. Warm mid-tan in daylight; at night a deep indigo,
     /// so the map reads as a night market rather than a switched-off screen.
-    static let mapWash = dynamic(Palette.mapWash)
+    static var mapWash: Color { dynamic(skin.mapWash) }
 
     /// The ink a score paints (ADR-005, TC-N-17). An unrated meal takes the secondary ink: the
     /// absence of a score is not a low score.
@@ -171,7 +183,7 @@ struct PaperCard<Content: View>: View {
             )
             .misregistered(
                 RoundedRectangle(cornerRadius: Theme.cornerRadius),
-                ink: edge ?? Theme.indigo,
+                ink: edge ?? Theme.printingInk,
                 opacity: edge == nil ? 0.22 : 0.35
             )
     }

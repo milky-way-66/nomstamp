@@ -52,8 +52,8 @@ struct ArtDirectionTests {
     /// TC-N-12 — the third ink is held to the same standard as the first two.
     @Test("TC-N-12 the printing ink is registered in the pairings the interface renders")
     func TC_N_12_printingInkIsRegistered() {
-        let named = Palette.renderedPairings.filter { $0.name.contains("indigo") }
-        #expect(named.count >= 2, "indigo must be checked on both page grounds")
+        let named = Palette.renderedPairings.filter { $0.name.contains("printing ink") }
+        #expect(named.count >= 2, "the printing ink must be checked on both page grounds")
         // The contrast levels themselves are asserted for every pairing by TC-N-07.
     }
 
@@ -91,6 +91,67 @@ struct ArtDirectionTests {
             #expect(
                 Palette.renderedPairings.contains { $0.foreground == mood.ink },
                 "The ink for \(mood) is drawn as text, so it has to be in the checked pairings"
+            )
+        }
+    }
+
+    /// TC-N-18 — re-inking the press must not cost anyone their legibility. Every skin is held to
+    /// exactly the levels the default one is, in both appearances, so a skin that looks lovely and
+    /// reads badly fails here rather than shipping (ADR-006, NFR-6.4).
+    @Test("TC-N-18 every skin meets its contrast levels in both appearances", arguments: Skin.allCases, Palette.Appearance.allCases)
+    func TC_N_18_everySkinIsLegible(skin: Skin, appearance: Palette.Appearance) {
+        for pairing in Palette.renderedPairings(for: skin) {
+            let ratio = Contrast.ratio(
+                Palette.value(pairing.foreground, in: appearance),
+                Palette.value(pairing.background, in: appearance)
+            )
+            #expect(
+                ratio >= pairing.minimum,
+                """
+                the \(skin.rawValue) skin: \(pairing.name) in \(appearance.rawValue) mode is \
+                \(String(format: "%.2f", ratio)):1, needs \(pairing.minimum):1
+                """
+            )
+        }
+    }
+
+    /// TC-N-18 — a skin is a printing, not a repaint: the page and the rating ramp are the same on
+    /// all five, and only the accents move. Without this a skin could quietly change what a score
+    /// means, or make body text unreadable in a way TC-N-07 would never see.
+    @Test("TC-N-18 skins re-ink the accents and leave the page alone")
+    func TC_N_18_skinsChangeOnlyTheAccents() {
+        for skin in Skin.allCases {
+            let pairings = Palette.renderedPairings(for: skin)
+            let paperPairing = pairings.first { $0.name == "ink on paper" }
+            #expect(paperPairing?.background == Palette.paper, "\(skin.rawValue) must print on the same paper")
+            #expect(paperPairing?.foreground == Palette.ink, "\(skin.rawValue) must use the same body ink")
+            #expect(
+                pairings.contains { $0.foreground == RatingMood.best.ink },
+                "\(skin.rawValue) must keep the rating ramp: five stars mean the same on every printing"
+            )
+        }
+    }
+
+    /// TC-N-18 — the two kinds of pin must stay tellable apart by colour as well as by shape, on
+    /// every skin.
+    ///
+    /// The measure is hue, not contrast: both accents have to clear AAA against the same paper, so
+    /// their luminances are necessarily close, and a lightness test would only be re-asserting that.
+    /// What has to differ is which colour they are.
+    @Test("TC-N-18 visited and wishlist inks stay distinct on every skin", arguments: Skin.allCases)
+    func TC_N_18_accentsAreDistinct(skin: Skin) {
+        #expect(skin.visitedInk != skin.wishlistInk)
+        for appearance in Palette.Appearance.allCases {
+            let separation = Contrast.hueSeparation(
+                Palette.value(skin.visitedInk, in: appearance),
+                Palette.value(skin.wishlistInk, in: appearance)
+            )
+            #expect(
+                separation >= 40,
+                """
+                \(skin.rawValue)'s accents are only \(String(format: "%.0f", separation))° apart in \
+                \(appearance.rawValue): been-here and want-to-go would read as one colour
+                """
             )
         }
     }

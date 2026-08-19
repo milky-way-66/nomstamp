@@ -5,6 +5,9 @@ import FoodMapDomain
 /// The app is the map. Lists and detail arrive in a bottom sheet rather than behind a tab bar,
 /// so the map is never more than a swipe away (ADR-003).
 struct MapScreen: View {
+    /// What the sky is doing where the reader is, set at the root (ADR-006).
+    @Environment(\.skyEffect) private var skyEffect
+
     let dependencies: AppDependencies
 
     @State private var model: MapViewModel
@@ -96,6 +99,11 @@ struct MapScreen: View {
                 .opacity(0.45)
                 .blendMode(.color)
                 .allowsHitTesting(false)
+                .ignoresSafeArea()
+        }
+        // The weather, printed over the cartography and nowhere else (ADR-006).
+        .overlay {
+            SkyEffectLayer(effect: skyEffect)
                 .ignoresSafeArea()
         }
         .mapControls { MapCompass() }
