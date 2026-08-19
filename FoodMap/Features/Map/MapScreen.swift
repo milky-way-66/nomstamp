@@ -37,7 +37,7 @@ struct MapScreen: View {
                 detent: $detent
             )
             // With the actions on the map, the peek detent only has to clear the drag
-            // indicator and the search field whole: 104 measured on an iPhone 17.
+            // indicator and the search field whole, with its own margins: 116 on an iPhone 17.
             .presentationDetents([.height(Self.peekHeight), .fraction(0.55), .large], selection: $detent)
             // Must name a detent this sheet actually has: `.medium` is not one of them, and an
             // unmatched detent silently disables background interaction — which made the map's
@@ -111,7 +111,7 @@ struct MapScreen: View {
 
     /// The sheet's smallest detent, in points. Shared with `floatingActions` so the buttons
     /// sit just above it by construction rather than by a guessed constant.
-    static let peekHeight: CGFloat = 104
+    static let peekHeight: CGFloat = 116
 
     private var header: some View {
         VStack(spacing: Theme.Space.tight) {
@@ -151,15 +151,32 @@ struct MapScreen: View {
         }
     }
 
+    /// Centres the map on a place, biased upwards.
+    ///
+    /// The sheet covers the lower half of the screen, so a pin at the geometric centre of the
+    /// map is a pin behind the sheet. Shifting the region's centre south of the place lifts the
+    /// pin into the visible band above it (FR-4.6).
     private func focus(on place: Place) {
-        withAnimation(.easeOut(duration: 0.25)) {
+        let span: CLLocationDistance = 600
+        // A degree of latitude is ~111 km everywhere, which is close enough for a nudge.
+        let metresPerDegree: CLLocationDistance = 111_000
+        let shift = span * Self.sheetBias / metresPerDegree
+
+        withAnimation(.easeOut(duration: 0.3)) {
             camera = .region(MKCoordinateRegion(
-                center: place.coordinate.clCoordinate,
-                latitudinalMeters: 500,
-                longitudinalMeters: 500
+                center: CLLocationCoordinate2D(
+                    latitude: place.coordinate.latitude - shift,
+                    longitude: place.coordinate.longitude
+                ),
+                latitudinalMeters: span,
+                longitudinalMeters: span
             ))
         }
     }
+
+    /// How far up the screen a focused pin should sit, as a fraction of the visible span.
+    /// 0.3 puts it a little above centre, clear of the sheet at its reading detent.
+    private static let sheetBias: Double = 0.3
 }
 
 /// Tapping a cluster lists what is inside it rather than guessing which pin was meant.

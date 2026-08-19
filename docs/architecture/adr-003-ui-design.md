@@ -114,9 +114,23 @@ Two things this cost, both worth recording:
   disabled background interaction and left the floating buttons unreachable behind the sheet.
 
 ### The sheet leads with a search field
-At the peek detent the sheet is a search input and the first row or two of results. Opening a
-place raises the sheet to full height — a pushed screen behind a 104 pt peek is a title and
-nothing else.
+At the peek detent the sheet is a search input and the first row or two of results.
+
+### Opening a place moves the map to its pin
+Tapping a place centres the map on it and lifts the sheet to its middle detent — not to full
+height, because the point is to see the pin the map just moved to (FR-4.6). This replaces what
+would otherwise be a "show on map" button: the map follows the reading, so nothing has to be
+asked for.
+
+The region's centre is set *south* of the place by 30% of the visible span, which lifts the pin
+into the band above the sheet. Centring it geometrically put the pin behind the sheet — visible
+only as a sliver, which is how the bias was found.
+
+### Meal pins carry the photograph
+A visited place's pin is its own food photograph in a perforated stamp frame, with a badge
+counting repeat visits; a wishlist pin is a dashed jade frame around a bookmark. This is the
+signature element of the whole design, and it only reads as one because the pin is where the
+photo goes.
 
 ### Spacing is a scale, not a decision per view
 `Theme.Space` is a 4 pt scale — 4, 8, 12, 16, 24, 32 — with `screenMargin` (16) for every screen

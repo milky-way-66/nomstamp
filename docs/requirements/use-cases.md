@@ -81,9 +81,11 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 - **Trigger:** User taps a pin (or a row in the list view).
 
 **Main flow**
-1. App opens the place detail: name, address, distance, and the pin kind.
+1. App centres the map on the place's pin and opens the place detail over the map — not covering
+   it — showing name, address, distance and the pin kind.
 2. Photos of every meal eaten there are shown newest-first, each with date, dish name, rating and note.
 3. User can tap a photo for a full-screen view, edit or delete a meal, or get directions.
+4. Going back leaves the map where the place put it, so the pin stays in view.
 
 **Alternate flow**
 - **2a. Wishlist place** — there are no meals yet; instead the app shows the saved source/note ("Lan said the pho here is great") and a prominent **“I ate here”** action (UC-6).
@@ -91,6 +93,8 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 **Acceptance criteria**
 - Given a place with 3 meals, when I open it, then I see all 3 photos ordered newest first.
 - Given a wishlist place, when I open it, then I see why I saved it and can log a meal in one tap.
+- Given any place, when I open it, then the map has moved to its pin and I can still see the map.
+- Given an open place, when I go back, then the map is still centred on that place.
 
 ---
 

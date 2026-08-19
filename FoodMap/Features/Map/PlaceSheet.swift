@@ -13,6 +13,9 @@ struct PlaceSheet: View {
     @State private var path: [Place] = []
     @State private var searchText = ""
 
+    /// Tall enough to read a place, short enough to leave its pin on screen.
+    private static let readingDetent: PresentationDetent = .fraction(0.55)
+
     private var shown: [Place] {
         model.allPlaces
             .filter(model.filter.matches)
@@ -35,10 +38,17 @@ struct PlaceSheet: View {
             .navigationDestination(for: Place.self) { place in
                 PlaceDetailView(place: place, dependencies: dependencies, model: model)
             }
-            // A pushed screen at the peek detent is a title behind a map. Opening a place
-            // raises the sheet; going back returns it to the peek.
+            // Opening a place moves the map to its pin and lifts the sheet to the middle
+            // detent — not to full height, because the whole point is to see the pin the map
+            // just centred on (FR-4.6). Going back returns the sheet to its peek and leaves the
+            // map where the place put it.
             .onChange(of: path) { _, stack in
-                withAnimation { detent = stack.isEmpty ? .height(MapScreen.peekHeight) : .large }
+                if let place = stack.last {
+                    onFocus(place)
+                }
+                withAnimation {
+                    detent = stack.isEmpty ? .height(MapScreen.peekHeight) : Self.readingDetent
+                }
             }
             .navigationBarHidden(true)
             // The map's floating buttons set `model.action`; the presentation happens here,
@@ -84,12 +94,15 @@ struct PlaceSheet: View {
                 .accessibilityLabel("Clear search")
             }
         }
-        .padding(.horizontal, Theme.contentInset)
+        // Inner padding matches the screen margin, so the glyph sits as far from the capsule's
+        // edge as the capsule sits from the screen's.
+        .padding(.horizontal, Theme.screenMargin)
         .frame(height: Theme.minimumTouchTarget)
         .background(Theme.paperRaised, in: Capsule())
         .overlay(Capsule().strokeBorder(Theme.rule, lineWidth: Theme.hairline))
         .padding(.horizontal, Theme.screenMargin)
-        .padding(.top, Theme.Space.hairline)
+        // Clear of the drag indicator above and the first row below, rather than crowding both.
+        .padding(.top, Theme.Space.regular)
         .padding(.bottom, Theme.Space.snug)
     }
 

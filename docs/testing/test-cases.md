@@ -77,6 +77,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-3-03 | U | step 3 | Given a meal is deleted, when the place is reloaded, then the meal is gone and other meals survive | **auto** |
 | TC-3-04 | I | step 3 | Given a meal with photos is deleted, then its image **files are removed from disk**, not just the rows | **auto** |
 | TC-3-05 | I | step 3 | Given a place is deleted, then its meals and all their photo files are removed | **auto** |
+| TC-3-07 | E | step 1 / FR-4.6 | Given a place opened from the list, then the map is still visible above the sheet — the place does not cover it — and going back returns the sheet to its peek | **auto** |
 | TC-3-06 | I | step 3 / FR-4.5 | Given a place, when directions are requested, then a map item is produced carrying that place's name and exact coordinate | **auto** |
 
 > TC-3-04 and TC-3-05 guard a leak that a database-only test cannot see: cascade delete
@@ -203,11 +204,11 @@ the omission is visible rather than forgotten.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 78 test cases** — 56 unit, 11 integration, 11 e2e. The shape is deliberate: the pyramid
+**Total: 79 test cases** — 56 unit, 11 integration, 12 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |
 |---|---|---|---|---|
 | Unit | 56 | 56 | 56 | 70 test functions (`FoodMapDomain` 68, `FoodMapDesign` 2) |
 | Integration | 11 | 11 | 11 | 28 test functions (`FoodMapData`) |
-| E2E | 11 | 11 | 11 | 14 XCUITest journeys (`FoodMapUITests`) |
+| E2E | 12 | 12 | 12 | 15 XCUITest journeys (`FoodMapUITests`) |

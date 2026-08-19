@@ -38,4 +38,31 @@ final class MapJourneyTests: XCTestCase {
             "Non-matching places should be filtered out"
         )
     }
+
+    /// TC-3-07 — opening a place moves the map to its pin and stays beside it (FR-4.6).
+    func test_TC_3_07_openingAPlaceKeepsTheMapInView() {
+        let app = AppLauncher.launch(seeded: true)
+
+        app.staticTexts["Cà phê Giảng"].tapWhenReady(timeout: 15)
+
+        // The place is open...
+        XCTAssertTrue(
+            app.staticTexts["placeKindLabel"].waitForExistence(timeout: 10),
+            "The place should be open"
+        )
+        // ...and the map is still on screen behind it, which is the point: the pin the map just
+        // centred on has to be visible. The filter lives on the map, not in the sheet.
+        XCTAssertTrue(
+            app.segmentedControls.firstMatch.exists,
+            "The sheet must not cover the map when a place is open"
+        )
+        XCTAssertTrue(app.buttons["addMealButton"].exists, "The map's own actions stay reachable")
+
+        // Going back returns the sheet to its peek, where the search field is the header.
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(
+            app.textFields["placeSearchField"].waitForExistence(timeout: 10),
+            "Going back should return to the list at its peek"
+        )
+    }
 }

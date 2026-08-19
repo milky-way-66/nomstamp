@@ -130,6 +130,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-4.3 | A wishlist place shall offer a single action to log a meal there | UC-3/2a | TC-6-05 |
 | FR-4.4 | The user shall delete a meal or a whole place | UC-3 | TC-3-03 |
 | FR-4.5 | The user shall obtain directions to a place | UC-3 | TC-3-06 |
+| FR-4.6 | Opening a place shall centre the map on its coordinate and present the place over the map without covering it, so the pin is visible while its meals are read. No separate "show on map" action is needed | UC-3/step 1 | TC-3-07 |
 
 ### FR-5 Saving a place heard about
 | ID | Requirement | UC | Tests |
