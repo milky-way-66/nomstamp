@@ -1,5 +1,6 @@
 import SwiftUI
 import FoodMapDomain
+import FoodMapDesign
 
 /// The signature element: a food photograph framed like a postage stamp.
 ///
@@ -23,6 +24,9 @@ struct StampPin: View {
             }
         }
         .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
+        // Stuck down by hand, not laid out: the angle comes from the place's id, so it never
+        // changes between redraws (ADR-005, TC-N-13).
+        .rotationEffect(.degrees(StampTilt.degrees(for: cluster.id)))
         // One element, no children: the label is applied by whoever makes this selectable.
         .accessibilityElement(children: .ignore)
     }
@@ -35,8 +39,10 @@ struct StampPin: View {
                 .scaledToFill()
                 .frame(width: size, height: size)
                 .clipShape(StampShape())
-                .overlay(StampShape().strokeBorder(Theme.lacquer, lineWidth: 2.5))
-                .shadow(color: .black.opacity(0.18), radius: 2, y: 1)
+                .overlay(StampShape().strokeBorder(Theme.paperRaised, lineWidth: 2.5))
+                // Two inks, one slightly off the other: the stamp's frame is printed, not drawn.
+                .misregistered(StampShape(), ink: Theme.indigo, opacity: 0.55)
+                .shadow(color: .black.opacity(0.22), radius: 2, y: 1)
         } else {
             StampShape()
                 .fill(isVisited ? Theme.lacquer.opacity(0.16) : Theme.paperRaised)

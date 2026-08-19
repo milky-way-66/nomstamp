@@ -22,6 +22,14 @@ public enum Palette {
     public static let lacquer = PaletteColor(light: 0x8C2A1B, dark: 0xF0937C)
     /// Jade — places you still want to try.
     public static let jade = PaletteColor(light: 0x1F5244, dark: 0x8FCDB4)
+    /// The printing ink (ADR-005): the second layer of a misregistration, and the colour of
+    /// ornaments, stamp frames and rules. Dark mode deepens rather than brightens it, so it stays
+    /// the ink and never competes with the two accents.
+    public static let indigo = PaletteColor(light: 0x243B6B, dark: 0x93A9E0)
+
+    /// The ink the map itself is printed in (ADR-005). Not a text colour: it is blended over the
+    /// cartography, taking its hue and leaving its luminance, which is why it carries no pairing.
+    public static let mapWash = PaletteColor(light: 0xC98A46, dark: 0x2A3550)
 
     /// What text on a lacquer or jade fill must be. In dark mode those fills are light, so
     /// white text on them would fail AA — the ink of the surface reads instead.
@@ -54,6 +62,9 @@ public enum Palette {
         // Pins are graphics, so the large-text level applies (NFR-6.3 covers shape, this covers colour).
         Pairing(name: "lacquer pin against the map", foreground: lacquer, background: paper, minimum: Contrast.largeTextMinimum),
         Pairing(name: "jade pin against the map", foreground: jade, background: paper, minimum: Contrast.largeTextMinimum),
+        // The printing ink, on both grounds (TC-N-12).
+        Pairing(name: "indigo on paper", foreground: indigo, background: paper, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "indigo on raised paper", foreground: indigo, background: paperRaised, minimum: Contrast.enhancedTextMinimum),
         // Separators and hairlines: interface components, not text.
         Pairing(name: "rule against paper", foreground: rule, background: paper, minimum: Contrast.componentMinimum),
     ]
