@@ -167,6 +167,24 @@ open FoodMap.xcodeproj
 
 ### 3.2 From the command line (for repeats)
 
+[`scripts/deploy.sh`](../../scripts/deploy.sh) does everything below in order, and refuses rather
+than half-finishes when something is missing:
+
+```bash
+export ASC_TEAM_ID=ABCDE12345      # developer.apple.com/account → Membership details
+export ASC_KEY_ID=XXXXXXXXXX       # App Store Connect → Users and Access → Integrations
+export ASC_ISSUER_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+scripts/deploy.sh --dry-run        # see the whole plan, touch nothing
+scripts/deploy.sh --bump           # bump the build number, test, archive, export, upload
+```
+
+It generates the project, runs all four suites, archives Release, exports, uploads, and tags the
+commit as `v<version>-<build>` when the working tree is clean. `--skip-tests` when the suites just
+ran; `--no-upload` to stop after the export. Run `scripts/deploy.sh --help` for the rest.
+
+The steps it performs, should you ever need them by hand:
+
 ```bash
 xcodegen generate
 
@@ -174,11 +192,11 @@ xcodebuild -project FoodMap.xcodeproj \
   -scheme FoodMap \
   -configuration Release \
   -destination 'generic/platform=iOS' \
-  -archivePath build/FoodMap.xcarchive \
+  -archivePath build/Nomstamp.xcarchive \
   archive
 
 xcodebuild -exportArchive \
-  -archivePath build/FoodMap.xcarchive \
+  -archivePath build/Nomstamp.xcarchive \
   -exportOptionsPlist docs/deployment/ExportOptions.plist \
   -exportPath build/export
 
@@ -186,11 +204,13 @@ xcrun altool --upload-app -f build/export/FoodMap.ipa -t ios \
   --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
 ```
 
-`ExportOptions.plist` lives beside this document. `altool` needs an App Store Connect API key:
-*Users and Access* → *Integrations* → *App Store Connect API* → **+**, role *App Manager*.
-Download the `.p8` **once** — it cannot be downloaded again — and put it in
-`~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8`, which is where `altool` looks. Never commit
-it. `xcrun notarytool` is for Mac apps; iOS uploads do not need notarisation.
+`docs/deployment/ExportOptions.plist` is the committed reference copy, with a placeholder team ID;
+the script writes its own from `$ASC_TEAM_ID` into `build/` so no real identifier is committed.
+
+The API key comes from *Users and Access* → *Integrations* → *App Store Connect API* → **+**, role
+*App Manager*. Download the `.p8` **once** — it cannot be downloaded again — and put it in
+`~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8`, which is where the uploader looks. Never
+commit it. `xcrun notarytool` is for Mac apps; iOS uploads do not need notarisation.
 
 ### 3.3 Processing
 
