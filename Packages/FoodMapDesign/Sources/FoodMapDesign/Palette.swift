@@ -11,21 +11,22 @@ public struct PaletteColor: Sendable, Equatable {
 
 /// The palette from ADR-003 — Vietnamese lacquer and jade on warm paper.
 public enum Palette {
-    public static let paper = PaletteColor(light: 0xF5EFE3, dark: 0x1A1714)
-    public static let paperRaised = PaletteColor(light: 0xFDFAF3, dark: 0x241F1B)
-    public static let ink = PaletteColor(light: 0x2A2521, dark: 0xF0E9DC)
-    public static let inkSecondary = PaletteColor(light: 0x6B6259, dark: 0xA79C8D)
-    public static let rule = PaletteColor(light: 0xDCD2C0, dark: 0x3A332C)
+    public static let paper = PaletteColor(light: 0xF7F2E6, dark: 0x141110)
+    public static let paperRaised = PaletteColor(light: 0xFFFDF7, dark: 0x201B17)
+    public static let ink = PaletteColor(light: 0x1F1A16, dark: 0xF7F1E6)
+    public static let inkSecondary = PaletteColor(light: 0x4A423A, dark: 0xC3B8A6)
+    /// Separators are interface components, so they aim at 3:1 rather than a text level.
+    public static let rule = PaletteColor(light: 0x8F836E, dark: 0x776B5F)
 
     /// Vietnamese lacquerware rather than an arbitrary red — places you have been.
-    public static let lacquer = PaletteColor(light: 0xA8402F, dark: 0xD97A66)
+    public static let lacquer = PaletteColor(light: 0x8C2A1B, dark: 0xF0937C)
     /// Jade — places you still want to try.
-    public static let jade = PaletteColor(light: 0x2F6152, dark: 0x6FAF97)
+    public static let jade = PaletteColor(light: 0x1F5244, dark: 0x8FCDB4)
 
     /// What text on a lacquer or jade fill must be. In dark mode those fills are light, so
-    /// white text on them fails AA (3.03:1 and 2.54:1) — the ink of the surface reads instead.
-    public static let onLacquer = PaletteColor(light: 0xFFFFFF, dark: 0x1A1714)
-    public static let onJade = PaletteColor(light: 0xFFFFFF, dark: 0x1A1714)
+    /// white text on them would fail AA — the ink of the surface reads instead.
+    public static let onLacquer = PaletteColor(light: 0xFFFFFF, dark: 0x141110)
+    public static let onJade = PaletteColor(light: 0xFFFFFF, dark: 0x141110)
 
     /// Every pairing the interface actually renders, with the level it has to reach.
     /// `Appearance` exists so a failure message says which mode broke.
@@ -39,20 +40,22 @@ public enum Palette {
     }
 
     public static let renderedPairings: [Pairing] = [
-        Pairing(name: "ink on paper", foreground: ink, background: paper, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "ink on raised paper", foreground: ink, background: paperRaised, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "secondary ink on paper", foreground: inkSecondary, background: paper, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "secondary ink on raised paper", foreground: inkSecondary, background: paperRaised, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "lacquer on paper", foreground: lacquer, background: paper, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "lacquer on raised paper", foreground: lacquer, background: paperRaised, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "jade on paper", foreground: jade, background: paper, minimum: Contrast.normalTextMinimum),
-        Pairing(name: "jade on raised paper", foreground: jade, background: paperRaised, minimum: Contrast.normalTextMinimum),
+        Pairing(name: "ink on paper", foreground: ink, background: paper, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "ink on raised paper", foreground: ink, background: paperRaised, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "secondary ink on paper", foreground: inkSecondary, background: paper, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "secondary ink on raised paper", foreground: inkSecondary, background: paperRaised, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "lacquer on paper", foreground: lacquer, background: paper, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "lacquer on raised paper", foreground: lacquer, background: paperRaised, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "jade on paper", foreground: jade, background: paper, minimum: Contrast.enhancedTextMinimum),
+        Pairing(name: "jade on raised paper", foreground: jade, background: paperRaised, minimum: Contrast.enhancedTextMinimum),
         // Filled controls: "I ate here", "Add meal", "Save a place".
         Pairing(name: "text on a lacquer fill", foreground: onLacquer, background: lacquer, minimum: Contrast.normalTextMinimum),
         Pairing(name: "text on a jade fill", foreground: onJade, background: jade, minimum: Contrast.normalTextMinimum),
         // Pins are graphics, so the large-text level applies (NFR-6.3 covers shape, this covers colour).
         Pairing(name: "lacquer pin against the map", foreground: lacquer, background: paper, minimum: Contrast.largeTextMinimum),
         Pairing(name: "jade pin against the map", foreground: jade, background: paper, minimum: Contrast.largeTextMinimum),
+        // Separators and hairlines: interface components, not text.
+        Pairing(name: "rule against paper", foreground: rule, background: paper, minimum: Contrast.componentMinimum),
     ]
 
     public static func value(_ color: PaletteColor, in appearance: Appearance) -> UInt32 {

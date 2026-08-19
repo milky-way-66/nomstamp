@@ -114,3 +114,39 @@ struct SectionHeading: View {
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
+
+/// The sheet's action row: one icon, one job, always at the minimum touch target.
+struct ActionButton: View {
+    enum Style { case primary, secondary }
+
+    let systemImage: String
+    let label: LocalizedStringKey
+    let identifier: String
+    var style: Style = .secondary
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(.system(size: 17, weight: .medium))
+                .frame(maxWidth: .infinity)
+                .frame(height: Theme.minimumTouchTarget)
+                .foregroundStyle(style == .primary ? Theme.onLacquer : Theme.jade)
+                .background(
+                    RoundedRectangle(cornerRadius: 11)
+                        .fill(style == .primary ? Theme.lacquer : Theme.paperRaised)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 11)
+                        .strokeBorder(
+                            style == .primary ? Color.clear : Theme.rule,
+                            lineWidth: Theme.hairline
+                        )
+                )
+        }
+        .buttonStyle(.plain)
+        // The label is what VoiceOver reads and what the journeys look for (TC-N-11).
+        .accessibilityLabel(label)
+        .accessibilityIdentifier(identifier)
+    }
+}

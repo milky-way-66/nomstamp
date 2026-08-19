@@ -49,6 +49,18 @@ public struct Place: Identifiable, Equatable, Sendable {
         meals.isEmpty ? .wishlist : .visited
     }
 
+    /// The average of the meals that carry a rating. Unrated meals are ignored rather than
+    /// counted as zero, and a place with none has no average at all (FR-9.4).
+    public var averageRating: Double? {
+        let scores = meals.compactMap(\.rating)
+        guard !scores.isEmpty else { return nil }
+        return Double(scores.reduce(0, +)) / Double(scores.count)
+    }
+
+    public var ratedMealCount: Int {
+        meals.compactMap(\.rating).count
+    }
+
     public var mealsNewestFirst: [Meal] {
         meals.sorted { $0.eatenAt > $1.eatenAt }
     }

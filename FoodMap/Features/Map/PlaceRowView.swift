@@ -25,6 +25,9 @@ struct PlaceRowView: View {
                         Text("· \(place.meals.count) meals")
                             .font(Theme.label(.caption))
                             .foregroundStyle(Theme.inkSecondary)
+                        if let average = place.averageRating {
+                            AverageRatingView(average: average, count: place.ratedMealCount)
+                        }
                     }
                 }
                 .foregroundStyle(place.kind == .visited ? Theme.lacquer : Theme.jade)

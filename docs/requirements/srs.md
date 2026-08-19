@@ -96,6 +96,9 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-1.7 | Logging a meal shall succeed when no network is available | UC-1/6a | TC-1-10 |
 | FR-1.8 | If storing any photograph fails, the meal shall not be persisted and no orphaned file shall remain | UC-1/E2 | TC-1-08 |
 | FR-1.9 | Multiple photographs shall be attachable to one meal, preserving their order | UC-1 | TC-1-09 |
+| FR-1.10 | Logging shall proceed camera → rating → confirm: the camera shall open immediately on **Add meal**, the score shall be asked once a photo exists, and every derived value shall be editable on the confirm step | UC-1 | TC-1-19 |
+| FR-1.11 | The system shall preselect the place from the meal's coordinate — the nearest saved place within 120 m, else the nearest search candidate within 120 m — without the user choosing one | UC-1/3 | TC-1-16, TC-1-17 |
+| FR-1.12 | A failure or absence of the place directory, or of any coordinate, shall leave the place unset rather than raise an error | UC-1/E1, UC-1/6a | TC-1-18 |
 
 ### FR-2 Photograph storage
 | ID | Requirement | UC | Tests |
@@ -168,6 +171,15 @@ Each requirement names the use case it comes from and the test cases that prove 
 
 ## 4. Non-functional requirements
 
+### FR-9 Rating a meal
+| ID | Requirement | UC | Tests |
+|---|---|---|---|
+| FR-9.1 | The user shall rate a meal from 1 to 5 while logging it | UC-7 | TC-7-01 |
+| FR-9.2 | The user shall change or clear the rating of a meal already logged | UC-7/1a, 1b | TC-7-02, TC-7-03 |
+| FR-9.3 | A score outside 1–5 shall be rejected, leaving the meal unchanged | UC-7/E1 | TC-7-04 |
+| FR-9.4 | A place shall report the average of its rated meals, ignoring unrated ones | UC-7 | TC-7-05 |
+| FR-9.5 | Ratings shall be reachable in one tap from the meal, with no separate edit screen | UC-7/1a | TC-7-06 |
+
 ### NFR-1 Privacy *(the product's core promise)*
 - **NFR-1.1** No photograph, note, rating or place shall be transmitted off the device.
 - **NFR-1.2** No analytics, telemetry, advertising identifier or crash reporter shall be included.
@@ -202,7 +214,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 - **NFR-6.1** The interface shall support Dynamic Type up to the accessibility sizes.
 - **NFR-6.2** All controls and map pins shall carry VoiceOver labels.
 - **NFR-6.3** Colour shall never be the only means of distinguishing visited from wishlist pins.
-- **NFR-6.4** Text contrast shall meet WCAG AA.
+- **NFR-6.4** Text contrast shall meet WCAG **AAA** (7:1) for body text and AA (4.5:1) for text on filled controls; enforced by TC-N-07.
 
 ### NFR-7 Maintainability and testability
 - **NFR-7.1** Domain logic shall not import SwiftUI, SwiftData, MapKit or UIKit (CON-5).

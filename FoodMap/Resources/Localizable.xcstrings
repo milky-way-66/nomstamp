@@ -1,37 +1,51 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "· %@ meals" : {
-
+  "sourceLanguage": "en",
+  "strings": {
+    "%lld places here": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld places here"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld địa điểm ở đây"
+          }
+        }
+      }
     },
-    "· %lld meals" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "· %lld meal"
+    "%lld stars": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld star"
                 }
               },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "· %lld meals"
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld stars"
                 }
               }
             }
           }
         },
-        "vi" : {
-          "variations" : {
-            "plural" : {
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "· %lld bữa"
+        "vi": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "%lld sao"
                 }
               }
             }
@@ -39,1156 +53,1226 @@
         }
       }
     },
-    "“%@”" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@”"
+    "Add a meal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a meal"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@”"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm bữa ăn"
           }
         }
       }
     },
-    "%lld places here" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld places here"
+    "Add another meal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add another meal"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld địa điểm ở đây"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm bữa nữa"
           }
         }
       }
     },
-    "Add a meal" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add a meal"
+    "Add meal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add meal"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm bữa ăn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm bữa"
           }
         }
       }
     },
-    "Add another meal" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add another meal"
+    "All": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm bữa nữa"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tất cả"
           }
         }
       }
     },
-    "Add meal" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add meal"
+    "Allow location access to see which of your saved places are nearby.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow location access to see which of your saved places are nearby."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thêm bữa"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cho phép truy cập vị trí để xem những địa điểm đã lưu ở gần bạn."
           }
         }
       }
     },
-    "All" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All"
+    "Already on your map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Already on your map"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tất cả"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã có trên bản đồ của bạn"
           }
         }
       }
     },
-    "Allow location access to see which of your saved places are nearby." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allow location access to see which of your saved places are nearby."
+    "Another photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ảnh nữa"
           }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cho phép truy cập vị trí để xem những địa điểm đã lưu ở gần bạn."
+        }
+      }
+    },
+    "Average rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điểm trung bình"
           }
         }
       }
     },
-    "Already on your map" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Already on your map"
+    "Been here": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Been here"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đã có trên bản đồ của bạn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã đến"
           }
         }
       }
     },
-    "Been here" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Been here"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đã đến"
+    "Camera access is off": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Máy ảnh đang bị tắt quyền"
           }
         }
       }
     },
-    "Can't tell where you are" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Can't tell where you are"
+    "Can't tell where you are": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can't tell where you are"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không xác định được vị trí của bạn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không xác định được vị trí của bạn"
           }
         }
       }
     },
-    "Cancel" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
+    "Cancel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Huỷ"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Huỷ"
           }
         }
       }
     },
-    "Choose a different place" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose a different place"
+    "Choose a different place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a different place"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chọn địa điểm khác"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn địa điểm khác"
           }
         }
       }
     },
-    "Choose from library" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose from library"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chọn từ thư viện"
+    "Choose a photo from your library instead.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn một ảnh trong thư viện của bạn."
           }
         }
       }
     },
-    "Choose the place" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose the place"
+    "Choose from library": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose from library"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chọn địa điểm"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn từ thư viện"
           }
         }
       }
     },
-    "Clear search" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Clear search"
+    "Choose the place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the place"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xoá tìm kiếm"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chọn địa điểm"
           }
         }
       }
     },
-    "Close" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Close"
+    "Clear search": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đóng"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá tìm kiếm"
           }
         }
       }
     },
-    "Couldn't reach the place directory. Add it by name below — your meal will still be saved." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't reach the place directory. Add it by name below — your meal will still be saved."
+    "Close": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không kết nối được danh bạ địa điểm. Hãy thêm bằng tên ở dưới — bữa ăn của bạn vẫn được lưu."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đóng"
           }
         }
       }
     },
-    "Couldn't save" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't save"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không lưu được"
+    "Close the camera": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đóng máy ảnh"
           }
         }
       }
     },
-    "Delete %@?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete %@?"
+    "Couldn't reach the place directory. Add it by name below — your meal will still be saved.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't reach the place directory. Add it by name below — your meal will still be saved."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xoá %@?"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không kết nối được danh bạ địa điểm. Hãy thêm bằng tên ở dưới — bữa ăn của bạn vẫn được lưu."
           }
         }
       }
     },
-    "Delete place" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete place"
+    "Couldn't save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xoá địa điểm"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không lưu được"
           }
         }
       }
     },
-    "Delete place and its meals" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete place and its meals"
+    "Delete %@?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete %@?"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xoá địa điểm và các bữa ăn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá %@?"
           }
         }
       }
     },
-    "Delete this meal" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete this meal"
+    "Delete place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete place"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Xoá bữa này"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá địa điểm"
           }
         }
       }
     },
-    "Directions" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Directions"
+    "Delete place and its meals": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete place and its meals"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chỉ đường"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá địa điểm và các bữa ăn"
           }
         }
       }
     },
-    "Dish name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dish name"
+    "Delete this meal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete this meal"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tên món"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá bữa này"
           }
         }
       }
     },
-    "e.g. Lan said try the bún chả" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "e.g. Lan said try the bún chả"
+    "Directions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Directions"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ví dụ: Lan bảo thử bún chả"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chỉ đường"
           }
         }
       }
     },
-    "Eaten at" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eaten at"
+    "Dish name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dish name"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ăn lúc"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên món"
           }
         }
       }
     },
-    "Finding you…" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finding you…"
+    "Dish, note and time": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên món, ghi chú và thời gian"
           }
+        }
+      }
+    },
+    "Eaten at": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eaten at"
+          }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đang tìm vị trí của bạn…"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ăn lúc"
           }
         }
       }
     },
-    "Food Map" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Food Map"
+    "Finding where you are…": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tìm vị trí của bạn…"
           }
         }
       }
     },
-    "I ate here" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "I ate here"
+    "Finding you…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Finding you…"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tôi đã ăn ở đây"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tìm vị trí của bạn…"
           }
         }
       }
     },
-    "Near me" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Near me"
+    "Food Map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Food Map"
           }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gần tôi"
+        }
+      }
+    },
+    "How was it?": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món này thế nào?"
           }
         }
       }
     },
-    "Nearby" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nearby"
+    "I ate here": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I ate here"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gần đây"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tôi đã ăn ở đây"
           }
         }
       }
     },
-    "None" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
+    "Near me": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Near me"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gần tôi"
           }
         }
       }
     },
-    "Not listed?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Not listed?"
+    "Nearby": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nearby"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chưa có trong danh sách?"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gần đây"
           }
         }
       }
     },
-    "Note" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Note"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ghi chú"
+    "No camera here": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Máy này không có máy ảnh"
           }
         }
       }
     },
-    "Nothing found nearby." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nothing found nearby."
+    "Not listed?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not listed?"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không tìm thấy gì ở gần đây."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có trong danh sách?"
           }
         }
       }
     },
-    "Nothing found. Many street food places aren't listed anywhere — you can still pin it from the map later." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nothing found. Many street food places aren't listed anywhere — you can still pin it from the map later."
+    "Note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không tìm thấy. Nhiều quán ăn đường phố không có trong danh bạ nào — bạn vẫn có thể ghim trên bản đồ sau."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghi chú"
           }
         }
       }
     },
-    "Nothing found. You can still add it by name below." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nothing found. You can still add it by name below."
+    "Nothing found nearby.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found nearby."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không tìm thấy. Bạn vẫn có thể thêm bằng tên ở dưới."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tìm thấy gì ở gần đây."
           }
         }
       }
     },
-    "Nothing saved near here" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nothing saved near here"
+    "Nothing found. Many street food places aren't listed anywhere — you can still pin it from the map later.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found. Many street food places aren't listed anywhere — you can still pin it from the map later."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chưa lưu gì ở gần đây"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tìm thấy. Nhiều quán ăn đường phố không có trong danh bạ nào — bạn vẫn có thể ghim trên bản đồ sau."
           }
         }
       }
     },
-    "OK" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+    "Nothing found. You can still add it by name below.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing found. You can still add it by name below."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không tìm thấy. Bạn vẫn có thể thêm bằng tên ở dưới."
           }
         }
       }
     },
-    "Optional" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Optional"
+    "Nothing saved near here": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing saved near here"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Không bắt buộc"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa lưu gì ở gần đây"
           }
         }
       }
     },
-    "Photograph a meal where you are, or save a place someone told you about." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Photograph a meal where you are, or save a place someone told you about."
+    "OK": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chụp bữa ăn ở nơi bạn đang ở, hoặc lưu một địa điểm ai đó giới thiệu."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
           }
         }
       }
     },
-    "Rating" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rating"
+    "Photograph a meal where you are, or save a place someone told you about.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photograph a meal where you are, or save a place someone told you about."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đánh giá"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp bữa ăn ở nơi bạn đang ở, hoặc lưu một địa điểm ai đó giới thiệu."
           }
         }
       }
     },
-    "Save" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
+    "Rate this meal": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chấm điểm bữa này"
           }
+        }
+      }
+    },
+    "Rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rating"
+          }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lưu"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đánh giá"
+          }
+        }
+      }
+    },
+    "Remove this photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ ảnh này"
           }
         }
       }
     },
-    "Save a place" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save a place"
+    "Save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lưu địa điểm"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu"
           }
         }
       }
     },
-    "Saved places near me" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Saved places near me"
+    "Save a place": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save a place"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Địa điểm đã lưu gần tôi"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lưu địa điểm"
           }
         }
       }
     },
-    "Search by name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search by name"
+    "Saved places near me": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved places near me"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tìm theo tên"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Địa điểm đã lưu gần tôi"
           }
         }
       }
     },
-    "Search results" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search results"
+    "Search by name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search by name"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kết quả tìm kiếm"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm theo tên"
           }
         }
       }
     },
-    "Search your places" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search your places"
+    "Search results": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search results"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tìm trong địa điểm của bạn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kết quả tìm kiếm"
           }
         }
       }
     },
-    "Show" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Show"
+    "Search your places": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search your places"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hiển thị"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tìm trong địa điểm của bạn"
           }
         }
       }
     },
-    "Tags, comma separated" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tags, comma separated"
+    "Show": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thẻ, cách nhau bằng dấu phẩy"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiển thị"
+          }
+        }
+      }
+    },
+    "Skip the rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ qua chấm điểm"
           }
         }
       }
     },
-    "Take a photo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take a photo"
+    "Tags, comma separated": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tags, comma separated"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chụp ảnh"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thẻ, cách nhau bằng dấu phẩy"
+          }
+        }
+      }
+    },
+    "Take the photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp ảnh"
           }
         }
       }
     },
-    "The food" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The food"
+    "This also deletes the photos you took there. It can't be undone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This also deletes the photos you took there. It can't be undone."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Món ăn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Việc này cũng xoá những ảnh bạn đã chụp ở đó. Không thể hoàn tác."
+          }
+        }
+      }
+    },
+    "Turn it on in Settings, or choose a photo from your library instead.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật quyền trong Cài đặt, hoặc chọn một ảnh trong thư viện của bạn."
           }
         }
       }
     },
-    "This also deletes the photos you took there. It can't be undone." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This also deletes the photos you took there. It can't be undone."
+    "Type the place name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type the place name"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Việc này cũng xoá những ảnh bạn đã chụp ở đó. Không thể hoàn tác."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nhập tên địa điểm"
           }
         }
       }
     },
-    "Type the place name" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Type the place name"
+    "Use a test photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use a test photo"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nhập tên địa điểm"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng ảnh thử"
           }
         }
       }
     },
-    "Use a test photo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use a test photo"
+    "Use my exact spot": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use my exact spot"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dùng ảnh thử"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng đúng vị trí của tôi"
           }
         }
       }
     },
-    "Use my exact spot" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use my exact spot"
+    "Use the photo's time": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use the photo's time"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dùng đúng vị trí của tôi"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng thời gian của ảnh"
           }
         }
       }
     },
-    "Use the photo's time" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use the photo's time"
+    "Using the time and place from your photo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using the time and place from your photo"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dùng thời gian của ảnh"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng thời gian và địa điểm từ ảnh của bạn"
           }
         }
       }
     },
-    "Using the time and place from your photo" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Using the time and place from your photo"
+    "Waiting for your location — you can still pick a place from search.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for your location — you can still pick a place from search."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dùng thời gian và địa điểm từ ảnh của bạn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang chờ vị trí của bạn — bạn vẫn có thể chọn địa điểm từ tìm kiếm."
           }
         }
       }
     },
-    "Waiting for your location — you can still pick a place from search." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waiting for your location — you can still pick a place from search."
+    "Want to try": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Want to try"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Đang chờ vị trí của bạn — bạn vẫn có thể chọn địa điểm từ tìm kiếm."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Muốn thử"
           }
         }
       }
     },
-    "Want to try" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Want to try"
+    "Which place?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which place?"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muốn thử"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Địa điểm nào?"
           }
         }
       }
     },
-    "When" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "When"
+    "Why are you saving it?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Why are you saving it?"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Khi nào"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vì sao bạn lưu địa điểm này?"
           }
         }
       }
     },
-    "Where" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Where"
+    "Within": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Within"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ở đâu"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trong vòng"
           }
         }
       }
     },
-    "Which place?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Which place?"
+    "You have no saved places within %@ of where you are.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You have no saved places within %@ of where you are."
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Địa điểm nào?"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn không có địa điểm nào đã lưu trong vòng %@ quanh vị trí hiện tại."
           }
         }
       }
     },
-    "Why are you saving it?" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Why are you saving it?"
+    "Your food map is empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your food map is empty"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vì sao bạn lưu địa điểm này?"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bản đồ ẩm thực của bạn còn trống"
           }
         }
       }
     },
-    "Within" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Within"
+    "Your places": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your places"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Trong vòng"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Địa điểm của bạn"
           }
         }
       }
     },
-    "You have no saved places within %@ of where you are." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You have no saved places within %@ of where you are."
+    "e.g. Lan said try the bún chả": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. Lan said try the bún chả"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bạn không có địa điểm nào đã lưu trong vòng %@ quanh vị trí hiện tại."
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ví dụ: Lan bảo thử bún chả"
           }
         }
       }
     },
-    "Your food map is empty" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your food map is empty"
+    "· %lld meals": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "variations": {
+            "plural": {
+              "one": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld meal"
+                }
+              },
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld meals"
+                }
+              }
+            }
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bản đồ ẩm thực của bạn còn trống"
+        "vi": {
+          "variations": {
+            "plural": {
+              "other": {
+                "stringUnit": {
+                  "state": "translated",
+                  "value": "· %lld bữa"
+                }
+              }
+            }
           }
         }
       }
     },
-    "Your places" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your places"
+    "“%@”": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”"
           }
         },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Địa điểm của bạn"
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“%@”"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

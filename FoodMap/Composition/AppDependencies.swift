@@ -25,9 +25,11 @@ final class AppDependencies {
     let savePlace: SavePlaceUseCase
     let findNearby: FindPlacesNearbyUseCase
     let buildPins: BuildMapPinsUseCase
+    let rateMeal: RateMealUseCase
     let deleteMeal: DeleteMealUseCase
     let deletePlace: DeletePlaceUseCase
     let suggestContext: SuggestMealContextUseCase
+    let suggestPlace: SuggestMealPlaceUseCase
 
     /// UI tests launch with `-UITestMode` so journeys run against an in-memory store and
     /// stubbed search — no live Apple Maps, no real GPS, no camera (ADR-002 §5.3).
@@ -74,9 +76,11 @@ final class AppDependencies {
         savePlace = SavePlaceUseCase(places: places, clock: clock)
         findNearby = FindPlacesNearbyUseCase(places: places, location: location)
         buildPins = BuildMapPinsUseCase(places: places)
+        rateMeal = RateMealUseCase(places: places)
         deleteMeal = DeleteMealUseCase(places: places, photos: photos)
         deletePlace = DeletePlaceUseCase(places: places, photos: photos)
         suggestContext = SuggestMealContextUseCase(photos: photos, location: location, clock: clock)
+        suggestPlace = SuggestMealPlaceUseCase(places: places, search: search)
 
         // Seeding belongs here, not in a view's `.task`: done later, it raced the map's first
         // load and the demo places sometimes never appeared at all.
@@ -136,11 +140,20 @@ struct StubPlaceSearch: PlaceSearchPort {
             id: "stub-3", name: "Bánh mì Như Lan", address: "Hàm Nghi, Quận 1",
             coordinate: Coordinate(latitude: 10.7711, longitude: 106.7041),
             providerPlaceID: "stub-3"
+        ),
+        // Right where `StubLocation` puts the user, so the "the app already knows the place"
+        // path (FR-1.11) is exercised end to end.
+        PlaceCandidate(
+            id: "stub-4", name: "Cà phê Giảng", address: "39 Nguyễn Hữu Huân",
+            coordinate: Coordinate(latitude: 21.0333, longitude: 105.8501),
+            providerPlaceID: "stub-4"
         )
     ]
 
     func nearbyFoodPlaces(around coordinate: Coordinate, radius: Double) async throws -> [PlaceCandidate] {
-        Self.fixtures
+        // Honouring the radius the way a real provider does; otherwise a journey in Hanoi
+        // would be offered a Saigon bánh mì.
+        Self.fixtures.filter { $0.coordinate.distance(to: coordinate) <= radius }
     }
 
     func search(matching query: String, near coordinate: Coordinate?) async throws -> [PlaceCandidate] {

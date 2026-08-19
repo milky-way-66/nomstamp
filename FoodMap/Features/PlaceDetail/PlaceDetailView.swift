@@ -145,11 +145,12 @@ struct PlaceDetailView: View {
             }
 
             ForEach(current.mealsNewestFirst) { meal in
-                MealCard(meal: meal) { photo in
-                    fullScreenPhoto = photo
-                } onDelete: {
-                    delete(meal)
-                }
+                MealCard(
+                    meal: meal,
+                    onTapPhoto: { fullScreenPhoto = $0 },
+                    onRate: { score in rate(meal, score) },
+                    onDelete: { delete(meal) }
+                )
             }
 
             Button {
@@ -161,6 +162,16 @@ struct PlaceDetailView: View {
             }
             .buttonStyle(.bordered)
             .tint(Theme.lacquer)
+        }
+    }
+
+    /// UC-7 — score a meal already logged, without leaving this screen.
+    private func rate(_ meal: Meal, _ score: Int) {
+        do {
+            try dependencies.rateMeal.execute(placeID: current.id, mealID: meal.id, score: score)
+            model.refresh()
+        } catch {
+            // A rating is not worth an alert: log nothing, change nothing, keep the screen calm.
         }
     }
 
@@ -184,6 +195,7 @@ struct PlaceDetailView: View {
 private struct MealCard: View {
     let meal: Meal
     let onTapPhoto: (Photo) -> Void
+    let onRate: (Int) -> Void
     let onDelete: () -> Void
 
     var body: some View {
@@ -216,11 +228,9 @@ private struct MealCard: View {
                         Text(meal.eatenAt.formatted(date: .abbreviated, time: .shortened))
                             .font(Theme.label(.caption))
                             .foregroundStyle(Theme.inkSecondary)
-                        if let rating = meal.rating {
-                            Text(String(repeating: "★", count: rating))
-                                .font(Theme.label(.caption))
-                                .foregroundStyle(Theme.lacquer)
-                        }
+                        Spacer(minLength: 0)
+                        // Tapping a star here is the edit — there is no rating screen (FR-9.5).
+                        StarRatingView(rating: meal.rating, onSelect: onRate, size: 14)
                     }
                     if let note = meal.note, !note.isEmpty {
                         Text(note)

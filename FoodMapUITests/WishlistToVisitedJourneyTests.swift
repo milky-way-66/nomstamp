@@ -15,6 +15,7 @@ final class WishlistToVisitedJourneyTests: XCTestCase {
 
         app.buttons["iAteHereButton"].tapWhenReady()
         app.buttons["useTestPhotoButton"].tapWhenReady()
+        app.buttons["skipRatingButton"].tapWhenReady()
         // The place is preselected on this path, so only the photo is needed.
         app.buttons["saveMealButton"].tapWhenReady()
 

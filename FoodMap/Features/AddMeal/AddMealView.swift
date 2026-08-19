@@ -2,22 +2,35 @@ import SwiftUI
 import PhotosUI
 import FoodMapDomain
 
-/// UC-1 — photograph the food and store it. The core loop, so it stays short: photos, place,
-/// save. Everything else is optional (NFR-4.1).
+/// UC-1 — photograph the food and store it.
+///
+/// Three steps, in the order the meal happens: **camera → rating → confirm**. The camera opens
+/// on the first frame, because the tap that got here was "add a meal", not "fill in a form"
+/// (FR-1.10). The score is the one question worth interrupting for. Everything else — place,
+/// time — the app works out for itself (FR-1.11) and shows on the confirm step, where the user
+/// changes only what is wrong.
 struct AddMealView: View {
     let dependencies: AppDependencies
     /// Set when arriving from a place's "I ate here" (UC-6).
     let preselected: Place?
     let onSaved: () -> Void
 
+    private enum Step {
+        case capture
+        case rate
+        case confirm
+    }
+
     @Environment(\.dismiss) private var dismiss
+
+    @State private var step: Step = .capture
 
     @State private var photoData: [Data] = []
     @State private var pickerItems: [PhotosPickerItem] = []
-    @State private var isShowingCamera = false
 
     @State private var target: MealTarget?
     @State private var targetName: String = ""
+    @State private var isResolvingPlace = false
     @State private var context: MealContext?
 
     /// FR-1.4 — set only once the user edits the time by hand; until then the
@@ -27,26 +40,151 @@ struct AddMealView: View {
     @State private var dishName = ""
     @State private var rating: Int?
     @State private var note = ""
+    @State private var isShowingDetails = false
     @State private var isSaving = false
     @State private var errorMessage: String?
 
     var body: some View {
+        Group {
+            switch step {
+            case .capture: captureStep
+            case .rate: rateStep
+            case .confirm: confirmStep
+            }
+        }
+        .task {
+            // Arriving from "I ate here" (UC-6): the place is already known.
+            if let preselected, target == nil {
+                target = .existingPlace(preselected.id)
+                targetName = preselected.name
+            }
+        }
+    }
+
+    // MARK: - Step 1 — the camera
+
+    private var captureStep: some View {
+        InAppCameraView(
+            onCapture: { data in
+                photoData.append(data)
+                advanceAfterCapture()
+            },
+            // Backing out of the very first shot means backing out of the meal.
+            onClose: {
+                if photoData.isEmpty {
+                    dismiss()
+                } else {
+                    step = .confirm
+                }
+            }
+        ) {
+            captureAlternatives
+        }
+    }
+
+    /// The library is a peer of the shutter, not a rival: photographing later, from a picture
+    /// you already took, is a first-class path (UC-1 / 1a).
+    private var captureAlternatives: some View {
+        HStack(spacing: 14) {
+            PhotosPicker(selection: $pickerItems, maxSelectionCount: 5, matching: .images) {
+                Image(systemName: "photo.on.rectangle")
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(.white)
+                    .frame(width: 46, height: 46)
+                    .background(.white.opacity(0.18), in: Circle())
+            }
+            .accessibilityLabel("Choose from library")
+            .accessibilityIdentifier("choosePhotoButton")
+
+            if AppDependencies.isUITesting {
+                Button {
+                    photoData.append(dependencies.testPhotoData())
+                    advanceAfterCapture()
+                } label: {
+                    Image(systemName: "photo")
+                        .foregroundStyle(.white)
+                        .frame(width: 46, height: 46)
+                }
+                .accessibilityLabel("Use a test photo")
+                .accessibilityIdentifier("useTestPhotoButton")
+            }
+        }
+        .onChange(of: pickerItems) { _, items in
+            guard !items.isEmpty else { return }
+            Task {
+                photoData.append(contentsOf: await PhotoLibraryLoader.load(items))
+                pickerItems = []
+                advanceAfterCapture()
+            }
+        }
+    }
+
+    /// The first photo earns the rating question; later ones just rejoin the confirm step.
+    private func advanceAfterCapture() {
+        let isFirst = photoData.count <= 1
+        step = isFirst ? .rate : .confirm
+        Task { await resolveContext() }
+    }
+
+    // MARK: - Step 2 — how was it?
+
+    private var rateStep: some View {
+        ZStack {
+            Theme.paper.ignoresSafeArea()
+
+            VStack(spacing: 22) {
+                Spacer(minLength: 0)
+
+                if let data = photoData.last, let image = UIImage(data: data) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 188, height: 188)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
+                        )
+                }
+
+                Text("How was it?")
+                    .font(Theme.display(.title3))
+                    .foregroundStyle(Theme.ink)
+
+                // A tap answers the question and moves on — the score is still editable on the
+                // confirm step, so there is nothing to lock in here (UC-7).
+                StarRatingView(rating: rating, onSelect: { score in
+                    rating = score
+                    step = .confirm
+                }, size: 34)
+
+                Spacer(minLength: 0)
+
+                Button {
+                    step = .confirm
+                } label: {
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(width: 54, height: Theme.minimumTouchTarget)
+                        .foregroundStyle(Theme.inkSecondary)
+                }
+                .accessibilityLabel("Skip the rating")
+                .accessibilityIdentifier("skipRatingButton")
+                .padding(.bottom, 18)
+            }
+            .padding(.horizontal, 24)
+        }
+    }
+
+    // MARK: - Step 3 — confirm what the app worked out
+
+    private var confirmStep: some View {
         NavigationStack {
             Form {
                 photosSection
                 placeSection
-                timeSection
+                ratingSection
                 detailsSection
-                if let context, context.derivedFromPhoto {
-                    Section {
-                        Label(
-                            "Using the time and place from your photo",
-                            systemImage: "clock.arrow.circlepath"
-                        )
-                        .font(Theme.label(.footnote))
-                        .foregroundStyle(Theme.inkSecondary)
-                    }
-                }
             }
             .scrollContentBackground(.hidden)
             .background(Theme.paper)
@@ -62,10 +200,6 @@ struct AddMealView: View {
                         .disabled(!canSave || isSaving)
                 }
             }
-            .fullScreenCover(isPresented: $isShowingCamera) {
-                CameraPicker { data in photoData.append(data) }
-                    .ignoresSafeArea()
-            }
             .alert("Couldn't save", isPresented: .init(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
@@ -73,14 +207,6 @@ struct AddMealView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(errorMessage ?? "")
-            }
-            .task { await prepare() }
-            .onChange(of: pickerItems) { _, items in
-                Task {
-                    photoData.append(contentsOf: await PhotoLibraryLoader.load(items))
-                    pickerItems = []
-                    await refreshContext()
-                }
             }
         }
     }
@@ -90,58 +216,53 @@ struct AddMealView: View {
     }
 
     private var photosSection: some View {
-        Section("The food") {
-            if !photoData.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        ForEach(Array(photoData.enumerated()), id: \.offset) { index, data in
-                            if let image = UIImage(data: data) {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 88, height: 88)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                                    .overlay(alignment: .topTrailing) {
-                                        Button {
-                                            photoData.remove(at: index)
-                                        } label: {
-                                            Image(systemName: "xmark.circle.fill")
-                                                .foregroundStyle(.white, .black.opacity(0.5))
-                                        }
-                                        .padding(3)
-                                    }
+        Section {
+            HStack(spacing: 8) {
+                ForEach(Array(photoData.enumerated()), id: \.offset) { index, data in
+                    if let image = UIImage(data: data) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 68, height: 68)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .overlay(alignment: .topTrailing) {
+                                Button {
+                                    photoData.remove(at: index)
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.white, .black.opacity(0.55))
+                                }
+                                .padding(3)
+                                .accessibilityLabel("Remove this photo")
                             }
-                        }
                     }
                 }
-            }
 
-            if AppDependencies.isUITesting {
                 Button {
-                    photoData.append(dependencies.testPhotoData())
-                    Task { await refreshContext() }
+                    step = .capture
                 } label: {
-                    Label("Use a test photo", systemImage: "photo")
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 16, weight: .medium))
+                        .frame(width: 68, height: 68)
+                        .foregroundStyle(Theme.jade)
+                        .background(Theme.paperRaised, in: RoundedRectangle(cornerRadius: 8))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
+                        )
                 }
-                .accessibilityIdentifier("useTestPhotoButton")
-            }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Another photo")
+                .accessibilityIdentifier("takePhotoButton")
 
-            if CameraPicker.isAvailable {
-                Button {
-                    isShowingCamera = true
-                } label: {
-                    Label("Take a photo", systemImage: "camera.fill")
-                }
+                Spacer(minLength: 0)
             }
-
-            PhotosPicker(selection: $pickerItems, maxSelectionCount: 5, matching: .images) {
-                Label("Choose from library", systemImage: "photo.on.rectangle")
-            }
+            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
         }
     }
 
     private var placeSection: some View {
-        Section("Where") {
+        Section {
             NavigationLink {
                 PlacePickerView(
                     dependencies: dependencies,
@@ -151,76 +272,116 @@ struct AddMealView: View {
                     targetName = name
                 }
             } label: {
-                HStack {
-                    // The placeholder is a localized key; a chosen name is the user's own
-                    // text and stays verbatim.
+                HStack(spacing: 8) {
+                    Image(systemName: "mappin.and.ellipse")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.lacquer)
+                    // The placeholder is a localized key; a chosen or suggested name is the
+                    // provider's own text and stays verbatim.
                     if targetName.isEmpty {
-                        Text("Choose the place")
-                            .font(Theme.label(.body))
-                            .foregroundStyle(Theme.inkSecondary)
-                            .lineSpacing(Theme.minimumLineSpacing)
+                        // Two separate `Text`s, not a ternary: a ternary of two literals is a
+                        // `String`, which skips the catalog and ships untranslated.
+                        if isResolvingPlace {
+                            Text("Finding where you are…")
+                                .font(Theme.label(.body))
+                                .foregroundStyle(Theme.inkSecondary)
+                                .lineSpacing(Theme.minimumLineSpacing)
+                        } else {
+                            Text("Choose the place")
+                                .font(Theme.label(.body))
+                                .foregroundStyle(Theme.inkSecondary)
+                                .lineSpacing(Theme.minimumLineSpacing)
+                        }
                     } else {
                         Text(targetName)
                             .font(Theme.display(.body))
                             .foregroundStyle(Theme.ink)
                             .lineSpacing(Theme.minimumLineSpacing)
                     }
-                    Spacer()
+                    Spacer(minLength: 0)
                 }
             }
+            .accessibilityIdentifier("placeRow")
         }
     }
 
-    /// FR-1.4 — the time is suggested, never imposed.
-    private var timeSection: some View {
-        Section("When") {
-            DatePicker(
-                "Eaten at",
-                selection: Binding(
-                    get: { editedEatenAt ?? context?.eatenAt ?? Date() },
-                    set: { editedEatenAt = $0 }
-                ),
-                in: ...Date(),
-                displayedComponents: [.date, .hourAndMinute]
-            )
-            .accessibilityIdentifier("eatenAtPicker")
-            .font(Theme.label(.body))
-
-            if editedEatenAt != nil {
-                Button("Use the photo's time") { editedEatenAt = nil }
-                    .font(Theme.label(.footnote))
-                    .foregroundStyle(Theme.lacquer)
+    /// UC-7 — the score, in the same control that displays it.
+    private var ratingSection: some View {
+        Section {
+            HStack {
+                Text("How was it?")
+                    .font(Theme.label(.body))
+                    .foregroundStyle(Theme.ink)
+                Spacer()
+                StarRatingView(rating: rating, onSelect: { score in
+                    rating = (rating == score) ? nil : score
+                }, size: 19)
             }
         }
     }
 
+    /// The long tail: useful, but never in the way of Save.
     private var detailsSection: some View {
-        Section("Optional") {
-            TextField("Dish name", text: $dishName)
-            Picker("Rating", selection: Binding(
-                get: { rating ?? 0 },
-                set: { rating = $0 == 0 ? nil : $0 }
-            )) {
-                Text("None").tag(0)
-                ForEach(1...5, id: \.self) { value in
-                    Text(String(repeating: "★", count: value)).tag(value)
+        Section {
+            DisclosureGroup(isExpanded: $isShowingDetails) {
+                TextField("Dish name", text: $dishName)
+                TextField("Note", text: $note, axis: .vertical)
+                    .lineLimit(1...4)
+
+                DatePicker(
+                    "Eaten at",
+                    selection: Binding(
+                        get: { editedEatenAt ?? context?.eatenAt ?? Date() },
+                        set: { editedEatenAt = $0 }
+                    ),
+                    in: ...Date(),
+                    displayedComponents: [.date, .hourAndMinute]
+                )
+                .accessibilityIdentifier("eatenAtPicker")
+
+                if editedEatenAt != nil {
+                    Button("Use the photo's time") { editedEatenAt = nil }
+                        .font(Theme.label(.footnote))
+                        .foregroundStyle(Theme.lacquer)
+                }
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "text.alignleft")
+                        .font(.system(size: 13))
+                        .foregroundStyle(Theme.inkSecondary)
+                    Text("Dish, note and time")
+                        .font(Theme.label(.body))
+                        .foregroundStyle(Theme.ink)
                 }
             }
-            TextField("Note", text: $note, axis: .vertical)
-                .lineLimit(1...4)
+            .accessibilityIdentifier("mealDetailsDisclosure")
+
+            if let context, context.derivedFromPhoto {
+                Label(
+                    "Using the time and place from your photo",
+                    systemImage: "clock.arrow.circlepath"
+                )
+                .font(Theme.label(.footnote))
+                .foregroundStyle(Theme.inkSecondary)
+            }
         }
     }
 
-    private func prepare() async {
-        if let preselected {
-            target = .existingPlace(preselected.id)
-            targetName = preselected.name
-        }
-        await refreshContext()
-    }
+    // MARK: - Deriving what the user does not have to type
 
-    private func refreshContext() async {
+    /// Reads the coordinate and time from the photo (or the current fix), then names the place.
+    private func resolveContext() async {
         context = await dependencies.suggestContext.execute(photoData: photoData)
+
+        // "I ate here" already knows the place; never overrule the user's own choice either.
+        guard preselected == nil, target == nil else { return }
+
+        isResolvingPlace = true
+        defer { isResolvingPlace = false }
+        if let suggestion = await dependencies.suggestPlace.execute(around: context?.coordinate) {
+            target = suggestion.target
+            targetName = suggestion.name
+        }
     }
 
     private func save() {

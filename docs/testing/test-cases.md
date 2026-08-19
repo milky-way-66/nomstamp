@@ -37,6 +37,10 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-1-12 | I | 1a | Given a JPEG with southern/western hemisphere GPS, when metadata is read, then latitude and longitude are correctly **negated** | **auto** |
 | TC-1-13 | I | 1a | Given a JPEG with no GPS block, when metadata is read, then coordinate is nil and no error is thrown | **auto** |
 | TC-1-14 | E | main | Given an empty app, when the user adds a meal from the fixture photo, then a pin appears on the map | **auto** |
+| TC-1-16 | U | 3 | Given a saved place 40 m from the meal's coordinate and another 900 m away, when the place is suggested, then the near one is chosen as an **existing** place, so no duplicate pin is created | **auto** |
+| TC-1-17 | U | 3 | Given no saved place nearby but two search candidates, when the place is suggested, then the nearer candidate is chosen as a **new** place draft, and a candidate beyond 120 m is never chosen | **auto** |
+| TC-1-18 | U | E1, 6a | Given no coordinate, or a search port that throws, when the place is suggested, then the result is nil and no error escapes | **auto** |
+| TC-1-19 | E | main | Given an empty app, when the user taps `+`, takes a photo, taps a star and saves, then the meal is stored with that score and the place was never chosen by hand | **auto** |
 | TC-1-15 | U | FR-1.4 | Given a photo carrying EXIF time, when the user sets the time by hand, then the typed time wins over both the EXIF and the clock | **auto** |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
@@ -134,6 +138,19 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 
 ---
 
+## UC-7 — Rate a meal
+
+| ID | Lvl | Traces | Given → When → Then | Status |
+|---|---|---|---|---|
+| TC-7-01 | U | main | Given a meal logged with a score of 4, then the stored meal carries that rating | **auto** |
+| TC-7-02 | U | 1a | Given a meal rated 3, when it is rated 5, then the meal reads 5 and nothing else about it changes | **auto** |
+| TC-7-03 | U | 1b | Given a meal rated 4, when the same score is applied again, then the rating is cleared | **auto** |
+| TC-7-04 | U | E1 | Given a meal rated 3, when a score of 0 or 6 is applied, then it is rejected and the meal still reads 3 | **auto** |
+| TC-7-05 | U | main | Given meals rated 5, 4 and unrated, then the place's average is 4.5 | **auto** |
+| TC-7-06 | E | 1a | Given a logged meal, when its stars are tapped on the place screen, then the new rating shows without leaving the screen | **auto** |
+
+---
+
 ## Cross-cutting
 
 | ID | Lvl | Concern | Given → When → Then | Status |
@@ -179,17 +196,18 @@ the omission is visible rather than forgotten.
 | Use case | Flows specified | Flows with a test case |
 |---|---|---|
 | UC-1 | main, 1a, 4a, 4b, 6a, E1, E2 | all |
+| UC-7 | main, 1a, 1b, E1 | all |
 | UC-2 | main, 1a, 3a, 5a | all |
 | UC-3 | main, 2a | all |
 | UC-4 | main, 2a, 3a | all |
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 62 test cases** — 43 unit, 10 integration, 9 e2e. The shape is deliberate: the pyramid
+**Total: 78 test cases** — 56 unit, 11 integration, 11 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |
 |---|---|---|---|---|
-| Unit | 43 | 43 | 43 | 57 test functions (`FoodMapDomain` 55, `FoodMapDesign` 2) |
-| Integration | 10 | 10 | 10 | 28 test functions (`FoodMapData`) |
-| E2E | 9 | 9 | 9 | 12 XCUITest journeys (`FoodMapUITests`) |
+| Unit | 56 | 56 | 56 | 70 test functions (`FoodMapDomain` 68, `FoodMapDesign` 2) |
+| Integration | 11 | 11 | 11 | 28 test functions (`FoodMapData`) |
+| E2E | 11 | 11 | 11 | 14 XCUITest journeys (`FoodMapUITests`) |

@@ -14,17 +14,20 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 - **Trigger:** User is at a restaurant with food in front of them and taps “Add meal”.
 
 **Main flow**
-1. User taps **Add meal**.
-2. App opens the camera; user takes one or more photos of the dish.
-3. App reads the current GPS position and asks the Place Provider for nearby candidates.
-4. App shows the nearest candidates; user taps the correct restaurant.
-5. User optionally adds: dish name, rating, note, price.
+1. User taps **Add meal** (`+`). The camera opens straight away — no form stands between the tap and the shutter.
+2. User takes a photo of the dish.
+3. App asks one question: how was it? User taps a star (or skips).
+4. Meanwhile the app reads the coordinate — the photo's own EXIF if it has one, otherwise the
+   current GPS fix — and preselects the place: a place already saved within 120 m, else the
+   nearest candidate from the Place Provider.
+5. App shows the confirm step with the photo, place, score and time already filled in. The user
+   changes anything that is wrong; dish name, note and time sit behind one disclosure.
 6. User taps **Save**.
-7. App uploads the photos, creates a `Meal` linked to that `Place`, and confirms.
+7. App stores the photos, creates a `Meal` linked to that `Place`, and confirms.
 
 **Alternate flows**
 - **1a. Photo already taken** — user picks an existing photo from the gallery. If the photo carries EXIF GPS + timestamp, the app uses those instead of the current position (this is what makes logging *after* the meal work).
-- **4a. Place not in the list** — user searches by name, or drops a pin manually and types the name.
+- **4a. Nothing to preselect, or the guess is wrong** — user opens the place picker from the confirm step and searches by name, or drops a pin manually and types the name.
 - **4b. Place is already on the map as a Wishlist pin** — it appears at the top of the candidate list; selecting it converts it to Visited (see UC-6).
 - **6a. Offline** — the meal is saved locally and queued; upload retries when connectivity returns. The pin appears on the map immediately, marked as pending sync.
 
@@ -38,7 +41,9 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 - Given I am at a restaurant, when I take a photo and save, then a meal is stored with that photo, the current time, and a place.
 - Given location is unavailable, when I log a meal, then I can still choose a place by searching.
 - Given I go offline mid-save, when I reopen the app online, then the meal uploads without me doing anything.
-- The happy path from tapping “Add meal” to a saved meal takes **no more than 3 taps** beyond the photo itself.
+- Given I tap **Add meal**, then the very next thing I see is a live camera.
+- Given a photo and a place nearby, when I reach the confirm step, then the place and the time are already filled in and I may still change them.
+- The happy path from tapping “Add meal” to a saved meal takes **no more than 3 taps** beyond the photo itself: one star, one Save — and nothing else is required.
 
 ---
 
@@ -155,6 +160,32 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 **Acceptance criteria**
 - Given a wishlist place, when I log a meal there, then its pin becomes a visited pin showing my photo, and the note I saved is not lost.
 - Given a visited place with one meal, when I delete that meal, then the place remains as a wishlist place with its note intact.
+
+---
+
+## UC-7 — Rate a meal
+**Serves:** US-1 (remembering *how good* it was, not just that it happened) · **Priority:** must-have
+
+- **Trigger:** User is logging a meal, or is looking back at one they logged before.
+
+**Main flow**
+1. While logging a meal, user taps a star to score it out of five.
+2. App stores the rating with the meal.
+3. The place's detail shows each meal's stars, and the place itself shows the average of them.
+
+**Alternate flows**
+- **1a. Rated later or changed** — user taps the stars on a meal they already logged; the new
+  score replaces the old one immediately, with no separate edit screen.
+- **1b. Rating cleared** — user taps the star already selected; the rating returns to none,
+  because a wrong score is worse than no score.
+
+**Exception**
+- **E1. Out-of-range score** — a score below 1 or above 5 is rejected rather than stored.
+
+**Acceptance criteria**
+- Given a meal with no rating, when I tap the fourth star, then the meal shows four stars.
+- Given a meal rated 4, when I tap the fourth star again, then it shows no rating.
+- Given a place with meals rated 5 and 4, then the place shows an average of 4.5.
 
 ---
 

@@ -80,47 +80,34 @@ struct PlaceSheet: View {
         .padding(.bottom, 10)
     }
 
+    /// Icons rather than labels, at the minimum touch target and no larger: this row sits on
+    /// top of the map at every detent, so it has to earn its height (NFR-4.1, NFR-6.1).
     private var actions: some View {
         HStack(spacing: 10) {
-            Button {
-                isSavingPlace = true
-            } label: {
-                Label("Save a place", systemImage: "bookmark")
-                    .accessibilityIdentifier("savePlaceButton")
-                    .font(Theme.label(.subheadline))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
-            }
-            .buttonStyle(.bordered)
-            .tint(Theme.jade)
+            ActionButton(
+                systemImage: "camera.fill",
+                label: "Add meal",
+                identifier: "addMealButton",
+                style: .primary
+            ) { isAddingMeal = true }
 
-            Button {
-                isAddingMeal = true
-            } label: {
-                Label("Add meal", systemImage: "camera.fill")
-                    .accessibilityIdentifier("addMealButton")
-                    .font(Theme.label(.subheadline))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 11)
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(Theme.lacquer)
-            .foregroundStyle(Theme.onLacquer)
+            ActionButton(
+                systemImage: "bookmark",
+                label: "Save a place",
+                identifier: "savePlaceButton",
+                style: .secondary
+            ) { isSavingPlace = true }
 
-            Button {
-                isShowingNearMe = true
-            } label: {
-                Image(systemName: "location.magnifyingglass")
-                    .padding(.vertical, 11)
-                    .padding(.horizontal, 4)
-            }
-            .buttonStyle(.bordered)
+            ActionButton(
+                systemImage: "location.magnifyingglass",
+                label: "Saved places near me",
+                identifier: "nearMeButton",
+                style: .secondary
+            ) { isShowingNearMe = true }
             .disabled(model.isEmpty)
-            .accessibilityLabel("Saved places near me")
-            .accessibilityIdentifier("nearMeButton")
         }
-        .padding(.horizontal)
-        .padding(.top, 14)
+        .padding(.horizontal, 16)
+        .padding(.top, 6)
         .padding(.bottom, 10)
     }
 
@@ -151,22 +138,31 @@ struct PlaceSheet: View {
     }
 
     /// UC-2 / 1a — never a blank screen (NFR-4.3).
+    ///
+    /// In a ScrollView because the sheet's smallest detent is shorter than this content: a
+    /// partly visible card that scrolls reads as more to come, where a clipped one reads as
+    /// broken.
     private var emptyState: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "fork.knife.circle")
-                .font(.system(size: 38))
-                .foregroundStyle(Theme.lacquer)
-            Text("Your food map is empty")
-                .font(Theme.display(.headline))
-                .foregroundStyle(Theme.ink)
-            Text("Photograph a meal where you are, or save a place someone told you about.")
-                .font(Theme.label(.footnote))
-                .foregroundStyle(Theme.inkSecondary)
-                .multilineTextAlignment(.center)
-                .lineSpacing(Theme.minimumLineSpacing)
-                .padding(.horizontal, 32)
+        ScrollView {
+            VStack(spacing: 10) {
+                Image(systemName: "fork.knife.circle")
+                    .font(.system(size: 30))
+                    .foregroundStyle(Theme.lacquer)
+                Text("Your food map is empty")
+                    .font(Theme.display(.subheadline))
+                    .foregroundStyle(Theme.ink)
+                    .multilineTextAlignment(.center)
+                Text("Photograph a meal where you are, or save a place someone told you about.")
+                    .font(Theme.label(.footnote))
+                    .foregroundStyle(Theme.inkSecondary)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(Theme.minimumLineSpacing)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 18)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(.top, 24)
+        .scrollBounceBehavior(.basedOnSize)
     }
 }

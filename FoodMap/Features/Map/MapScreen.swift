@@ -33,9 +33,9 @@ struct MapScreen: View {
                 model: model,
                 onFocus: focus(on:)
             )
-             // The peek detent shows the actions and the search field whole; anything smaller
-            // clips a list row mid-way and reads as broken.
-            .presentationDetents([.height(156), .medium, .large])
+            // The peek detent has to clear the drag indicator *and* the action row and search
+            // field whole — 148 measured on an iPhone 17. Anything less clipped the buttons.
+            .presentationDetents([.height(148), .fraction(0.55), .large])
             .presentationBackgroundInteraction(.enabled(upThrough: .medium))
             .presentationDragIndicator(.visible)
             .interactiveDismissDisabled()
