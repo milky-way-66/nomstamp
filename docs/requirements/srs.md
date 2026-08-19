@@ -88,9 +88,9 @@ Each requirement names the use case it comes from and the test cases that prove 
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
 | FR-1.1 | The user shall log a meal consisting of at least one photograph, a time and a place | UC-1 | TC-1-01 |
-| FR-1.2 | The system shall reject a meal with no photograph | UC-1 | (rejectsEmptyPhotoList) |
+| FR-1.2 | The system shall reject a meal with no photograph | UC-1 | TC-1-01 (rejectsEmptyPhotoList) |
 | FR-1.3 | The system shall derive the meal time from the photograph's own metadata when present, and from the device clock otherwise | UC-1/1a | TC-1-04, TC-1-05 |
-| FR-1.4 | The system shall let the user override the derived meal time | UC-1 | — |
+| FR-1.4 | The system shall let the user override the derived meal time | UC-1 | TC-1-15 |
 | FR-1.5 | The user shall optionally record dish name, rating (1–5), note and price | UC-1 | TC-1-01 |
 | FR-1.6 | Logging a meal shall succeed when location permission is denied | UC-1/E1 | TC-1-03 |
 | FR-1.7 | Logging a meal shall succeed when no network is available | UC-1/6a | TC-1-10 |
@@ -126,7 +126,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-4.2 | A wishlist place shall display the note explaining why it was saved | UC-3/2a | TC-3-02 |
 | FR-4.3 | A wishlist place shall offer a single action to log a meal there | UC-3/2a | TC-6-05 |
 | FR-4.4 | The user shall delete a meal or a whole place | UC-3 | TC-3-03 |
-| FR-4.5 | The user shall obtain directions to a place | UC-3 | — |
+| FR-4.5 | The user shall obtain directions to a place | UC-3 | TC-3-06 |
 
 ### FR-5 Saving a place heard about
 | ID | Requirement | UC | Tests |

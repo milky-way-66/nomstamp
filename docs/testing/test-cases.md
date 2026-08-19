@@ -147,6 +147,33 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 
 ---
 
+## Non-functional cases
+
+The FR-driven cases above say the app does the right thing; these say it does it fast enough,
+in the user's language, durably, legibly and privately. They were added on 2026-08-19 after an
+audit found 28 of the 31 SRS non-functional requirements had no case at all.
+
+| ID | Lvl | Traces | Given → When → Then | Status |
+|---|---|---|---|---|
+| TC-N-01 | E | NFR-5.1, NFR-5.2 | Given the device language is Vietnamese, when the app launches, then the interface is Vietnamese, not English | **auto** |
+| TC-N-02 | I | NFR-3.1 | Given a place with a meal and photo written to an on-disk store, when the store is closed and reopened, then the whole graph is still there | **auto** |
+| TC-N-03 | U | NFR-2.2 | Given 500 saved places, when the map pin pipeline runs, then it completes inside one 60 fps frame budget (16 ms) | **auto** |
+| TC-N-04 | U | NFR-2.2 | Given 5,000 saved places, when clustering runs, then it stays well inside a quarter second and still conserves every place | **auto** |
+| TC-N-05 | I | NFR-2.3 | Given one full-size photograph, when a meal is saved, then storing image, thumbnail and record takes ≤ 1 s | **auto** |
+| TC-N-06 | E | NFR-2.1 | Given a cold start, when the app launches, then an interactive map is reached in ≤ 2 s | **auto** |
+| TC-N-07 | U | NFR-6.4 | Given every foreground/background pair in the palette, then each meets its WCAG AA contrast minimum, in both light and dark | **auto** |
+| TC-N-08 | U | NFR-1.1, NFR-1.2, NFR-1.3 | Given the shipped source, then it declares no third-party dependency and makes no network call outside the place-search adapter | **auto** |
+| TC-N-09 | I | NFR-3.3, FR-1.8 | Given a photo directory that cannot be written, when a meal is saved, then the error surfaces, nothing partial is stored, and nothing crashes | **auto** |
+| TC-N-10 | E | NFR-6.1 | Given the largest accessibility text size, when the map opens, then the primary actions are still present and hittable | **auto** |
+| TC-N-11 | E | NFR-6.2 | Given the map screen, then every control carries a VoiceOver label, not a bare image name | **auto** |
+
+Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
+bound the work per frame, as TC-N-03 does, but only a device measurement can prove 55 fps), and
+**NFR-4.1's tap count**, which is a design review, not an assertion. Both are recorded here so
+the omission is visible rather than forgotten.
+
+---
+
 ## Coverage check against `use-cases.md`
 
 | Use case | Flows specified | Flows with a test case |
@@ -158,11 +185,11 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 51 test cases** — 39 unit, 7 integration, 5 e2e. The shape is deliberate: the pyramid
+**Total: 62 test cases** — 43 unit, 10 integration, 9 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |
 |---|---|---|---|---|
-| Unit | 39 | 39 | 39 | 52 test functions (`FoodMapDomain`) |
-| Integration | 7 | 7 | 7 | 25 test functions (`FoodMapData`) |
-| E2E | 5 | 5 | 5 | 7 XCUITest journeys (`FoodMapUITests`) |
+| Unit | 43 | 43 | 43 | 57 test functions (`FoodMapDomain` 55, `FoodMapDesign` 2) |
+| Integration | 10 | 10 | 10 | 28 test functions (`FoodMapData`) |
+| E2E | 9 | 9 | 9 | 12 XCUITest journeys (`FoodMapUITests`) |

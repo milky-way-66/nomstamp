@@ -33,10 +33,11 @@ the specification was wrong, the document is corrected first — never left to d
 | User stories | 3 captured |
 | Use cases | UC-1 … UC-6 written |
 | SRS | draft v0.1, 2 open questions (OPEN-2, OPEN-3) |
-| Test cases | 51 specified (39 unit, 7 integration, 5 e2e) — all automated |
+| Test cases | 62 specified (43 unit, 10 integration, 9 e2e) — all automated |
 | Domain code | **complete and green** — 52 tests, sub-second warm loop, no simulator |
-| Test totals | 84 automated, all passing — 52 unit, 25 integration, 7 e2e journeys |
-| UI/UX | decided — travel-journal/editorial, ADR-003 |
+| Test totals | 97 automated, all passing — 55 domain, 2 design, 28 data, 12 e2e |
+| UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
+| Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | **built and running** — 6 screens, verified in the simulator, light and dark |
-| E2E tests | **complete and green** — 7 XCUITest journeys covering all 5 cases, run against stubbed adapters |
+| E2E tests | **complete and green** — 12 XCUITest journeys, run against stubbed adapters |

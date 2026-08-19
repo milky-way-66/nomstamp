@@ -1,24 +1,31 @@
 import SwiftUI
+import FoodMapDesign
 
 /// The design tokens from ADR-003. No view hard-codes a colour or a size.
 ///
-/// Every pairing here was contrast-checked; the weakest is 5.21:1, comfortably past WCAG AA
-/// (NFR-6.4).
+/// The hex values live in `FoodMapDesign.Palette`, where TC-N-07 checks every pairing the
+/// interface renders against WCAG AA in both appearances (NFR-6.4). This type only turns
+/// them into SwiftUI colours.
 enum Theme {
 
     // MARK: - Colour
 
     /// Warm paper in light mode, deep ink at night.
-    static let paper = dynamic(light: 0xF5EFE3, dark: 0x1A1714)
-    static let paperRaised = dynamic(light: 0xFDFAF3, dark: 0x241F1B)
-    static let ink = dynamic(light: 0x2A2521, dark: 0xF0E9DC)
-    static let inkSecondary = dynamic(light: 0x6B6259, dark: 0xA79C8D)
-    static let rule = dynamic(light: 0xDCD2C0, dark: 0x3A332C)
+    static let paper = dynamic(Palette.paper)
+    static let paperRaised = dynamic(Palette.paperRaised)
+    static let ink = dynamic(Palette.ink)
+    static let inkSecondary = dynamic(Palette.inkSecondary)
+    static let rule = dynamic(Palette.rule)
 
     /// Vietnamese lacquerware rather than an arbitrary red — used for places you have been.
-    static let lacquer = dynamic(light: 0xA8402F, dark: 0xD97A66)
+    static let lacquer = dynamic(Palette.lacquer)
     /// Jade, for places you still want to try.
-    static let jade = dynamic(light: 0x2F6152, dark: 0x6FAF97)
+    static let jade = dynamic(Palette.jade)
+
+    /// Text drawn *on* a lacquer or jade fill. Not white in dark mode: the dark-mode fills are
+    /// light, so white on them is 3.03:1, below AA (TC-N-07).
+    static let onLacquer = dynamic(Palette.onLacquer)
+    static let onJade = dynamic(Palette.onJade)
 
     static func accent(for kind: PlaceKindStyle) -> Color {
         switch kind {
@@ -56,9 +63,9 @@ enum Theme {
     /// Apple's minimum touch target; pins are never drawn smaller (NFR-6.4).
     static let minimumTouchTarget: CGFloat = 44
 
-    private static func dynamic(light: UInt32, dark: UInt32) -> Color {
+    private static func dynamic(_ color: PaletteColor) -> Color {
         Color(UIColor { traits in
-            UIColor(rgb: traits.userInterfaceStyle == .dark ? dark : light)
+            UIColor(rgb: traits.userInterfaceStyle == .dark ? color.dark : color.light)
         })
     }
 }

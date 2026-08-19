@@ -77,6 +77,12 @@ final class AppDependencies {
         deleteMeal = DeleteMealUseCase(places: places, photos: photos)
         deletePlace = DeletePlaceUseCase(places: places, photos: photos)
         suggestContext = SuggestMealContextUseCase(photos: photos, location: location, clock: clock)
+
+        // Seeding belongs here, not in a view's `.task`: done later, it raced the map's first
+        // load and the demo places sometimes never appeared at all.
+        if DemoSeed.isRequested {
+            DemoSeed.apply(to: self)
+        }
     }
 
     func requestLocationPermission() {

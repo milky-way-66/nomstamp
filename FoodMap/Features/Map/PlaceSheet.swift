@@ -105,6 +105,7 @@ struct PlaceSheet: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(Theme.lacquer)
+            .foregroundStyle(Theme.onLacquer)
 
             Button {
                 isShowingNearMe = true

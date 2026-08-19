@@ -81,7 +81,7 @@ struct PlaceDetailView: View {
 
             HStack(spacing: 6) {
                 Image(systemName: current.kind == .visited ? "fork.knife" : "bookmark.fill")
-                Text(current.kind == .visited ? "Been here" : "Want to try")
+                Text(current.kind == .visited ? LocalizedStringKey("Been here") : LocalizedStringKey("Want to try"))
             }
             .accessibilityIdentifier("placeKindLabel")
             .font(Theme.label(.subheadline))
@@ -129,6 +129,7 @@ struct PlaceDetailView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(Theme.lacquer)
+            .foregroundStyle(Theme.onLacquer)
             .accessibilityIdentifier("iAteHereButton")
         }
     }

@@ -9,11 +9,6 @@ struct FoodMapApp: App {
             MapScreen(dependencies: dependencies)
                 .tint(Theme.lacquer)
                 .preferredColorScheme(nil) // follow the device; both themes are designed
-                .task {
-                    if DemoSeed.isRequested {
-                        DemoSeed.apply(to: dependencies)
-                    }
-                }
         }
     }
 }

@@ -18,10 +18,11 @@ struct PlaceRowView: View {
                 HStack(spacing: 5) {
                     Image(systemName: place.kind == .visited ? "fork.knife" : "bookmark.fill")
                         .font(.caption2)
-                    Text(place.kind == .visited ? "Been here" : "Want to try")
+                    Text(place.kind == .visited ? LocalizedStringKey("Been here") : LocalizedStringKey("Want to try"))
                         .font(Theme.label(.caption))
                     if place.kind == .visited {
-                        Text("· \(place.meals.count) meal\(place.meals.count == 1 ? "" : "s")")
+                        // A plural-aware key, so Vietnamese (which does not inflect) reads naturally too.
+                        Text("· \(place.meals.count) meals")
                             .font(Theme.label(.caption))
                             .foregroundStyle(Theme.inkSecondary)
                     }

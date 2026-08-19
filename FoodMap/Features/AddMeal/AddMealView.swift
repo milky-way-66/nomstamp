@@ -152,10 +152,19 @@ struct AddMealView: View {
                 }
             } label: {
                 HStack {
-                    Text(targetName.isEmpty ? "Choose the place" : targetName)
-                        .font(targetName.isEmpty ? Theme.label(.body) : Theme.display(.body))
-                        .foregroundStyle(targetName.isEmpty ? Theme.inkSecondary : Theme.ink)
-                        .lineSpacing(Theme.minimumLineSpacing)
+                    // The placeholder is a localized key; a chosen name is the user's own
+                    // text and stays verbatim.
+                    if targetName.isEmpty {
+                        Text("Choose the place")
+                            .font(Theme.label(.body))
+                            .foregroundStyle(Theme.inkSecondary)
+                            .lineSpacing(Theme.minimumLineSpacing)
+                    } else {
+                        Text(targetName)
+                            .font(Theme.display(.body))
+                            .foregroundStyle(Theme.ink)
+                            .lineSpacing(Theme.minimumLineSpacing)
+                    }
                     Spacer()
                 }
             }

@@ -1,10 +1,15 @@
 name: FoodMap
 options:
   bundleIdPrefix: com.foodmap
+  developmentLanguage: en
+  # Vietnamese is a target-market requirement (NFR-5.1), not an afterthought.
+  knownRegions: [en, vi, Base]
   deploymentTarget:
     iOS: "18.0"
   createIntermediateGroups: true
 packages:
+  FoodMapDesign:
+    path: Packages/FoodMapDesign
   FoodMapDomain:
     path: Packages/FoodMapDomain
   FoodMapData:
@@ -23,6 +28,7 @@ targets:
     sources:
       - path: FoodMap
     dependencies:
+      - package: FoodMapDesign
       - package: FoodMapDomain
       - package: FoodMapData
     settings:
