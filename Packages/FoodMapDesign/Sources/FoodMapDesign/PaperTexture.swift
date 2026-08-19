@@ -33,6 +33,31 @@ public enum PaperTexture {
     }
 }
 
+/// A torn paper edge (ADR-005).
+///
+/// The amplitudes are the only thing worth deciding away from the interface: how far each point of
+/// the tear strays from the straight line, as a fraction of the edge's depth. Seeded, so a given
+/// edge is torn the same way every time it is drawn rather than fluttering between redraws.
+public enum DeckleEdge {
+    /// The deepest a tear may go, as a fraction of the edge's depth. A tear that reaches the far
+    /// side stops reading as paper and starts reading as damage.
+    public static let maximumAmplitude: Double = 0.85
+
+    /// The shallowest, so the edge never flattens into a ruled line.
+    public static let minimumAmplitude: Double = 0.15
+
+    public static func amplitudes(count: Int, seed: UInt64 = PaperTexture.defaultSeed) -> [Double] {
+        guard count > 0 else { return [] }
+        var generator = SplitMix64(seed: seed)
+        let span = maximumAmplitude - minimumAmplitude
+        // 1000 steps is finer than any screen can show, and integer arithmetic keeps the values
+        // identical on every architecture.
+        return (0..<count).map { _ in
+            minimumAmplitude + Double(generator.next(upperBound: 1001)) / 1000 * span
+        }
+    }
+}
+
 /// A small, explicit generator: `Int.random` uses the system source, which would give a different
 /// tile on every launch and make the grain shimmer.
 private struct SplitMix64 {

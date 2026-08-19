@@ -44,6 +44,11 @@ final class DesignSweep: XCTestCase {
         raiseSheet(app)
         shoot(app, "03-list-full")
 
+        // The filter chip on a tab that is not the first, which is where it has to look right.
+        app.buttons["Been here"].tapWhenReady(timeout: 5)
+        shoot(app, "03b-list-filtered")
+        app.buttons["All"].tapWhenReady(timeout: 5)
+
         // A visited place: heading, meal cards, ratings.
         open("Phở Thìn", "pho thin", in: app)
         raiseSheet(app, from: 0.46)
@@ -72,6 +77,8 @@ final class DesignSweep: XCTestCase {
         app.buttons["useTestPhotoButton"].tapWhenReady(timeout: 10)
         shoot(app, "09-rating")
         app.buttons["star4"].tapWhenReady(timeout: 10)
+        // Caught before the step advances: the page answers the score with its ink and its word.
+        shoot(app, "09b-rating-chosen")
         shoot(app, "10-confirm")
     }
 

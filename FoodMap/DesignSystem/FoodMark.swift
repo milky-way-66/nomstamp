@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 /// The drawn glyph set (ADR-005).
 ///
@@ -18,6 +19,8 @@ struct FoodMark: Shape {
         case needle
         /// Nothing here yet: a bowl with its steam.
         case bowl
+        /// A score: one point of a rating.
+        case star
     }
 
     let glyph: Glyph
@@ -76,6 +79,23 @@ struct FoodMark: Shape {
             path.addQuadCurve(to: point(0.38, 0.10), control: point(0.28, 0.22))
             path.move(to: point(0.60, 0.32))
             path.addQuadCurve(to: point(0.60, 0.14), control: point(0.70, 0.23))
+        case .star:
+            // Five points, struck from the centre: outer radius half the square, inner a little
+            // over a fifth, which is the proportion that still reads as a star at 14 pt.
+            let centre = point(0.5, 0.5)
+            let outer = min(rect.width, rect.height) * 0.5
+            let inner = outer * 0.42
+            for step in 0..<10 {
+                let radius = step.isMultiple(of: 2) ? outer : inner
+                // Start at the top: -90° in a coordinate space whose y grows downwards.
+                let angle = -Double.pi / 2 + Double(step) * Double.pi / 5
+                let vertex = CGPoint(
+                    x: centre.x + CGFloat(cos(angle)) * radius,
+                    y: centre.y + CGFloat(sin(angle)) * radius
+                )
+                if step == 0 { path.move(to: vertex) } else { path.addLine(to: vertex) }
+            }
+            path.closeSubpath()
         }
 
         return path

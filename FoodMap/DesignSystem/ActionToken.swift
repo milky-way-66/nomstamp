@@ -47,11 +47,11 @@ struct FloatingActionButton: View {
     }
 
     private var foreground: Color {
-        style == .primary ? Theme.onLacquer : Theme.jade
+        style == .primary ? Theme.onPandan : Theme.bay
     }
 
     private var background: Color {
-        style == .primary ? Theme.lacquer : Theme.paperRaised
+        style == .primary ? Theme.pandan : Theme.paperRaised
     }
 
     /// The primary token is solid ink, so a ring on it would only muddy its edge.

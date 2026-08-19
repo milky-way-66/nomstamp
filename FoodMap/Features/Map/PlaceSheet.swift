@@ -167,6 +167,8 @@ struct PlaceSheet: View {
             selection: Binding(get: { model.filter }, set: { model.filter = $0 })
         )
         .padding(.horizontal, Theme.screenMargin)
+        // Air under the row, so the chip never touches the first place on the list.
+        .padding(.bottom, Theme.Space.snug)
         .background(Theme.paper)
     }
 
@@ -199,7 +201,7 @@ struct PlaceSheet: View {
             VStack(spacing: Theme.Space.snug) {
                 Image(systemName: "fork.knife.circle")
                     .font(.system(size: 30))
-                    .foregroundStyle(Theme.lacquer)
+                    .foregroundStyle(Theme.pandan)
                 Text("Your food map is empty")
                     .font(Theme.display(.subheadline))
                     .foregroundStyle(Theme.ink)
