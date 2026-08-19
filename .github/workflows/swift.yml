@@ -1,5 +1,11 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+# Build and test Nomstamp.
+#
+# The four suites CLAUDE.md names: `swift test` on each of the three packages, and the XCUITest
+# journeys through `xcodebuild test`. There is no Package.swift at the repository root, so the
+# Xcode project is generated with xcodegen first — as it must be after any file is added.
+#
+# Every action here runs on the Node 24 runtime (actions/checkout@v5); nothing pulls in a
+# Node 20 action.
 
 name: Swift
 
@@ -9,14 +15,95 @@ on:
   pull_request:
     branches: [ "main" ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-
+  packages:
+    name: Package tests
     runs-on: macos-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        package: [FoodMapDomain, FoodMapData, FoodMapDesign]
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+      - uses: actions/checkout@v5
+
+      - name: Show toolchain
+        run: swift --version
+
+      - name: Build ${{ matrix.package }}
+        run: swift build --package-path Packages/${{ matrix.package }}
+
+      # The two live-network tests stay opt-in (RUN_NETWORK_TESTS=1), so CI is deterministic
+      # offline — NFR-7.5.
+      - name: Test ${{ matrix.package }}
+        run: swift test --package-path Packages/${{ matrix.package }}
+
+  app:
+    name: App build and UI journeys
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install xcodegen
+        run: brew install xcodegen
+
+      - name: Generate the Xcode project
+        run: xcodegen generate
+
+      # Runner images change their simulator line-up without warning, so the destination is
+      # discovered rather than hard-coded to a device name.
+      # Runner images change their simulator line-up without warning, so the destination is
+      # discovered rather than hard-coded to a device name.
+      - name: Choose a simulator
+        id: sim
+        run: |
+          udid=$(xcrun simctl list devices available --json | python3 -c '
+          import json, sys
+          best = None
+          for runtime, devices in json.load(sys.stdin)["devices"].items():
+              if "iOS" not in runtime:
+                  continue
+              version = tuple(int(p) for p in runtime.rsplit(".", 1)[-1].split("-")[1:])
+              for device in devices:
+                  if not device["name"].startswith("iPhone"):
+                      continue
+                  key = (version, device["name"])
+                  if best is None or key > best[0]:
+                      best = (key, device)
+          if best is None:
+              sys.exit("no iPhone simulator is available on this runner")
+          print(best[1]["udid"])
+          ')
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+          xcrun simctl list devices | grep "$udid"
+
+      - name: Build the app
+        run: |
+          xcodebuild build-for-testing \
+            -project FoodMap.xcodeproj \
+            -scheme FoodMap \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -quiet
+
+      # Full `test`, never test-without-building: the latter happily re-runs a stale bundle.
+      # The journeys use stubbed search, location, photo and storage adapters, so they need no
+      # network, GPS or camera.
+      - name: Run the XCUITest journeys
+        run: |
+          xcodebuild test \
+            -project FoodMap.xcodeproj \
+            -scheme FoodMap \
+            -destination "id=${{ steps.sim.outputs.udid }}" \
+            -resultBundlePath build/FoodMap.xcresult \
+            -quiet
+
+      - name: Upload the result bundle
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: xcresult
+          path: build/FoodMap.xcresult
+          if-no-files-found: ignore
