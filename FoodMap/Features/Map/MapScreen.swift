@@ -85,9 +85,10 @@ struct MapScreen: View {
         // multiply was invisible at any opacity that kept the map legible.
         .overlay {
             Theme.mapWash
-                // Not full strength: at 0.72 the bay and the streets became one olive tone and the
-                // map stopped being readable as a place. This leaves water faintly blue.
-                .opacity(0.55)
+                // Not full strength: at 0.72 land and water collapsed into one tone and the map
+                // stopped being readable as a place. At full saturation the bay went neon. This
+                // leaves the water deep and the streets pale.
+                .opacity(0.45)
                 .blendMode(.color)
                 .allowsHitTesting(false)
                 .ignoresSafeArea()

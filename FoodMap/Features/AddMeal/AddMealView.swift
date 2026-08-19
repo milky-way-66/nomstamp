@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import FoodMapDomain
+import FoodMapDesign
 
 /// UC-1 — photograph the food and store it.
 ///
@@ -131,18 +132,72 @@ struct AddMealView: View {
     private var rateStep: some View {
         ZStack {
             Theme.paper.ignoresSafeArea()
+            // The page answers the judgement: the ground warms along the rating ramp as the score
+            // rises, from slate at one star to leaf green at five (ADR-005).
+            Theme.ratingInk(rating)
+                .opacity(rating == nil ? 0 : RatingMood.groundTint)
+                .ignoresSafeArea()
+                .animation(.easeOut(duration: 0.35), value: rating)
 
             VStack(spacing: 0) {
-                // A bar rather than a lone button at the foot of the screen: back to the
-                // camera on one side, past the question on the other.
+                // The photograph is the question: it runs to the edges of the page and is torn
+                // into it, so the screen opens on the food rather than on a floating tile
+                // (design review, 19 Aug).
+                if let data = photoData.last, let image = UIImage(data: data) {
+                    Color.clear
+                        .aspectRatio(Theme.photoAspect, contentMode: .fit)
+                        .overlay(
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                        )
+                        .clipShape(TornBottom(depth: 18))
+                        .ignoresSafeArea(edges: .top)
+                }
+
+                VStack(spacing: Theme.Space.snug) {
+                    // Where you are in the three steps, stamped rather than styled as a
+                    // progress bar: this is a form, not a download.
+                    Text("Step 2 of 3")
+                        .font(Theme.stamped(.caption))
+                        .foregroundStyle(Theme.inkSecondary)
+
+                    Text("How was it?")
+                        .font(Theme.display(.title2))
+                        .foregroundStyle(Theme.ink)
+
+                    // A tap answers the question and moves on — the score is still editable
+                    // on the confirm step, so there is nothing to lock in here (UC-7).
+                    StarRatingView(rating: rating, onSelect: { score in
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) { rating = score }
+                        // Long enough to see the word land, short enough not to feel held up.
+                        Task {
+                            try? await Task.sleep(for: .milliseconds(520))
+                            if rating == score { step = .confirm }
+                        }
+                    }, size: 46)
+                    .padding(.top, Theme.Space.tight)
+
+                    // The word for the score, so the scale means something before it is committed.
+                    RatingWord(score: rating)
+                        .frame(height: 22)
+                        .animation(.easeOut(duration: 0.2), value: rating)
+                }
+                .padding(.top, Theme.Space.loose)
+                .padding(.horizontal, Theme.screenMargin)
+
+                Spacer(minLength: Theme.Space.regular)
+
+                // Words, not bare arrows: the two ways off this screen were a chevron and an
+                // arrow, which said nothing about what they did.
                 HStack {
                     Button {
                         step = .capture
                     } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
+                        Text("Back")
+                            .font(Theme.smallCaps(.subheadline))
                             .foregroundStyle(Theme.inkSecondary)
-                            .frame(width: Theme.minimumTouchTarget, height: Theme.minimumTouchTarget)
+                            .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
                     }
                     .accessibilityLabel("Back to the camera")
                     .accessibilityIdentifier("backToCameraButton")
@@ -152,58 +207,16 @@ struct AddMealView: View {
                     Button {
                         step = .confirm
                     } label: {
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundStyle(Theme.inkSecondary)
-                            .frame(width: Theme.minimumTouchTarget, height: Theme.minimumTouchTarget)
+                        Text("Skip")
+                            .font(Theme.smallCaps(.subheadline))
+                            .foregroundStyle(Theme.bay)
+                            .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
                     }
                     .accessibilityLabel("Skip the rating")
                     .accessibilityIdentifier("skipRatingButton")
                 }
-                .padding(.horizontal, Theme.Space.tight)
-                .padding(.top, Theme.Space.tight)
-
-                Spacer(minLength: Theme.Space.regular)
-
-                VStack(spacing: Theme.Space.loose) {
-                    if let data = photoData.last, let image = UIImage(data: data) {
-                        // The photograph just taken is the subject of this screen, so it fills
-                        // the width at the same ratio as everywhere else, rather than being
-                        // square-cropped into a 208 pt tile (ADR-003).
-                        Color.clear
-                            .aspectRatio(Theme.photoAspect, contentMode: .fit)
-                            .overlay(
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                                    .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
-                            )
-                            .padding(.horizontal, Theme.screenMargin)
-                    }
-
-                    VStack(spacing: Theme.Space.snug) {
-                        Text("How was it?")
-                            .font(Theme.display(.title3))
-                            .foregroundStyle(Theme.ink)
-
-                        // A tap answers the question and moves on — the score is still editable
-                        // on the confirm step, so there is nothing to lock in here (UC-7).
-                        StarRatingView(rating: rating, onSelect: { score in
-                            rating = score
-                            step = .confirm
-                        }, size: 32)
-                    }
-                }
                 .padding(.horizontal, Theme.screenMargin)
-
-                // Weighted so the block sits a little above centre, where the eye lands,
-                // rather than marooned with equal air above and below.
-                Spacer(minLength: Theme.Space.regular)
-                Spacer(minLength: 0)
+                .padding(.bottom, Theme.Space.tight)
             }
         }
     }
@@ -277,7 +290,7 @@ struct AddMealView: View {
                     Image(systemName: "camera.fill")
                         .font(.system(size: 16, weight: .medium))
                         .frame(width: 68, height: 68)
-                        .foregroundStyle(Theme.jade)
+                        .foregroundStyle(Theme.bay)
                         .background(Theme.paperRaised, in: RoundedRectangle(cornerRadius: 8))
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
@@ -308,7 +321,7 @@ struct AddMealView: View {
                 HStack(spacing: Theme.Space.tight) {
                     Image(systemName: "mappin.and.ellipse")
                         .font(.system(size: 13))
-                        .foregroundStyle(Theme.lacquer)
+                        .foregroundStyle(Theme.pandan)
                     // The placeholder is a localized key; a chosen or suggested name is the
                     // provider's own text and stays verbatim.
                     if targetName.isEmpty {
@@ -375,7 +388,7 @@ struct AddMealView: View {
                 if editedEatenAt != nil {
                     Button("Use the photo's time") { editedEatenAt = nil }
                         .font(Theme.label(.footnote))
-                        .foregroundStyle(Theme.lacquer)
+                        .foregroundStyle(Theme.pandan)
                 }
             } label: {
                 HStack(spacing: Theme.Space.tight) {

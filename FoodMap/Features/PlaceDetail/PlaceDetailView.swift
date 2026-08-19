@@ -14,6 +14,15 @@ struct PlaceDetailView: View {
     @State private var isLoggingMeal = false
     @State private var fullScreenPhoto: Photo?
     @State private var confirmingDelete = false
+    /// The page's own title, once the cover has scrolled away.
+    @State private var isTitleStuck = false
+
+    /// The place's own ink: how it scored, averaged over its rated meals. Everything the page
+    /// rules and marks with follows it, so a five-star place reads differently from a two (ADR-005).
+    private var placeInk: Color {
+        guard let average = current.averageRating else { return Theme.pandan }
+        return Theme.ratingInk(Int(average.rounded()))
+    }
 
     /// Re-read from the model so the view updates after a meal is added or removed.
     private var current: Place {
@@ -23,18 +32,40 @@ struct PlaceDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Theme.Space.regular) {
-                heading
-                if current.kind == .wishlist {
-                    wishlistBody
-                } else {
-                    mealsBody
+                // Outside the padding: the cover is the width of the page, torn in rather than
+                // cropped into a card (ADR-005).
+                cover
+                VStack(alignment: .leading, spacing: Theme.Space.regular) {
+                    heading
+                    if current.kind == .wishlist {
+                        wishlistBody
+                    } else {
+                        mealsBody
+                    }
                 }
+                .padding()
             }
-            .padding()
         }
         .background(Theme.paper)
+        // Once the name has scrolled off the page it comes back in the bar, so the reader never
+        // loses track of which place they are in (design review, 19 Aug).
+        .onScrollGeometryChange(for: Bool.self) { geometry in
+            geometry.contentOffset.y > 140
+        } action: { _, isPast in
+            withAnimation(.easeOut(duration: 0.2)) { isTitleStuck = isPast }
+        }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                if isTitleStuck {
+                    Text(current.name)
+                        .font(Theme.display(.headline))
+                        .foregroundStyle(Theme.ink)
+                        .lineLimit(1)
+                }
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -72,6 +103,31 @@ struct PlaceDetailView: View {
         }
     }
 
+    /// The newest photograph of the newest meal: the page opens on the food, not on a header.
+    ///
+    /// A place with nothing photographed yet gets no cover — a placeholder rectangle would be a
+    /// promise the page cannot keep.
+    @ViewBuilder
+    private var cover: some View {
+        if let photo = current.mealsNewestFirst.first?.photos.first,
+           let image = PhotoImageLoader.shared.fullImage(named: photo.filename)
+            ?? PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
+            Color.clear
+                .aspectRatio(Theme.photoAspect, contentMode: .fit)
+                .overlay(
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                )
+                // Torn along the bottom, so the paper below is the same sheet the picture is on.
+                .clipShape(TornBottom())
+                .contentShape(Rectangle())
+                .onTapGesture { fullScreenPhoto = photo }
+                .accessibilityAddTraits(.isButton)
+                .accessibilityLabel("Photograph of this meal")
+        }
+    }
+
     private var heading: some View {
         VStack(alignment: .leading, spacing: Theme.Space.hairline) {
             Text(current.name)
@@ -85,7 +141,7 @@ struct PlaceDetailView: View {
             }
             .accessibilityIdentifier("placeKindLabel")
             .font(Theme.label(.subheadline))
-            .foregroundStyle(current.kind == .visited ? Theme.lacquer : Theme.jade)
+            .foregroundStyle(current.kind == .visited ? placeInk : Theme.bay)
 
             if let address = current.address {
                 Text(address)
@@ -93,10 +149,20 @@ struct PlaceDetailView: View {
                     .foregroundStyle(Theme.inkSecondary)
             }
 
-            Rectangle()
-                .fill(Theme.rule)
-                .frame(height: 1)
-                .padding(.top, Theme.Space.tight)
+            HStack(spacing: Theme.Space.tight) {
+                // A rated place rules its page in its own ink, and says the word out loud.
+                if let average = current.averageRating {
+                    RatingWord(score: Int(average.rounded()))
+                    Rectangle()
+                        .fill(placeInk.opacity(0.5))
+                        .frame(height: 2)
+                } else {
+                    Rectangle()
+                        .fill(Theme.rule)
+                        .frame(height: 1)
+                }
+            }
+            .padding(.top, Theme.Space.tight)
         }
     }
 
@@ -128,8 +194,8 @@ struct PlaceDetailView: View {
                     .padding(.vertical, Theme.Space.snug)
             }
             .buttonStyle(.borderedProminent)
-            .tint(Theme.lacquer)
-            .foregroundStyle(Theme.onLacquer)
+            .tint(Theme.pandan)
+            .foregroundStyle(Theme.onPandan)
             .accessibilityIdentifier("iAteHereButton")
         }
     }
@@ -144,9 +210,12 @@ struct PlaceDetailView: View {
                     .lineSpacing(Theme.minimumLineSpacing)
             }
 
-            ForEach(current.mealsNewestFirst) { meal in
+            ForEach(Array(current.mealsNewestFirst.enumerated()), id: \.element.id) { index, meal in
                 MealCard(
                     meal: meal,
+                    // The newest meal's first photograph is already the page's cover; showing it
+                    // again immediately below it read as a duplicate upload.
+                    showsHero: index > 0,
                     onTapPhoto: { fullScreenPhoto = $0 },
                     onRate: { score in rate(meal, score) },
                     onDelete: { delete(meal) }
@@ -161,7 +230,7 @@ struct PlaceDetailView: View {
                     .padding(.vertical, 12)
             }
             .buttonStyle(.bordered)
-            .tint(Theme.lacquer)
+            .tint(Theme.pandan)
         }
     }
 
@@ -194,6 +263,7 @@ struct PlaceDetailView: View {
 
 private struct MealCard: View {
     let meal: Meal
+    var showsHero: Bool = true
     let onTapPhoto: (Photo) -> Void
     let onRate: (Int) -> Void
     let onDelete: () -> Void
@@ -223,19 +293,21 @@ private struct MealCard: View {
         }
     }
 
+    private var mealInk: Color { Theme.ratingInk(meal.rating) }
+
     var body: some View {
         PaperCard {
             VStack(alignment: .leading, spacing: Theme.Space.snug) {
-                if let first = meal.photos.first {
+                if showsHero, let first = meal.photos.first {
                     // The dish is the point of the card, so the first photograph fills its
                     // width at one editorial ratio. A 132 pt square left two thirds of the card
                     // empty, which read as a loading failure rather than a layout (ADR-003).
                     hero(first)
                 }
-                if meal.photos.count > 1 {
+                if meal.photos.count > (showsHero ? 1 : 0) {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: Theme.Space.tight) {
-                            ForEach(meal.photos.dropFirst()) { photo in
+                            ForEach(showsHero ? Array(meal.photos.dropFirst()) : meal.photos) { photo in
                                 if let image = PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
                                     Image(uiImage: image)
                                         .resizable()
@@ -250,7 +322,7 @@ private struct MealCard: View {
                     }
                     // The strip may be one photo short of scrolling; without this it jitters
                     // against the card's inset.
-                    .scrollDisabled(meal.photos.count <= 4)
+                    .scrollDisabled(meal.photos.count <= (showsHero ? 5 : 4))
                 }
 
                 VStack(alignment: .leading, spacing: Theme.Space.hairline) {
@@ -265,7 +337,7 @@ private struct MealCard: View {
                             .foregroundStyle(Theme.inkSecondary)
                         Spacer(minLength: 0)
                         // Tapping a star here is the edit — there is no rating screen (FR-9.5).
-                        StarRatingView(rating: meal.rating, onSelect: onRate, size: 14)
+                        StarRatingView(rating: meal.rating, onSelect: onRate, size: 16)
                     }
                     if let note = meal.note, !note.isEmpty {
                         Text(note)
@@ -276,6 +348,15 @@ private struct MealCard: View {
                 }
             }
             .padding(Theme.contentInset)
+        }
+        // Each meal is scored on its own, so each card carries its own ink down its spine.
+        .overlay(alignment: .leading) {
+            if meal.rating != nil {
+                Rectangle()
+                    .fill(mealInk)
+                    .frame(width: 3)
+                    .clipShape(RoundedRectangle(cornerRadius: 2))
+            }
         }
         .contextMenu {
             Button(role: .destructive, action: onDelete) {

@@ -37,13 +37,13 @@ Two influences, deliberately combined:
 
 ## The inks
 
-Two accents already exist — lacquer red for places you have been, jade for places you want to try.
+Two accents already exist — pandan green for places you have been, bay blue for places you want to try.
 The art direction adds **indigo** as the printing ink: the second layer in a misregistration, the
 colour of ornaments, rules and stamp frames. Three inks is a zine; five is a mess.
 
 ## Dark mode is a night market
 
-Not a neutral inversion. A warm ink-brown ground rather than grey-black, lacquer and jade pushed
+Not a neutral inversion. A deep green-black ground rather than grey-black, pandan and bay pushed
 to neon, indigo deepened, photographs given a faint bloom so they read as lit rather than as
 cut-outs on black.
 
@@ -56,6 +56,8 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `PaperTexture` | One cached procedural noise tile, tiled under page grounds |
 | `InkLayer` | Reprints a shape 1.5 pt off in a second ink at low alpha — the misregistration |
 | `FoodMark` | The drawn glyph set that retires SF Symbols from primary chrome |
+| `RatingMood` | The ink ramp a score paints, from slate at one star to leaf green at five |
+| `DeckleEdge` | A deterministic torn-paper edge, used where a photograph meets the page |
 | `InkTabs` | Drawn filter tabs — small caps over a brushed underline — in place of the stock segmented control |
 | `StampShape` family | Perforated stamp (visited), torn ticket (wishlist), deterministic tilt per place |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |

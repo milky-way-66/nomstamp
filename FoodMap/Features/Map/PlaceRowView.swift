@@ -30,7 +30,7 @@ struct PlaceRowView: View {
                         }
                     }
                 }
-                .foregroundStyle(place.kind == .visited ? Theme.lacquer : Theme.jade)
+                .foregroundStyle(place.kind == .visited ? Theme.pandan : Theme.bay)
 
                 if let subtitle {
                     Text(subtitle)
@@ -65,14 +65,22 @@ struct PlaceRowView: View {
                 .scaledToFill()
                 .frame(width: 52, height: 52)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                .overlay(RoundedRectangle(cornerRadius: 8).strokeBorder(Theme.rule, lineWidth: 1))
+                // The same ink as the pin on the map, so a row and its pin are recognisably the
+                // same place at the same score (ADR-005).
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .strokeBorder(
+                            place.averageRating.map { Theme.ratingInk(Int($0.rounded())) } ?? Theme.rule,
+                            lineWidth: place.averageRating == nil ? 1 : 2
+                        )
+                )
         } else {
             RoundedRectangle(cornerRadius: 8)
-                .fill((place.kind == .visited ? Theme.lacquer : Theme.jade).opacity(0.14))
+                .fill((place.kind == .visited ? Theme.pandan : Theme.bay).opacity(0.14))
                 .frame(width: 52, height: 52)
                 .overlay(
                     Image(systemName: place.kind == .visited ? "fork.knife" : "bookmark.fill")
-                        .foregroundStyle(place.kind == .visited ? Theme.lacquer : Theme.jade)
+                        .foregroundStyle(place.kind == .visited ? Theme.pandan : Theme.bay)
                 )
         }
     }

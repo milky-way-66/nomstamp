@@ -49,9 +49,9 @@ why the numbers live in code rather than in this table alone.
 | `ink` | `#1F1A16` | Primary text | **15.6:1** |
 | `inkSecondary` | `#4A423A` | Secondary text | **8.4:1** |
 | `rule` | `#8F836E` | Hairlines, stamp perforations | **3.3:1** (component) |
-| `lacquer` | `#8C2A1B` | Visited places, primary action | **8.9:1** |
-| `jade` | `#1F5244` | Wishlist places | **8.2:1** |
-| `onLacquer` / `onJade` | `#FFFFFF` | Text on a filled control | **≥ 7.4:1** on the fill |
+| `pandan` | `#0B5E45` | Visited places, primary action | **8.6:1** |
+| `bay` | `#15496F` | Wishlist places | **9.4:1** |
+| `onPandan` / `onBay` | `#FFFFFF` | Text on a filled control | **≥ 7.4:1** on the fill |
 
 ### Dark — "night"
 | Token | Hex | Use | Contrast on night |
@@ -61,11 +61,14 @@ why the numbers live in code rather than in this table alone.
 | `ink` | `#F7F1E6` | Primary text | **16.3:1** |
 | `inkSecondary` | `#C3B8A6` | Secondary text | **9.8:1** |
 | `rule` | `#776B5F` | Hairlines | **3.6:1** (component) |
-| `lacquer` | `#F0937C` | Visited, primary action | **8.7:1** |
-| `jade` | `#8FCDB4` | Wishlist | **9.9:1** |
-| `onLacquer` / `onJade` | `#141110` | Text on a filled control | **≥ 8.2:1** on the fill |
+| `pandan` | `#74D3AA` | Visited, primary action | **10.5:1** |
+| `bay` | `#8CC6EC` | Wishlist | **10.3:1** |
+| `onPandan` / `onBay` | `#0D1513` | Text on a filled control | **≥ 8.2:1** on the fill |
 
-**Lacquer red and jade green** are drawn from Vietnamese lacquerware rather than picked at
+**Pandan green and bay blue** replace the original lacquer red and jade (19 Aug 2026): the warm
+scheme read as dusty rather than appetising, and the app is about fresh food. Green for a place you
+have eaten at, blue for water you have not crossed yet. They are drawn from the food and the coast
+rather than picked at
 random, which keeps the palette specific to the market without resorting to flag colours.
 
 ## Components
@@ -77,12 +80,12 @@ random, which keeps the palette specific to the market without resorting to flag
   │ ▓▓▓▓▓▓▓ │            │    ✦    │
   │ ▓photo▓ │            │         │
   │ ▓▓▓▓▓▓▓ │            └ ─ ─ ─ ─ ┘
-  └ ─ ─ ─ ─ ┘         outlined, jade, dashed
+  └ ─ ─ ─ ─ ┘         outlined, bay, dashed
  scalloped edge,
- lacquer border
+ pandan border
 ```
-- **Visited:** the photograph, in a scalloped "stamp" frame with a lacquer border.
-- **Wishlist:** an empty stamp outline in jade with a bookmark glyph — **shape and fill differ,
+- **Visited:** the photograph, in a scalloped "stamp" frame with a pandan border.
+- **Wishlist:** an empty stamp outline in bay with a bookmark glyph — **shape and fill differ,
   not only colour**, satisfying NFR-6.3 for colour-blind users.
 - **Cluster:** stacked stamp edges with a count in the corner, like layered postcards.
 
@@ -96,7 +99,7 @@ drop shadows — the language is printed paper, not floating glass.
 
 ### Chrome is iconographic, and it floats on the map
 The three actions — add a meal, save a place, near me — are circular icon buttons on the map
-itself, stacked above the sheet's peek detent, with the camera largest and in lacquer. Labels in
+itself, stacked above the sheet's peek detent, with the camera largest and in pandan. Labels in
 two languages of very different lengths made a labelled row wrap or clip on the smallest iPhone,
 and the three glyphs (camera, bookmark, location) are unambiguous. Every one carries a VoiceOver
 label, so nothing is lost to a screen reader.
@@ -128,7 +131,7 @@ only as a sliver, which is how the bias was found.
 
 ### Meal pins carry the photograph
 A visited place's pin is its own food photograph in a perforated stamp frame, with a badge
-counting repeat visits; a wishlist pin is a dashed jade frame around a bookmark. This is the
+counting repeat visits; a wishlist pin is a dashed bay frame around a bookmark. This is the
 signature element of the whole design, and it only reads as one because the pin is where the
 photo goes.
 

@@ -7,7 +7,7 @@ struct FoodMapApp: App {
     var body: some Scene {
         WindowGroup {
             MapScreen(dependencies: dependencies)
-                .tint(Theme.lacquer)
+                .tint(Theme.pandan)
                 .preferredColorScheme(nil) // follow the device; both themes are designed
         }
     }

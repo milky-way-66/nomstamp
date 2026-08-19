@@ -177,6 +177,23 @@
         }
       }
     },
+    "Back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại"
+          }
+        }
+      }
+    },
     "Back to the camera": {
       "extractionState": "manual",
       "localizations": {
@@ -201,6 +218,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Đã đến"
+          }
+        }
+      }
+    },
+    "Best in town": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Best in town"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngon nhất vùng"
           }
         }
       }
@@ -549,6 +583,23 @@
         }
       }
     },
+    "Good": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Good"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ngon"
+          }
+        }
+      }
+    },
     "How was it?": {
       "extractionState": "manual",
       "localizations": {
@@ -573,6 +624,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tôi đã ăn ở đây"
+          }
+        }
+      }
+    },
+    "It was fine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "It was fine"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cũng được"
           }
         }
       }
@@ -618,6 +686,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Máy này không có máy ảnh"
+          }
+        }
+      }
+    },
+    "Not for me": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not for me"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không hợp mình"
           }
         }
       }
@@ -797,6 +882,23 @@
         }
       }
     },
+    "Really good": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Really good"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rất ngon"
+          }
+        }
+      }
+    },
     "Remove this photo": {
       "extractionState": "manual",
       "localizations": {
@@ -927,6 +1029,23 @@
         }
       }
     },
+    "Skip": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bỏ qua"
+          }
+        }
+      }
+    },
     "Skip the rating": {
       "extractionState": "manual",
       "localizations": {
@@ -934,6 +1053,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bỏ qua chấm điểm"
+          }
+        }
+      }
+    },
+    "Step 2 of 3": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Step 2 of 3"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bước 2 / 3"
           }
         }
       }

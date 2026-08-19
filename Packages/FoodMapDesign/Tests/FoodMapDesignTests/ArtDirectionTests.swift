@@ -56,4 +56,42 @@ struct ArtDirectionTests {
         #expect(named.count >= 2, "indigo must be checked on both page grounds")
         // The contrast levels themselves are asserted for every pairing by TC-N-07.
     }
+
+    /// TC-N-16 — a tear is torn once. The edge has to be identical between redraws, stay inside
+    /// its bounds, and not collapse into a straight line.
+    @Test("TC-N-16 the deckle edge is deterministic, bounded and uneven")
+    func deckleEdgeIsDeterministicAndUneven() {
+        let edge = DeckleEdge.amplitudes(count: 24)
+
+        #expect(edge == DeckleEdge.amplitudes(count: 24))
+        #expect(edge.count == 24)
+        #expect(edge.allSatisfy { $0 >= DeckleEdge.minimumAmplitude && $0 <= DeckleEdge.maximumAmplitude })
+        #expect(Set(edge).count >= 12, "A tear with a handful of distinct depths reads as a pattern")
+        #expect(DeckleEdge.amplitudes(count: 24, seed: 99) != edge)
+        #expect(DeckleEdge.amplitudes(count: 0).isEmpty)
+    }
+
+    /// TC-N-17 — the rating ramp. An unrated meal has no mood (absence is not a low score), the
+    /// scale covers exactly 1...5, each step is a distinct ink, and every one of them is a pairing
+    /// the contrast test checks.
+    @Test("TC-N-17 the rating moods map the scale and are all contrast-checked")
+    func ratingMoodsCoverTheScale() {
+        #expect(RatingMood.mood(for: nil) == nil)
+        #expect(RatingMood.mood(for: 0) == nil)
+        #expect(RatingMood.mood(for: 6) == nil)
+        #expect(RatingMood.mood(for: 1) == .poor)
+        #expect(RatingMood.mood(for: 5) == .best)
+        #expect(RatingMood.allCases.count == 5)
+
+        let inks = RatingMood.allCases.map(\.ink)
+        #expect(Set(inks.map(\.light)).count == 5, "Each step of the ramp needs its own ink")
+        #expect(Set(inks.map(\.dark)).count == 5)
+
+        for mood in RatingMood.allCases {
+            #expect(
+                Palette.renderedPairings.contains { $0.foreground == mood.ink },
+                "The ink for \(mood) is drawn as text, so it has to be in the checked pairings"
+            )
+        }
+    }
 }

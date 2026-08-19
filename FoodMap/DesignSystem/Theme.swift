@@ -17,23 +17,24 @@ enum Theme {
     static let inkSecondary = dynamic(Palette.inkSecondary)
     static let rule = dynamic(Palette.rule)
 
-    /// Vietnamese lacquerware rather than an arbitrary red — used for places you have been.
-    static let lacquer = dynamic(Palette.lacquer)
-    /// Jade, for places you still want to try.
-    static let jade = dynamic(Palette.jade)
+    /// Pandan — the green everything sweet is cooked in. Places you have been, and the actions
+    /// that add to the map.
+    static let pandan = dynamic(Palette.pandan)
+    /// Bay, for places you still want to try.
+    static let bay = dynamic(Palette.bay)
     /// The printing ink (ADR-005): ornaments, stamp frames, and the second layer of a
     /// misregistration. Never an accent — it does not mean anything on its own.
     static let indigo = dynamic(Palette.indigo)
 
-    /// Text drawn *on* a lacquer or jade fill. Not white in dark mode: the dark-mode fills are
+    /// Text drawn *on* a pandan or bay fill. Not white in dark mode: the dark-mode fills are
     /// light, so white on them is 3.03:1, below AA (TC-N-07).
-    static let onLacquer = dynamic(Palette.onLacquer)
-    static let onJade = dynamic(Palette.onJade)
+    static let onPandan = dynamic(Palette.onPandan)
+    static let onBay = dynamic(Palette.onBay)
 
     static func accent(for kind: PlaceKindStyle) -> Color {
         switch kind {
-        case .visited: return lacquer
-        case .wishlist: return jade
+        case .visited: return pandan
+        case .wishlist: return bay
         }
     }
 
@@ -79,6 +80,13 @@ enum Theme {
     /// The ink the cartography is printed in. Warm mid-tan in daylight; at night a deep indigo,
     /// so the map reads as a night market rather than a switched-off screen.
     static let mapWash = dynamic(Palette.mapWash)
+
+    /// The ink a score paints (ADR-005, TC-N-17). An unrated meal takes the secondary ink: the
+    /// absence of a score is not a low score.
+    static func ratingInk(_ score: Int?) -> Color {
+        guard let mood = RatingMood.mood(for: score) else { return inkSecondary }
+        return dynamic(mood.ink)
+    }
 
     // MARK: - Spacing
     //

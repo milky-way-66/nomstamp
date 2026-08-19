@@ -12,11 +12,24 @@ struct StampPin: View {
 
     private var place: Place? { cluster.representative }
     private var isVisited: Bool { cluster.containsVisited }
+    /// How the place scored, rounded to the nearest star: the pin is printed in that ink, so the
+    /// map shows at a glance which places were worth it (ADR-005).
+    private var score: Int? { place?.averageRating.map { Int($0.rounded()) } }
+    private var scoreInk: Color { score == nil ? Theme.pandan : Theme.ratingInk(score) }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
             stamp
-            if cluster.count > 1 {
+            if score == 5, cluster.count == 1 {
+                // Five stars is rare enough to be worth a mark of its own.
+                FoodMark(glyph: .star)
+                    .fill(Theme.ratingInk(5))
+                    .frame(width: 13, height: 13)
+                    .padding(3)
+                    .background(Circle().fill(Theme.paperRaised))
+                    .offset(x: 5, y: -5)
+                    .accessibilityHidden(true)
+            } else if cluster.count > 1 {
                 badge("\(cluster.count)")
             } else if let count = place?.meals.count, count > 1 {
                 // Repeat visits collapse into one pin, so the count says there is more behind it.
@@ -40,21 +53,24 @@ struct StampPin: View {
                 .frame(width: size, height: size)
                 .clipShape(StampShape())
                 .overlay(StampShape().strokeBorder(Theme.paperRaised, lineWidth: 2.5))
+                // The frame carries the score: a plain paper edge for an unrated place, the
+                // rating's own ink around one that earned it.
+                .overlay(StampShape().strokeBorder(scoreInk.opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
                 // Two inks, one slightly off the other: the stamp's frame is printed, not drawn.
                 .misregistered(StampShape(), ink: Theme.indigo, opacity: 0.55)
                 .shadow(color: .black.opacity(0.22), radius: 2, y: 1)
         } else {
             StampShape()
-                .fill(isVisited ? Theme.lacquer.opacity(0.16) : Theme.paperRaised)
+                .fill(isVisited ? Theme.pandan.opacity(0.16) : Theme.paperRaised)
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
                     Image(systemName: isVisited ? "fork.knife" : "bookmark.fill")
                         .font(.system(size: size * 0.3, weight: .semibold))
-                        .foregroundStyle(isVisited ? Theme.lacquer : Theme.jade)
+                        .foregroundStyle(isVisited ? Theme.pandan : Theme.bay)
                 )
                 .overlay(
                     StampShape().strokeBorder(
-                        isVisited ? Theme.lacquer : Theme.jade,
+                        isVisited ? scoreInk : Theme.bay,
                         style: StrokeStyle(lineWidth: 2, dash: isVisited ? [] : [4, 3])
                     )
                 )

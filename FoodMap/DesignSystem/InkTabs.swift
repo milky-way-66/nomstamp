@@ -4,7 +4,9 @@ import SwiftUI
 ///
 /// The stock segmented control is the single most recognisable piece of iOS furniture, and it sat
 /// at the top of the sheet where the eye lands first — a grey plastic strip on a paper page. These
-/// are the same three choices: small-caps labels with a brushed rule under the chosen one.
+/// are the same three choices, set as small caps with a stroke drawn under the chosen one — the
+/// mark a reader makes in a book. A filled chip was tried first and read as a button pretending to
+/// be a tab: too big, too loud, and the only solid shape on a page made of type and paper.
 ///
 /// Behaviour is deliberately identical to a picker's: one choice at a time, each tab a button that
 /// reports itself selected to assistive technology (TC-N-15), full touch target, labels translated
@@ -20,38 +22,45 @@ struct InkTabs<Value: Hashable>: View {
     let tabs: [Tab]
     @Binding var selection: Value
 
-    @Namespace private var underline
+    @Namespace private var chip
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: Theme.Space.regular) {
             ForEach(tabs) { tab in
+                let isSelected = tab.value == selection
                 Button {
-                    withAnimation(.snappy(duration: 0.22)) { selection = tab.value }
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.78)) {
+                        selection = tab.value
+                    }
                 } label: {
                     Text(tab.title)
-                        .font(Theme.smallCaps(.subheadline))
-                        .foregroundStyle(tab.value == selection ? Theme.ink : Theme.inkSecondary)
-                        // The rule is an overlay on the word, not on the column, so it is as wide
-                        // as what it underlines — a stroke under a label, not a tab indicator.
+                        .font(Theme.smallCaps(.caption))
+                        .tracking(0.9)
+                        .foregroundStyle(isSelected ? Theme.ink : Theme.inkSecondary.opacity(0.7))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                        // The mark is an annotation on the word — a stroke someone drew under it —
+                        // not a container the word sits inside.
                         .overlay(alignment: .bottom) {
-                            if tab.value == selection {
+                            if isSelected {
                                 BrushRule()
-                                    .fill(Theme.lacquer)
-                                    .frame(height: 5)
-                                    .offset(y: 9)
-                                    // One rule that moves between tabs, rather than three that
-                                    // appear and vanish: the ink stays the same ink.
-                                    .matchedGeometryEffect(id: "rule", in: underline)
+                                    .fill(Theme.pandan)
+                                    .misregistered(BrushRule(), ink: Theme.indigo, opacity: 0.45)
+                                    .frame(height: 4)
+                                    .offset(y: 8)
+                                    .matchedGeometryEffect(id: "stroke", in: chip)
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .frame(height: Theme.minimumTouchTarget)
+                        .frame(height: 34)
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityAddTraits(tab.value == selection ? [.isButton, .isSelected] : .isButton)
+                .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
             }
         }
+        // Choosing a filter is a small physical act; the tick confirms it landed.
+        .sensoryFeedback(.selection, trigger: selection)
     }
 }
 
