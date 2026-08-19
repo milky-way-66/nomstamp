@@ -37,6 +37,10 @@ extension WeatherKitAdapter {
     ///
     /// The mapping is deliberately blunt: anything falling out of the sky that is not frozen is
     /// rain, anything that reduces visibility is fog, and anything violent is a storm.
+    ///
+    /// Wind is the awkward one, because it says nothing about the sky. `.windy` is strong enough
+    /// to read as weather and joins the storms; `.breezy` is not, and says so by falling through
+    /// to the daily rotation rather than claiming a sky nobody reported.
     static func condition(for condition: WeatherKit.WeatherCondition) -> FoodMapDomain.WeatherCondition {
         switch condition {
         case .clear, .mostlyClear, .hot:
@@ -49,6 +53,8 @@ extension WeatherKitAdapter {
             return .rain
         case .flurries, .snow, .heavySnow, .sunFlurries, .wintryMix, .blizzard, .blowingSnow, .frigid:
             return .snow
+        case .breezy:
+            return .unknown
         case .thunderstorms, .isolatedThunderstorms, .scatteredThunderstorms, .strongStorms,
              .hurricane, .tropicalStorm, .windy:
             return .storm

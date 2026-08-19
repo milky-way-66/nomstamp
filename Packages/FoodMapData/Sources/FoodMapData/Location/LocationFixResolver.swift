@@ -112,9 +112,12 @@ actor LocationFixResolver {
     }
 
     private func startTimeout() {
+        // The task inherits this actor's isolation, so `timedOut()` is already a call on the
+        // actor by the time the sleep returns — no `await`, and no hop that could let a second
+        // fix arrive between the two.
         Task { [timeout] in
             try? await Task.sleep(for: .seconds(timeout))
-            await self.timedOut()
+            self.timedOut()
         }
     }
 

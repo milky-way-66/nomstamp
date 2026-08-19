@@ -11,8 +11,9 @@ public enum WeatherCondition: String, Sendable, CaseIterable {
     case rain
     case snow
     case storm
-    /// Nothing could be read — no permission, no network, no entitlement. Not an error: the app
-    /// falls back to the daily rotation.
+    /// Nothing worth drawing — no permission, no network, no entitlement, or a forecast that
+    /// describes something other than the sky. Not an error: the app falls back to the daily
+    /// rotation.
     case unknown
 }
 
