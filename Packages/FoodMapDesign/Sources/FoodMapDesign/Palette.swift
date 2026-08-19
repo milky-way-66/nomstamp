@@ -15,8 +15,8 @@ public struct PaletteColor: Sendable, Equatable {
 /// inks are now the greens and blues of the food itself and of the water a market sits on: fresher,
 /// and with more energy at the same contrast levels.
 public enum Palette {
-    public static let paper = PaletteColor(light: 0xF1F5F1, dark: 0x0D1513)
-    public static let paperRaised = PaletteColor(light: 0xFBFDFA, dark: 0x17201E)
+    public static let paper = PaletteColor(light: 0xF1F5F1, dark: 0x0A1210)
+    public static let paperRaised = PaletteColor(light: 0xFBFDFA, dark: 0x14201C)
     public static let ink = PaletteColor(light: 0x14201C, dark: 0xEDF4F0)
     public static let inkSecondary = PaletteColor(light: 0x39463F, dark: 0xB2C2BA)
     /// Separators are interface components, so they aim at 3:1 rather than a text level.
@@ -24,22 +24,22 @@ public enum Palette {
 
     /// Pandan — the green of the leaf everything sweet is cooked in. Places you have been, and
     /// every action that adds to the map.
-    public static let pandan = PaletteColor(light: 0x0B5E45, dark: 0x74D3AA)
+    public static let pandan = PaletteColor(light: 0x0B5E45, dark: 0x5FE4A6)
     /// Bay water — places you still want to try: somewhere you have not been yet.
-    public static let bay = PaletteColor(light: 0x15496F, dark: 0x8CC6EC)
+    public static let bay = PaletteColor(light: 0x15496F, dark: 0x79CEFF)
     /// The printing ink (ADR-005): the second layer of a misregistration, and the colour of
     /// ornaments, stamp frames and rules. Dark mode deepens rather than brightens it, so it stays
     /// the ink and never competes with the two accents.
-    public static let indigo = PaletteColor(light: 0x1E3A4A, dark: 0x9FBECC)
+    public static let indigo = PaletteColor(light: 0x1E3A4A, dark: 0x86C6DE)
 
     /// The ink the map itself is printed in (ADR-005). Not a text colour: it is blended over the
     /// cartography, taking its hue and leaving its luminance, which is why it carries no pairing.
-    public static let mapWash = PaletteColor(light: 0x4E7C72, dark: 0x14313A)
+    public static let mapWash = PaletteColor(light: 0x4E7C72, dark: 0x0E2C36)
 
     /// What text on a pandan or bay fill must be. In dark mode those fills are light, so white
     /// text on them would fail AA — the ink of the surface reads instead.
-    public static let onPandan = PaletteColor(light: 0xFFFFFF, dark: 0x0D1513)
-    public static let onBay = PaletteColor(light: 0xFFFFFF, dark: 0x0D1513)
+    public static let onPandan = PaletteColor(light: 0xFFFFFF, dark: 0x0A1210)
+    public static let onBay = PaletteColor(light: 0xFFFFFF, dark: 0x0A1210)
 
     /// Every pairing the interface actually renders, with the level it has to reach.
     /// `Appearance` exists so a failure message says which mode broke.

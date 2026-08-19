@@ -156,6 +156,9 @@ private extension UIColor {
 /// The paper card used throughout: flat warmth, a hairline rule, no heavy shadow. The language
 /// is printed paper, not floating glass.
 struct PaperCard<Content: View>: View {
+    /// An ink for the card's own edge — a meal's score, say. A straight bar bolted to the side of
+    /// a rounded card fought its shape; the border itself carries the colour instead.
+    var edge: Color?
     @ViewBuilder var content: Content
 
     var body: some View {
@@ -164,7 +167,12 @@ struct PaperCard<Content: View>: View {
             .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                    .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
+                    .strokeBorder(edge ?? Theme.rule, lineWidth: edge == nil ? Theme.hairline : 1.6)
+            )
+            .misregistered(
+                RoundedRectangle(cornerRadius: Theme.cornerRadius),
+                ink: edge ?? Theme.indigo,
+                opacity: edge == nil ? 0.22 : 0.35
             )
     }
 }

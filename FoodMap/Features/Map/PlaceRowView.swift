@@ -1,54 +1,91 @@
 import SwiftUI
 import FoodMapDomain
+import FoodMapDesign
 
+/// One entry in the list, set as an index of places rather than as a table row (ADR-005).
+///
+/// The photograph is the same stamp the map draws, framed in the same rating ink, so a row and its
+/// pin are recognisably one place. The name leads in display type; everything the eye only needs
+/// second — the kind, the count, the score, the street — follows in small caps beneath it.
 struct PlaceRowView: View {
     let place: Place
     let distance: Double?
+    /// Position in the list, printed as an index number. Nil where the list is not an index — a
+    /// cluster's contents, or the near-me sheet, where distance is the ordering that matters.
+    var index: Int?
+
+    private var score: Int? { place.averageRating.map { Int($0.rounded()) } }
+    private var kindInk: Color { place.kind == .visited ? Theme.ratingInk(score) : Theme.bay }
 
     var body: some View {
-        HStack(spacing: Theme.Space.snug) {
-            thumbnail
-            VStack(alignment: .leading, spacing: Theme.Space.hairline) {
+        HStack(alignment: .top, spacing: Theme.Space.snug) {
+            stamp
+
+            VStack(alignment: .leading, spacing: 3) {
                 Text(place.name)
-                    .font(Theme.display(.headline))
+                    .font(Theme.display(.title3))
                     .foregroundStyle(Theme.ink)
                     .lineSpacing(Theme.minimumLineSpacing)
-                    .lineLimit(1)
+                    .lineLimit(2)
 
-                HStack(spacing: Theme.Space.tight) {
-                    Image(systemName: place.kind == .visited ? "fork.knife" : "bookmark.fill")
-                        .font(.caption2)
-                    Text(place.kind == .visited ? LocalizedStringKey("Been here") : LocalizedStringKey("Want to try"))
-                        .font(Theme.label(.caption))
-                    if place.kind == .visited {
-                        // A plural-aware key, so Vietnamese (which does not inflect) reads naturally too.
-                        Text("· \(place.meals.count) meals")
-                            .font(Theme.label(.caption))
-                            .foregroundStyle(Theme.inkSecondary)
-                        if let average = place.averageRating {
-                            AverageRatingView(average: average, count: place.ratedMealCount)
-                        }
-                    }
-                }
-                .foregroundStyle(place.kind == .visited ? Theme.pandan : Theme.bay)
+                meta
 
                 if let subtitle {
                     Text(subtitle)
                         .font(place.kind == .wishlist && place.note != nil
-                              ? Theme.displayItalic(.caption)
+                              ? Theme.displayItalic(.footnote)
                               : Theme.label(.caption))
                         .foregroundStyle(Theme.inkSecondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
+                        .padding(.top, 1)
                 }
             }
+
             Spacer(minLength: 4)
-            if let distance {
-                Text(DistanceFormatter.string(fromMeters: distance))
-                    .font(Theme.label(.caption).monospacedDigit())
-                    .foregroundStyle(Theme.inkSecondary)
+
+            VStack(alignment: .trailing, spacing: Theme.Space.hairline) {
+                if let index {
+                    // The list as a printed index: the number is set in the stamped face, quiet
+                    // enough to be furniture and useful enough to count by.
+                    Text(String(format: "%02d", index + 1))
+                        .font(Theme.stamped(.caption2))
+                        .foregroundStyle(Theme.inkSecondary.opacity(0.6))
+                }
+                if let distance {
+                    Text(DistanceFormatter.string(fromMeters: distance))
+                        .font(Theme.label(.caption).monospacedDigit())
+                        .foregroundStyle(Theme.inkSecondary)
+                }
             }
         }
-        .padding(.vertical, Theme.Space.hairline)
+        .padding(.vertical, Theme.Space.tight)
+    }
+
+    /// The kind, the count and the score on one small-caps line, in the place's own ink.
+    private var meta: some View {
+        HStack(spacing: Theme.Space.tight) {
+            HStack(spacing: 4) {
+                FoodMark(glyph: place.kind == .visited ? .bowl : .ribbon)
+                    .inked(1.4)
+                    .frame(width: 11, height: 11)
+                Text(place.kind == .visited ? LocalizedStringKey("Been here") : LocalizedStringKey("Want to try"))
+                    .font(Theme.smallCaps(.caption2))
+                    .tracking(0.7)
+            }
+            .foregroundStyle(kindInk)
+            .accessibilityElement(children: .combine)
+
+            if place.kind == .visited {
+                // A plural-aware key, so Vietnamese (which does not inflect) reads naturally too.
+                Text("· \(place.meals.count) meals")
+                    .font(Theme.smallCaps(.caption2))
+                    .tracking(0.7)
+                    .foregroundStyle(Theme.inkSecondary)
+                if let average = place.averageRating {
+                    AverageRatingView(average: average, count: place.ratedMealCount)
+                }
+            }
+        }
     }
 
     /// For a wishlist place the note is the reason it exists, so it outranks the address.
@@ -57,31 +94,36 @@ struct PlaceRowView: View {
         return place.address
     }
 
+    private static let stampSide: CGFloat = 62
+
     @ViewBuilder
-    private var thumbnail: some View {
+    private var stamp: some View {
         if let photo = place.pinPhoto, let image = PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 52, height: 52)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
-                // The same ink as the pin on the map, so a row and its pin are recognisably the
-                // same place at the same score (ADR-005).
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .strokeBorder(
-                            place.averageRating.map { Theme.ratingInk(Int($0.rounded())) } ?? Theme.rule,
-                            lineWidth: place.averageRating == nil ? 1 : 2
-                        )
-                )
+                .frame(width: Self.stampSide, height: Self.stampSide)
+                // The same perforated frame as the pin, in the same rating ink (ADR-005).
+                .clipShape(StampShape())
+                .overlay(StampShape().strokeBorder(Theme.paperRaised, lineWidth: 2))
+                .overlay(StampShape().strokeBorder(Theme.ratingInk(score).opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
+                .misregistered(StampShape(), ink: Theme.indigo, opacity: 0.4)
+                .photoGlow(7)
+                .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) / 2))
         } else {
-            RoundedRectangle(cornerRadius: 8)
-                .fill((place.kind == .visited ? Theme.pandan : Theme.bay).opacity(0.14))
-                .frame(width: 52, height: 52)
+            StampShape()
+                .fill(Theme.bay.opacity(0.12))
+                .frame(width: Self.stampSide, height: Self.stampSide)
                 .overlay(
-                    Image(systemName: place.kind == .visited ? "fork.knife" : "bookmark.fill")
-                        .foregroundStyle(place.kind == .visited ? Theme.pandan : Theme.bay)
+                    FoodMark(glyph: .ribbon)
+                        .inked(1.7)
+                        .foregroundStyle(Theme.bay)
+                        .padding(Self.stampSide * 0.3)
                 )
+                .overlay(
+                    StampShape().strokeBorder(Theme.bay.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
+                )
+                .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) / 2))
         }
     }
 }

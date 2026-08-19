@@ -41,13 +41,21 @@ extension XCUIElement {
 extension XCUIApplication {
     /// Drags the bottom sheet from its peek up to full height.
     ///
-    /// The grab has to start on the sheet's own grabber — a drag that starts on the map pans the
-    /// map, and one that starts inside the list scrolls the list. At the peek detent the grabber
-    /// sits just below the sheet's top edge, a little above the bottom sixth of the screen.
-    /// - Parameter from: where the grabber is, as a fraction down the screen. The default is the
-    ///   peek detent; a sheet already at its reading detent has its grabber around 0.46.
+    /// The grab has to start on something that is not scrollable: a drag beginning on the list
+    /// scrolls the list, and one beginning on the map pans the map. The search field is part of the
+    /// sheet's fixed header, so pulling from there always moves the sheet itself.
+    ///
+    /// - Parameter from: fallback grab point, as a fraction down the screen, for the screens with
+    ///   no search field (an empty map, or a place already open).
     func raiseSheet(from: CGFloat = 0.84) {
-        coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: from))
-            .press(forDuration: 0.2, thenDragTo: coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06)))
+        let target = coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06))
+        let field = textFields["placeSearchField"]
+        if field.waitForExistence(timeout: 5) {
+            field.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                .press(forDuration: 0.2, thenDragTo: target)
+        } else {
+            coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: from))
+                .press(forDuration: 0.2, thenDragTo: target)
+        }
     }
 }

@@ -47,8 +47,13 @@ struct MapScreen: View {
         }
         .onChange(of: selectedPinID) { _, id in
             guard let id, let cluster = model.clusters.first(where: { $0.id == id }) else { return }
-            selectedPinID = nil
             select(cluster)
+            // Cleared a beat later, not at once: the stamp's lift is the answer to the tap, and
+            // clearing the selection in the same frame swallows it.
+            Task {
+                try? await Task.sleep(for: .milliseconds(260))
+                if selectedPinID == id { selectedPinID = nil }
+            }
         }
         .task {
             dependencies.requestLocationPermission()
@@ -61,7 +66,7 @@ struct MapScreen: View {
             UserAnnotation()
             ForEach(model.clusters) { cluster in
                 Annotation("", coordinate: cluster.coordinate.clCoordinate, anchor: .center) {
-                    StampPin(cluster: cluster)
+                    StampPin(cluster: cluster, isSelected: selectedPinID == cluster.id)
                         .accessibilityLabel(StampPin(cluster: cluster).accessibilityDescription)
                         .accessibilityIdentifier("mapPin")
                 }

@@ -23,7 +23,7 @@ public enum RatingMood: Int, CaseIterable, Sendable {
         case .poor: return PaletteColor(light: 0x414C56, dark: 0xA8B4BD)
         case .fair: return PaletteColor(light: 0x2C5670, dark: 0x9CC0D6)
         case .good: return PaletteColor(light: 0x0F5A66, dark: 0x86CBD4)
-        case .great: return PaletteColor(light: 0x0B5E45, dark: 0x74D3AA)
+        case .great: return PaletteColor(light: 0x0B5E45, dark: 0x5FE4A6)
         case .best: return PaletteColor(light: 0x235509, dark: 0xA6D97A)
         }
     }

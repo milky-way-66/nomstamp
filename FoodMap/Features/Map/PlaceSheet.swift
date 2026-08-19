@@ -11,6 +11,9 @@ struct PlaceSheet: View {
     @Binding var detent: PresentationDetent
 
     @State private var path: [Place] = []
+    /// Ties a row's stamp to the cover it opens, so the photograph grows into the page rather than
+    /// the page sliding over it.
+    @Namespace private var opening
     @State private var searchText = ""
 
     /// Tall enough to read a place, short enough to leave its pin on screen.
@@ -40,7 +43,7 @@ struct PlaceSheet: View {
                 }
                 content
             }
-            .background(Theme.paper)
+            .paperGround()
             // A pin tap arrives here rather than on the map, because pushing belongs to this
             // sheet's navigation stack (FR-3.10).
             .onChange(of: model.placeToOpen) { _, place in
@@ -50,6 +53,9 @@ struct PlaceSheet: View {
             }
             .navigationDestination(for: Place.self) { place in
                 PlaceDetailView(place: place, dependencies: dependencies, model: model)
+                    // A pin tap has no source in this stack, and SwiftUI falls back to the ordinary
+                    // push for it — which is right: nothing on screen was zoomed from.
+                    .navigationTransition(.zoom(sourceID: place.id, in: opening))
             }
             // Opening a place moves the map to its pin and lifts the sheet to the middle
             // detent — not to full height, because the whole point is to see the pin the map
@@ -130,11 +136,27 @@ struct PlaceSheet: View {
             emptyState
         } else {
             List {
-                ForEach(shown) { place in
-                    NavigationLink(value: place) {
-                        PlaceRowView(place: place, distance: nil)
+                ForEach(Array(shown.enumerated()), id: \.element.id) { index, place in
+                    // A tap gesture rather than a NavigationLink or a Button: the link's disclosure
+                    // chevron is the one piece of stock furniture this index cannot absorb (the row
+                    // already carries its own number on that side), and a Button fires on a drag
+                    // that starts on the row — which is exactly how the sheet is pulled up.
+                    PlaceRowView(place: place, distance: nil, index: index)
+                        .matchedTransitionSource(id: place.id, in: opening)
+                        .contentShape(Rectangle())
+                        .onTapGesture { path.append(place) }
+                        .accessibilityElement(children: .combine)
+                        .accessibilityAddTraits(.isButton)
+                    .listRowBackground(Theme.paper)
+                    // The rules between entries are drawn, not stock separators, and stop short
+                    // of the margins the way a printed index does.
+                    .listRowSeparator(.hidden)
+                    .overlay(alignment: .bottom) {
+                        Rectangle()
+                            .fill(Theme.rule.opacity(0.35))
+                            .frame(height: Theme.hairline)
+                            .padding(.horizontal, Theme.screenMargin)
                     }
-                    .listRowBackground(Theme.paperRaised)
                 }
             }
             .listStyle(.plain)

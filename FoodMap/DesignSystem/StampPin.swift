@@ -9,6 +9,9 @@ import FoodMapDesign
 struct StampPin: View {
     let cluster: PlaceCluster
     var size: CGFloat = Theme.pinSize
+    /// Set while the map has this pin selected: the stamp lifts off the page for the moment
+    /// between the tap and the place opening, so the tap has somewhere to land.
+    var isSelected: Bool = false
 
     private var place: Place? { cluster.representative }
     private var isVisited: Bool { cluster.containsVisited }
@@ -40,6 +43,8 @@ struct StampPin: View {
         // Stuck down by hand, not laid out: the angle comes from the place's id, so it never
         // changes between redraws (ADR-005, TC-N-13).
         .rotationEffect(.degrees(StampTilt.degrees(for: cluster.id)))
+        .scaleEffect(isSelected ? 1.22 : 1)
+        .animation(.spring(response: 0.28, dampingFraction: 0.55), value: isSelected)
         // One element, no children: the label is applied by whoever makes this selectable.
         .accessibilityElement(children: .ignore)
     }
@@ -58,7 +63,7 @@ struct StampPin: View {
                 .overlay(StampShape().strokeBorder(scoreInk.opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
                 // Two inks, one slightly off the other: the stamp's frame is printed, not drawn.
                 .misregistered(StampShape(), ink: Theme.indigo, opacity: 0.55)
-                .shadow(color: .black.opacity(0.22), radius: 2, y: 1)
+                .photoGlow(6)
         } else {
             StampShape()
                 .fill(isVisited ? Theme.pandan.opacity(0.16) : Theme.paperRaised)

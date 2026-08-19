@@ -45,6 +45,15 @@ extension View {
         modifier(PaperGround(colour: colour))
     }
 
+    /// A photograph at night.
+    ///
+    /// Dark mode is a night market (ADR-005): the page is dark and the food is what is lit, so a
+    /// photograph carries a soft glow of its own rather than sitting in a hole. In light mode this
+    /// is a plain drop shadow, which is what paper does under a lamp.
+    func photoGlow(_ radius: CGFloat = 10) -> some View {
+        modifier(PhotoGlow(radius: radius))
+    }
+
     /// Reprints `shape` a fraction off in a second ink, the way a two-colour press misses.
     ///
     /// Applied to ornament and chrome, never to a photograph or a paragraph.
@@ -64,6 +73,7 @@ extension View {
 private struct PaperGround: ViewModifier {
     let colour: Color
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorScheme) private var scheme
 
     func body(content: Content) -> some View {
         content.background {
@@ -72,12 +82,28 @@ private struct PaperGround: ViewModifier {
                 if !reduceTransparency {
                     PaperGrain.image
                         .resizable(resizingMode: .tile)
-                        .opacity(Theme.grainOpacity)
-                        .blendMode(.multiply)
+                        // Ink darkens paper; at night the same tile has to lift the ground instead,
+                        // or the grain disappears into the dark and the page goes flat.
+                        .opacity(scheme == .dark ? Theme.grainOpacity * 0.5 : Theme.grainOpacity)
+                        .blendMode(scheme == .dark ? .screen : .multiply)
                         .allowsHitTesting(false)
                 }
             }
             .ignoresSafeArea()
         }
+    }
+}
+
+private struct PhotoGlow: ViewModifier {
+    let radius: CGFloat
+    @Environment(\.colorScheme) private var scheme
+
+    func body(content: Content) -> some View {
+        content
+            .shadow(
+                color: scheme == .dark ? Theme.pandan.opacity(0.28) : .black.opacity(0.2),
+                radius: radius,
+                y: scheme == .dark ? 0 : 2
+            )
     }
 }
