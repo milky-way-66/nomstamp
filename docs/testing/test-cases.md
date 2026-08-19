@@ -8,10 +8,12 @@ ImageIO) · `E` end-to-end (XCUITest, stubbed search + GPS + camera).
 
 Status: `spec` = specified, not yet automated · `auto` = an automated test exists and passes.
 
-**As of 2026-08-19:** 41 of the 43 unit cases are automated and green, implemented by 51 test
-functions (the extra ones are edge cases found while writing them). TC-X-02 and TC-X-03 stay
-specified because they test mappers, which live in the `FoodMapData` package not yet built.
-All 7 integration and 5 e2e cases remain specified.
+**As of 2026-08-19:** all 43 unit and all 7 integration cases are automated and green,
+implemented by 74 test functions (the extra ones are edge cases found while writing them).
+The 5 e2e cases remain specified, pending the app target.
+
+The two live-network tests are opt-in and skipped by default, so the suite is deterministic
+offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 
 ---
 
@@ -29,9 +31,9 @@ All 7 integration and 5 e2e cases remain specified.
 | TC-1-08 | U | E2 | Given photo storage throws, when logging, then the use case returns a failure and **no partial meal is persisted** | **auto** |
 | TC-1-09 | U | main | Given a meal with 3 photos, when logged, then all 3 are attached in the order supplied | **auto** |
 | TC-1-10 | U | 6a | Given the search port throws (no network), when the user logs a meal with a manual name and GPS, then the meal still saves | **auto** |
-| TC-1-11 | I | main | Given a real JPEG, when stored, then a full image and a thumbnail exist on disk and both decode | spec |
-| TC-1-12 | I | 1a | Given a JPEG with southern/western hemisphere GPS, when metadata is read, then latitude and longitude are correctly **negated** | spec |
-| TC-1-13 | I | 1a | Given a JPEG with no GPS block, when metadata is read, then coordinate is nil and no error is thrown | spec |
+| TC-1-11 | I | main | Given a real JPEG, when stored, then a full image and a thumbnail exist on disk and both decode | **auto** |
+| TC-1-12 | I | 1a | Given a JPEG with southern/western hemisphere GPS, when metadata is read, then latitude and longitude are correctly **negated** | **auto** |
+| TC-1-13 | I | 1a | Given a JPEG with no GPS block, when metadata is read, then coordinate is nil and no error is thrown | **auto** |
 | TC-1-14 | E | main | Given an empty app, when the user adds a meal from the fixture photo, then a pin appears on the map | spec |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
@@ -66,8 +68,8 @@ All 7 integration and 5 e2e cases remain specified.
 | TC-3-01 | U | step 2 | Given 3 meals on different dates, when the place is opened, then they are ordered newest first | **auto** |
 | TC-3-02 | U | 2a | Given a wishlist place, when opened, then it has no meals and its saved note is returned | **auto** |
 | TC-3-03 | U | step 3 | Given a meal is deleted, when the place is reloaded, then the meal is gone and other meals survive | **auto** |
-| TC-3-04 | I | step 3 | Given a meal with photos is deleted, then its image **files are removed from disk**, not just the rows | spec |
-| TC-3-05 | I | step 3 | Given a place is deleted, then its meals and all their photo files are removed | spec |
+| TC-3-04 | I | step 3 | Given a meal with photos is deleted, then its image **files are removed from disk**, not just the rows | **auto** |
+| TC-3-05 | I | step 3 | Given a place is deleted, then its meals and all their photo files are removed | **auto** |
 
 > TC-3-04 and TC-3-05 guard a leak that a database-only test cannot see: cascade delete
 > removes rows, but the JPEGs would sit on the user's device forever.
@@ -85,7 +87,7 @@ All 7 integration and 5 e2e cases remain specified.
 | TC-4-05 | U | 3a | Given a saved place whose name differs only by diacritics/case (`pho thin` vs `Phở Thìn`) at the same spot, then it is treated as the same place | **auto** |
 | TC-4-06 | U | 2a | Given the place cannot be found by search, when the user drops a pin and types a name, then a wishlist place is created there | **auto** |
 | TC-4-07 | U | step 4 | Given tags are supplied, when saved, then they are persisted and searchable | **auto** |
-| TC-4-08 | I | — | Given the Apple search adapter, when asked for nearby food places, then it uses a **category filter and never a free-text category word** (network-tagged, excluded by default) | spec |
+| TC-4-08 | I | — | Given the Apple search adapter, when asked for nearby food places, then it uses a **category filter and never a free-text category word** (network-tagged, excluded by default) | **auto** |
 | TC-4-09 | E | main | Given the user searches a name and saves it, then a wishlist pin appears and its note shows when opened | spec |
 
 > TC-4-05 is Vietnam-specific and easy to get wrong: users type without diacritics, so
@@ -133,9 +135,9 @@ All 7 integration and 5 e2e cases remain specified.
 | ID | Lvl | Concern | Given → When → Then | Status |
 |---|---|---|---|---|
 | TC-X-01 | U | Clock | Given a fixed clock at 2026-01-01, when a meal is logged with no EXIF, then `eatenAt` is exactly that instant | **auto** |
-| TC-X-02 | U | Mapper | Given a domain place, when mapped to persistence and back, then it is unchanged | spec |
-| TC-X-03 | U | Mapper | Given a meal with photos, when round-tripped, then photo order and metadata survive | spec |
-| TC-X-04 | I | Persistence | Given an in-memory container, when a place with meals and photos is saved and refetched, then the whole graph is intact | spec |
+| TC-X-02 | U | Mapper | Given a domain place, when mapped to persistence and back, then it is unchanged | **auto** |
+| TC-X-03 | U | Mapper | Given a meal with photos, when round-tripped, then photo order and metadata survive | **auto** |
+| TC-X-04 | I | Persistence | Given an in-memory container, when a place with meals and photos is saved and refetched, then the whole graph is intact | **auto** |
 | TC-X-05 | U | Formatting | Given 850 m → "850 m"; given 2,400 m → "2.4 km" | **auto** |
 | TC-X-06 | U | Distance | Given two known Hanoi coordinates, then the computed distance matches the known value within 1% | **auto** |
 
@@ -157,6 +159,6 @@ is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing |
 |---|---|---|---|
-| Unit | 43 | 41 | 41 |
-| Integration | 7 | 0 | — |
+| Unit | 43 | 43 | 43 |
+| Integration | 7 | 7 | 7 |
 | E2E | 5 | 0 | — |

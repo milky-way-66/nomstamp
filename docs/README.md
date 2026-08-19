@@ -35,6 +35,7 @@ the specification was wrong, the document is corrected first — never left to d
 | SRS | draft v0.1, 4 open questions |
 | Test cases | 46 specified (33 unit, 8 integration, 5 e2e) |
 | Domain code | **complete and green** — 51 tests, 0.8 s warm loop, no simulator |
+| Test totals | 74 automated, all passing; 5 e2e cases still specified only |
 | UI/UX | decided — travel-journal/editorial, ADR-003 |
-| Data adapters | not started — `FoodMapData` package is the next step |
+| Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | not started; earlier scaffold removed as it predated ADR-002/003 |
