@@ -37,6 +37,7 @@ docs → test cases → test code → implementation
 | Document | Purpose |
 |---|---|
 | [SRS](docs/requirements/srs.md) | What the product must do, and how well |
+| [Shipping](docs/deployment/testflight.md) | TestFlight and App Store release, step by step |
 | [Use cases](docs/requirements/use-cases.md) | How users achieve each goal, including failures |
 | [ADR-001](docs/architecture/adr-001-map-and-search.md) | Map provider, with measured Vietnam coverage |
 | [ADR-002](docs/architecture/adr-002-architecture-and-testing.md) | Clean architecture and test strategy |

@@ -17,6 +17,7 @@ try, both on a map. No account, no server; photos stay on the device.
 | 8 | [testing/test-cases.md](testing/test-cases.md) | What exactly is verified? |
 | 9 | [workflow.md](workflow.md) | In what order is anything allowed to be built? |
 | 10 | [traceability.md](traceability.md) | Which test proves which requirement? |
+| 11 | [deployment/testflight.md](deployment/testflight.md) | How does a build reach TestFlight, and then the store? |
 
 ## The rule
 
@@ -34,9 +35,9 @@ the specification was wrong, the document is corrected first — never left to d
 | User stories | 3 captured |
 | Use cases | UC-1 … UC-6 written |
 | SRS | draft v0.1, 2 open questions (OPEN-2, OPEN-3) |
-| Test cases | 93 specified (66 unit, 13 integration, 14 e2e) — all automated |
+| Test cases | 97 specified (70 unit, 13 integration, 14 e2e) — all automated |
 | Domain code | **complete and green** — 71 tests, sub-second warm loop, no simulator |
-| Test totals | 134 automated, all passing — 71 domain, 8 design, 38 data, 17 e2e journeys |
+| Test totals | 138 automated, all passing — 74 domain, 10 design, 38 data, 17 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
 | Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |

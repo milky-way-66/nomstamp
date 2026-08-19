@@ -55,21 +55,22 @@ Your Team ID is on <https://developer.apple.com/account> under *Membership detai
 Re-run `xcodegen generate` afterwards. **Every** change to `project.yml` needs it; the `.xcodeproj`
 is generated, so editing signing settings in Xcode's UI is thrown away on the next generate.
 
-### 0.2 There is no app icon
+### 0.2 The app icon
 
-`FoodMap/Resources` holds only `Localizable.xcstrings`. App Store Connect rejects any build
-without a 1024×1024 icon, and TestFlight testers would see a white square.
+Done — `FoodMap/Resources/Assets.xcassets/AppIcon.appiconset` holds a single 1024×1024 PNG, sRGB
+and **without an alpha channel** (App Store Connect rejects transparency). A single size is
+sufficient on iOS 18+; the system derives the rest.
 
-Create `FoodMap/Resources/Assets.xcassets` with an `AppIcon.appiconset`. A single-size icon is
-enough for iOS 18+: one 1024×1024 PNG, sRGB, **no alpha channel and no transparency** — Apple
-rejects both. Then add to the target:
+The icon is the app's own motif: a perforated stamp in paper white on pandan green, with the
+printing ink a shade off register behind it and the fork-and-knife glyph a visited pin carries
+(ADR-005). It is generated, not hand-drawn, so the palette can never drift from `Palette.swift`:
 
-```yaml
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+```bash
+swift Tools/MakeAppIcon.swift FoodMap/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
 ```
 
-and `xcodegen generate` again. The icon should come from the same art direction as the rest of the
-app (ADR-005) — the stamp-pin motif is the obvious candidate.
+`ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon` is already set on the target. If you replace the
+icon by hand, keep it square, opaque, and free of rounded corners — iOS masks it itself.
 
 ### 0.3 Decide the version and build number
 

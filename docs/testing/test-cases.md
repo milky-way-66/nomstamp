@@ -197,6 +197,10 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-14 | U | ADR-005 | Given the paper grain tile, then it is deterministic for a seed, non-uniform, and its mean ink stays inside the documented bounds | **auto** |
 | TC-N-16 | U | ADR-005 | Given a deckle edge of n points, then the amplitudes are deterministic for a seed, within bounds, and not all equal | **auto** |
 | TC-N-17 | U | ADR-005 | Given a score, then its mood is defined only for 1...5, each step has its own ink, and every ink is a contrast-checked pairing | **auto** |
+| TC-N-18 | U | ADR-006 | Given every skin, then all of its rendered pairings meet their contrast level in both appearances | **auto** |
+| TC-N-19 | U | ADR-006 | Given a weather condition and whether it is daylight, then the documented skin and effect are chosen | **auto** |
+| TC-N-20 | U | ADR-006 | Given no weather reading, then the skin comes from the date, is stable within a day, changes the next day, and covers every skin | **auto** |
+| TC-N-21 | U | ADR-006 | Given daylight or its absence, then the appearance is light or dark accordingly | **auto** |
 | TC-N-15 | E | ADR-005 | Given the drawn filter tabs, when one is chosen, then it reports itself selected to assistive technology and the list shows only that kind | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
@@ -218,7 +222,7 @@ the omission is visible rather than forgotten.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 93 test cases** — 66 unit, 13 integration, 14 e2e. The shape is deliberate: the pyramid
+**Total: 97 test cases** — 70 unit, 13 integration, 14 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |

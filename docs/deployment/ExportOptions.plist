@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- App Store Connect distribution. See docs/deployment/testflight.md §3.2. -->
+    <key>method</key>
+    <string>app-store-connect</string>
+    <key>destination</key>
+    <string>export</string>
+    <key>signingStyle</key>
+    <string>automatic</string>
+    <!-- Your ten-character Team ID; the same value as DEVELOPMENT_TEAM in project.yml. -->
+    <key>teamID</key>
+    <string>ABCDE12345</string>
+    <!-- Readable crash reports are worth the upload. -->
+    <key>uploadSymbols</key>
+    <true/>
+    <!-- Version numbers stay under project.yml's control, not App Store Connect's. -->
+    <key>manageAppVersionAndBuildNumber</key>
+    <false/>
+</dict>
+</plist>
