@@ -59,12 +59,34 @@ launch was rejected — an app that changes colour while you look at it reads as
 photograph, a form or a paragraph (ADR-005 rules 1 and 2) — and they are suppressed under Reduce
 Transparency.
 
+**Two accents are told apart by hue, not by lightness.** Both have to clear AAA against the same
+paper, which forces their luminances close together, so a contrast test between them would only be
+re-asserting that. TC-N-18 measures hue separation instead and requires 40°. This is a legibility
+floor, not the distinction itself: pins are still told apart by shape and glyph first (NFR-6.3).
+
+**The skin name crosses the package boundary as a string.** `Skin` exists twice — in the domain,
+which decides which printing the day calls for, and in `FoodMapDesign`, which owns what a printing
+looks like. Neither package depends on the other and neither should, so the composition root maps
+one to the other in a single exhaustive switch; a case added on one side and not the other fails to
+compile there.
+
+**The skin is a stored value on `Theme`, and the root rebuilds when it changes.** Every view that
+draws chrome reads these tokens, and threading a skin through all of them would be a large change
+for something that is, by construction, identical everywhere on screen. `AppearanceStore` writes it
+and the root view carries `.id(skin)`, so a new printing rebuilds the tree — affordable because
+re-inking happens roughly once a day, and on a change of sky or scene phase.
+
 **Contrast is checked per skin.** `Palette.renderedPairings(for:)` is a function of the skin, and
 TC-N-18 walks every skin in both appearances. A skin that cannot meet the levels is not a skin.
 
 **Weather comes from WeatherKit, behind a port.** `WeatherPort` lives in the domain; the adapter in
 `FoodMapData` wraps WeatherKit and returns nil for anything it cannot answer — no permission, no
 entitlement, no network, a throw. Nil is not an error state in the interface: it is the rotation.
+
+**Two launch arguments make it photographable.** `-ForceSkin <name>` pins the printing and
+`-ForceNight` pins the night market. The second exists because the appearance now follows the sun
+rather than the system setting, so flipping the simulator to dark no longer reaches the app, and
+the night market would otherwise only be capturable after sunset.
 
 ## Consequences
 
