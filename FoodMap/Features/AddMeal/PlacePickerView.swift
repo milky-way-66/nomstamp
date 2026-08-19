@@ -103,7 +103,7 @@ struct PlacePickerView: View {
             onPick(.newPlace(PlaceDraft(candidate: candidate)), candidate.name)
             dismiss()
         } label: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: Theme.Space.hairline) {
                 Text(candidate.name)
                     .font(Theme.display(.subheadline))
                     .foregroundStyle(Theme.ink)

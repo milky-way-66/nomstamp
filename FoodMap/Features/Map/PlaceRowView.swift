@@ -6,16 +6,16 @@ struct PlaceRowView: View {
     let distance: Double?
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Theme.Space.snug) {
             thumbnail
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: Theme.Space.hairline) {
                 Text(place.name)
                     .font(Theme.display(.headline))
                     .foregroundStyle(Theme.ink)
                     .lineSpacing(Theme.minimumLineSpacing)
                     .lineLimit(1)
 
-                HStack(spacing: 5) {
+                HStack(spacing: Theme.Space.tight) {
                     Image(systemName: place.kind == .visited ? "fork.knife" : "bookmark.fill")
                         .font(.caption2)
                     Text(place.kind == .visited ? LocalizedStringKey("Been here") : LocalizedStringKey("Want to try"))
@@ -48,7 +48,7 @@ struct PlaceRowView: View {
                     .foregroundStyle(Theme.inkSecondary)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, Theme.Space.hairline)
     }
 
     /// For a wishlist place the note is the reason it exists, so it outranks the address.

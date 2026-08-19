@@ -22,7 +22,7 @@ struct SavePlaceView: View {
             Form {
                 Section("Which place?") {
                     if let selected {
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: Theme.Space.hairline) {
                             Text(selected.name)
                                 .font(Theme.display(.headline))
                                 .lineSpacing(Theme.minimumLineSpacing)
@@ -43,7 +43,7 @@ struct SavePlaceView: View {
                                 // Save button with it — hidden.
                                 isSearchPresented = false
                             } label: {
-                                VStack(alignment: .leading, spacing: 2) {
+                                VStack(alignment: .leading, spacing: Theme.Space.hairline) {
                                     Text(candidate.name)
                                         .font(Theme.display(.subheadline))
                                         .foregroundStyle(Theme.ink)

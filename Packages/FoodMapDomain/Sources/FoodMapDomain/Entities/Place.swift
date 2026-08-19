@@ -10,7 +10,7 @@ public enum PlaceKind: String, Equatable, Sendable {
 /// `kind` is derived from `meals`, never stored. Logging a meal at a saved place therefore
 /// flips the pin with no flag to keep in sync (UC-6), and deleting the last meal reverts it
 /// (TC-6-04).
-public struct Place: Identifiable, Equatable, Sendable {
+public struct Place: Identifiable, Equatable, Hashable, Sendable {
     public let id: UUID
     public var name: String
     public var address: String?
@@ -51,6 +51,12 @@ public struct Place: Identifiable, Equatable, Sendable {
 
     /// The average of the meals that carry a rating. Unrated meals are ignored rather than
     /// counted as zero, and a place with none has no average at all (FR-9.4).
+    /// Identity is the id; the rest of the graph does not need to be `Hashable` for a place
+    /// to be a navigation value.
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
     public var averageRating: Double? {
         let scores = meals.compactMap(\.rating)
         guard !scores.isEmpty else { return nil }

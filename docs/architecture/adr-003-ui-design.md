@@ -94,11 +94,35 @@ full (place detail). The map is never fully covered at the peek and half detents
 `paperRaised`, 1 pt `rule` border, 12 pt corner radius, and a very soft shadow. No heavy
 drop shadows — the language is printed paper, not floating glass.
 
-### Chrome is iconographic
-The sheet's three actions — add a meal, save a place, near me — are icons on a 44 pt target,
-not labelled buttons. Labels in two languages of very different lengths made the row wrap or
-clip on the smallest iPhone, and the three glyphs (camera, bookmark, location) are unambiguous.
-Every one carries a VoiceOver label, so nothing is lost to a screen reader.
+### Chrome is iconographic, and it floats on the map
+The three actions — add a meal, save a place, near me — are circular icon buttons on the map
+itself, stacked above the sheet's peek detent, with the camera largest and in lacquer. Labels in
+two languages of very different lengths made a labelled row wrap or clip on the smallest iPhone,
+and the three glyphs (camera, bookmark, location) are unambiguous. Every one carries a VoiceOver
+label, so nothing is lost to a screen reader.
+
+Putting them on the map rather than in the sheet means the sheet's smallest detent only has to
+clear the search field, and the actions stay reachable at every detent — including when the
+sheet is pulled up over them, where they are simply out of the way.
+
+Two things this cost, both worth recording:
+
+- The map cannot present a sheet while it is presenting the bottom sheet, so the action's
+  destination is presented *from the sheet*, driven by `MapViewModel.action`.
+- `presentationBackgroundInteraction` must name a detent the sheet actually has. It read
+  `upThrough: .medium` while the detents were `.height` and `.fraction`, which silently
+  disabled background interaction and left the floating buttons unreachable behind the sheet.
+
+### The sheet leads with a search field
+At the peek detent the sheet is a search input and the first row or two of results. Opening a
+place raises the sheet to full height — a pushed screen behind a 104 pt peek is a title and
+nothing else.
+
+### Spacing is a scale, not a decision per view
+`Theme.Space` is a 4 pt scale — 4, 8, 12, 16, 24, 32 — with `screenMargin` (16) for every screen
+edge and `contentInset` (12) inside cards and fields, one step tighter so nested edges do not
+read as doubled. Before it, views carried 6, 9, 10, 14, 18, 22 and 26 pt paddings chosen one at
+a time, and nothing lined up across screens.
 
 ## Motion
 Restrained: 200–250 ms ease-out for sheet and pin transitions. One signature moment — a newly

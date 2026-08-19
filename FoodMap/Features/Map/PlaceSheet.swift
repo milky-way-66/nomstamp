@@ -1,17 +1,17 @@
 import SwiftUI
 import FoodMapDomain
 
-/// The bottom sheet: the app's only navigation surface. At its smallest detent it shows just
-/// the two actions; pulled up it becomes the full list.
+/// The bottom sheet: the app's only navigation surface. At its smallest detent it shows the
+/// search field alone; pulled up it becomes the full list. The actions live on the map itself
+/// (`MapScreen`), so this sheet never has to be tall enough to hold a row of buttons.
 struct PlaceSheet: View {
     let dependencies: AppDependencies
     let model: MapViewModel
     let onFocus: (Place) -> Void
+    @Binding var detent: PresentationDetent
 
+    @State private var path: [Place] = []
     @State private var searchText = ""
-    @State private var isAddingMeal = false
-    @State private var isSavingPlace = false
-    @State private var isShowingNearMe = false
 
     private var shown: [Place] {
         model.allPlaces
@@ -26,24 +26,34 @@ struct PlaceSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(spacing: 0) {
-                actions
                 if !model.isEmpty { searchField }
                 content
             }
             .background(Theme.paper)
+            .navigationDestination(for: Place.self) { place in
+                PlaceDetailView(place: place, dependencies: dependencies, model: model)
+            }
+            // A pushed screen at the peek detent is a title behind a map. Opening a place
+            // raises the sheet; going back returns it to the peek.
+            .onChange(of: path) { _, stack in
+                withAnimation { detent = stack.isEmpty ? .height(MapScreen.peekHeight) : .large }
+            }
             .navigationBarHidden(true)
-            .sheet(isPresented: $isAddingMeal) {
-                AddMealView(dependencies: dependencies, preselected: nil) { model.refresh() }
-            }
-            .sheet(isPresented: $isSavingPlace) {
-                SavePlaceView(dependencies: dependencies) { model.refresh() }
-            }
-            .sheet(isPresented: $isShowingNearMe) {
-                NearMeView(dependencies: dependencies) { place in
-                    isShowingNearMe = false
-                    onFocus(place)
+            // The map's floating buttons set `model.action`; the presentation happens here,
+            // because the map is already presenting this sheet and cannot present another.
+            .sheet(item: Binding(get: { model.action }, set: { model.action = $0 })) { action in
+                switch action {
+                case .addMeal:
+                    AddMealView(dependencies: dependencies, preselected: nil) { model.refresh() }
+                case .savePlace:
+                    SavePlaceView(dependencies: dependencies) { model.refresh() }
+                case .nearMe:
+                    NearMeView(dependencies: dependencies) { place in
+                        model.action = nil
+                        onFocus(place)
+                    }
                 }
             }
         }
@@ -52,12 +62,14 @@ struct PlaceSheet: View {
     /// An explicit field rather than `.searchable`: inside a sheet with a hidden navigation
     /// bar, the system search field lands on top of the first list row.
     private var searchField: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Theme.Space.tight) {
             Image(systemName: "magnifyingglass")
+                .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(Theme.inkSecondary)
             TextField("Search your places", text: $searchText)
                 .accessibilityIdentifier("placeSearchField")
                 .font(Theme.label(.body))
+                .submitLabel(.search)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
             if !searchText.isEmpty {
@@ -65,50 +77,20 @@ struct PlaceSheet: View {
                     searchText = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 15))
                         .foregroundStyle(Theme.inkSecondary)
                 }
+                .buttonStyle(.plain)
                 .accessibilityLabel("Clear search")
             }
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
-        .background(Theme.paperRaised, in: RoundedRectangle(cornerRadius: 10))
-        .overlay(
-            RoundedRectangle(cornerRadius: 10).strokeBorder(Theme.rule, lineWidth: Theme.hairline)
-        )
-        .padding(.horizontal)
-        .padding(.bottom, 10)
-    }
-
-    /// Icons rather than labels, at the minimum touch target and no larger: this row sits on
-    /// top of the map at every detent, so it has to earn its height (NFR-4.1, NFR-6.1).
-    private var actions: some View {
-        HStack(spacing: 10) {
-            ActionButton(
-                systemImage: "camera.fill",
-                label: "Add meal",
-                identifier: "addMealButton",
-                style: .primary
-            ) { isAddingMeal = true }
-
-            ActionButton(
-                systemImage: "bookmark",
-                label: "Save a place",
-                identifier: "savePlaceButton",
-                style: .secondary
-            ) { isSavingPlace = true }
-
-            ActionButton(
-                systemImage: "location.magnifyingglass",
-                label: "Saved places near me",
-                identifier: "nearMeButton",
-                style: .secondary
-            ) { isShowingNearMe = true }
-            .disabled(model.isEmpty)
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 6)
-        .padding(.bottom, 10)
+        .padding(.horizontal, Theme.contentInset)
+        .frame(height: Theme.minimumTouchTarget)
+        .background(Theme.paperRaised, in: Capsule())
+        .overlay(Capsule().strokeBorder(Theme.rule, lineWidth: Theme.hairline))
+        .padding(.horizontal, Theme.screenMargin)
+        .padding(.top, Theme.Space.hairline)
+        .padding(.bottom, Theme.Space.snug)
     }
 
     @ViewBuilder
@@ -118,9 +100,7 @@ struct PlaceSheet: View {
         } else {
             List {
                 ForEach(shown) { place in
-                    NavigationLink {
-                        PlaceDetailView(place: place, dependencies: dependencies, model: model)
-                    } label: {
+                    NavigationLink(value: place) {
                         PlaceRowView(place: place, distance: nil)
                     }
                     .listRowBackground(Theme.paperRaised)
@@ -144,7 +124,7 @@ struct PlaceSheet: View {
     /// broken.
     private var emptyState: some View {
         ScrollView {
-            VStack(spacing: 10) {
+            VStack(spacing: Theme.Space.snug) {
                 Image(systemName: "fork.knife.circle")
                     .font(.system(size: 30))
                     .foregroundStyle(Theme.lacquer)
@@ -160,8 +140,8 @@ struct PlaceSheet: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 18)
+            .padding(.horizontal, Theme.Space.loose)
+            .padding(.vertical, Theme.Space.loose)
         }
         .scrollBounceBehavior(.basedOnSize)
     }

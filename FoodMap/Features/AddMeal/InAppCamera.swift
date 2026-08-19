@@ -179,7 +179,7 @@ struct InAppCameraView<Auxiliary: View>: View {
                 .accessibilityIdentifier("closeCameraButton")
                 Spacer()
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, Theme.screenMargin)
 
             Spacer()
 
@@ -205,8 +205,8 @@ struct InAppCameraView<Auxiliary: View>: View {
                 }
             }
             .frame(height: 64)
-            .padding(.horizontal, 22)
-            .padding(.bottom, 26)
+            .padding(.horizontal, Theme.screenMargin)
+            .padding(.bottom, Theme.Space.loose)
         }
     }
 
@@ -215,7 +215,7 @@ struct InAppCameraView<Auxiliary: View>: View {
         detail: LocalizedStringKey,
         systemImage: String
     ) -> some View {
-        VStack(spacing: 10) {
+        VStack(spacing: Theme.Space.snug) {
             Image(systemName: systemImage)
                 .font(.system(size: 32))
             Text(title)
@@ -223,7 +223,7 @@ struct InAppCameraView<Auxiliary: View>: View {
             Text(detail)
                 .font(Theme.label(.footnote))
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 40)
+                .padding(.horizontal, Theme.Space.generous)
         }
         .foregroundStyle(.white)
     }

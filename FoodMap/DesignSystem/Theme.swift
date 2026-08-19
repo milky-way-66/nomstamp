@@ -55,6 +55,33 @@ enum Theme {
     /// never drops below this.
     static let minimumLineSpacing: CGFloat = 4
 
+    // MARK: - Spacing
+    //
+    // One 4 pt scale, used everywhere. Before this, views carried 6, 9, 10, 14, 18, 22 and 26
+    // pt paddings picked one at a time, and nothing lined up across screens.
+
+    enum Space {
+        /// 4 — between a glyph and its own label.
+        static let hairline: CGFloat = 4
+        /// 8 — between items inside one component.
+        static let tight: CGFloat = 8
+        /// 12 — between components in a group.
+        static let snug: CGFloat = 12
+        /// 16 — the screen margin, and the gap between groups.
+        static let regular: CGFloat = 16
+        /// 24 — between unrelated blocks.
+        static let loose: CGFloat = 24
+        /// 32 — around a lone piece of content, such as an empty state.
+        static let generous: CGFloat = 32
+    }
+
+    /// Every screen edge is this far from its content, so blocks line up across screens.
+    static let screenMargin: CGFloat = Space.regular
+
+    /// Padding inside a card or a field, which is one step tighter than the screen margin so
+    /// nested edges do not read as doubled.
+    static let contentInset: CGFloat = Space.snug
+
     // MARK: - Metrics
 
     static let cornerRadius: CGFloat = 12
@@ -115,38 +142,54 @@ struct SectionHeading: View {
     }
 }
 
-/// The sheet's action row: one icon, one job, always at the minimum touch target.
-struct ActionButton: View {
+
+/// A round action that floats on the map (ADR-003).
+///
+/// The map is the app, so its actions belong on it rather than in a row the sheet has to be
+/// tall enough to show. Circular and shadowed to read as chrome above the cartography, at the
+/// minimum touch target or larger (NFR-6.1).
+struct FloatingActionButton: View {
     enum Style { case primary, secondary }
 
     let systemImage: String
     let label: LocalizedStringKey
     let identifier: String
     var style: Style = .secondary
+
+    @Environment(\.isEnabled) private var isEnabled
     let action: () -> Void
+
+    private var diameter: CGFloat {
+        style == .primary ? 58 : Theme.minimumTouchTarget
+    }
 
     var body: some View {
         Button(action: action) {
             Image(systemName: systemImage)
-                .font(.system(size: 17, weight: .medium))
-                .frame(maxWidth: .infinity)
-                .frame(height: Theme.minimumTouchTarget)
-                .foregroundStyle(style == .primary ? Theme.onLacquer : Theme.jade)
-                .background(
-                    RoundedRectangle(cornerRadius: 11)
-                        .fill(style == .primary ? Theme.lacquer : Theme.paperRaised)
-                )
+                .font(.system(size: style == .primary ? 22 : 17, weight: .medium))
+                .foregroundStyle(foreground)
+                .frame(width: diameter, height: diameter)
+                .background(Circle().fill(background))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 11)
-                        .strokeBorder(
-                            style == .primary ? Color.clear : Theme.rule,
-                            lineWidth: Theme.hairline
-                        )
+                    Circle().strokeBorder(
+                        style == .primary ? Color.clear : Theme.rule,
+                        lineWidth: Theme.hairline
+                    )
                 )
+                .shadow(color: .black.opacity(0.18), radius: 6, y: 2)
         }
         .buttonStyle(.plain)
+        .opacity(isEnabled ? 1 : 0.45)
         // The label is what VoiceOver reads and what the journeys look for (TC-N-11).
         .accessibilityLabel(label)
         .accessibilityIdentifier(identifier)
+    }
+
+    private var foreground: Color {
+        style == .primary ? Theme.onLacquer : Theme.jade
+    }
+
+    private var background: Color {
+        style == .primary ? Theme.lacquer : Theme.paperRaised
     }
 }

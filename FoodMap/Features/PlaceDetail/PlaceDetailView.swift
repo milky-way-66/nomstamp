@@ -22,7 +22,7 @@ struct PlaceDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: Theme.Space.regular) {
                 heading
                 if current.kind == .wishlist {
                     wishlistBody
@@ -73,13 +73,13 @@ struct PlaceDetailView: View {
     }
 
     private var heading: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Theme.Space.hairline) {
             Text(current.name)
                 .font(Theme.display(.largeTitle))
                 .foregroundStyle(Theme.ink)
                 .lineSpacing(Theme.minimumLineSpacing)
 
-            HStack(spacing: 6) {
+            HStack(spacing: Theme.Space.tight) {
                 Image(systemName: current.kind == .visited ? "fork.knife" : "bookmark.fill")
                 Text(current.kind == .visited ? LocalizedStringKey("Been here") : LocalizedStringKey("Want to try"))
             }
@@ -96,12 +96,12 @@ struct PlaceDetailView: View {
             Rectangle()
                 .fill(Theme.rule)
                 .frame(height: 1)
-                .padding(.top, 6)
+                .padding(.top, Theme.Space.tight)
         }
     }
 
     private var wishlistBody: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: Theme.Space.snug) {
             if let note = current.note, !note.isEmpty {
                 PaperCard {
                     Text("“\(note)”")
@@ -125,7 +125,7 @@ struct PlaceDetailView: View {
             } label: {
                 Label("I ate here", systemImage: "camera.fill")
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
+                    .padding(.vertical, Theme.Space.snug)
             }
             .buttonStyle(.borderedProminent)
             .tint(Theme.lacquer)
@@ -135,7 +135,7 @@ struct PlaceDetailView: View {
     }
 
     private var mealsBody: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: Theme.Space.regular) {
             if let note = current.note, !note.isEmpty {
                 // The original recommendation survives the transition to visited (FR-8.2).
                 Text("“\(note)”")
@@ -200,10 +200,10 @@ private struct MealCard: View {
 
     var body: some View {
         PaperCard {
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .leading, spacing: Theme.Space.snug) {
                 if !meal.photos.isEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
+                        HStack(spacing: Theme.Space.tight) {
                             ForEach(meal.photos) { photo in
                                 if let image = PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
                                     Image(uiImage: image)
@@ -218,13 +218,13 @@ private struct MealCard: View {
                     }
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: Theme.Space.hairline) {
                     if let dish = meal.dishName, !dish.isEmpty {
                         Text(dish)
                             .font(Theme.display(.headline))
                             .lineSpacing(Theme.minimumLineSpacing)
                     }
-                    HStack(spacing: 8) {
+                    HStack(spacing: Theme.Space.tight) {
                         Text(meal.eatenAt.formatted(date: .abbreviated, time: .shortened))
                             .font(Theme.label(.caption))
                             .foregroundStyle(Theme.inkSecondary)
@@ -240,7 +240,7 @@ private struct MealCard: View {
                     }
                 }
             }
-            .padding(12)
+            .padding(Theme.contentInset)
         }
         .contextMenu {
             Button(role: .destructive, action: onDelete) {

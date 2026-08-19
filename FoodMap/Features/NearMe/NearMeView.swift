@@ -62,7 +62,7 @@ struct NearMeView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
-                .padding(.bottom, 8)
+                .padding(.bottom, Theme.Space.tight)
                 .background(Theme.paper)
                 .onChange(of: radius) { _, _ in Task { await load() } }
             }

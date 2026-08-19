@@ -85,7 +85,7 @@ struct AddMealView: View {
     /// The library is a peer of the shutter, not a rival: photographing later, from a picture
     /// you already took, is a first-class path (UC-1 / 1a).
     private var captureAlternatives: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: Theme.Space.regular) {
             PhotosPicker(selection: $pickerItems, maxSelectionCount: 5, matching: .images) {
                 Image(systemName: "photo.on.rectangle")
                     .font(.system(size: 17, weight: .medium))
@@ -132,47 +132,72 @@ struct AddMealView: View {
         ZStack {
             Theme.paper.ignoresSafeArea()
 
-            VStack(spacing: 22) {
-                Spacer(minLength: 0)
+            VStack(spacing: 0) {
+                // A bar rather than a lone button at the foot of the screen: back to the
+                // camera on one side, past the question on the other.
+                HStack {
+                    Button {
+                        step = .capture
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                            .frame(width: Theme.minimumTouchTarget, height: Theme.minimumTouchTarget)
+                    }
+                    .accessibilityLabel("Back to the camera")
+                    .accessibilityIdentifier("backToCameraButton")
 
-                if let data = photoData.last, let image = UIImage(data: data) {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 188, height: 188)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
-                        )
+                    Spacer()
+
+                    Button {
+                        step = .confirm
+                    } label: {
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundStyle(Theme.inkSecondary)
+                            .frame(width: Theme.minimumTouchTarget, height: Theme.minimumTouchTarget)
+                    }
+                    .accessibilityLabel("Skip the rating")
+                    .accessibilityIdentifier("skipRatingButton")
                 }
+                .padding(.horizontal, Theme.Space.tight)
+                .padding(.top, Theme.Space.tight)
 
-                Text("How was it?")
-                    .font(Theme.display(.title3))
-                    .foregroundStyle(Theme.ink)
+                Spacer(minLength: Theme.Space.regular)
 
-                // A tap answers the question and moves on — the score is still editable on the
-                // confirm step, so there is nothing to lock in here (UC-7).
-                StarRatingView(rating: rating, onSelect: { score in
-                    rating = score
-                    step = .confirm
-                }, size: 34)
+                VStack(spacing: Theme.Space.loose) {
+                    if let data = photoData.last, let image = UIImage(data: data) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 208, height: 208)
+                            .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: Theme.cornerRadius)
+                                    .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
+                            )
+                    }
 
-                Spacer(minLength: 0)
+                    VStack(spacing: Theme.Space.snug) {
+                        Text("How was it?")
+                            .font(Theme.display(.title3))
+                            .foregroundStyle(Theme.ink)
 
-                Button {
-                    step = .confirm
-                } label: {
-                    Image(systemName: "arrow.right")
-                        .font(.system(size: 16, weight: .semibold))
-                        .frame(width: 54, height: Theme.minimumTouchTarget)
-                        .foregroundStyle(Theme.inkSecondary)
+                        // A tap answers the question and moves on — the score is still editable
+                        // on the confirm step, so there is nothing to lock in here (UC-7).
+                        StarRatingView(rating: rating, onSelect: { score in
+                            rating = score
+                            step = .confirm
+                        }, size: 32)
+                    }
                 }
-                .accessibilityLabel("Skip the rating")
-                .accessibilityIdentifier("skipRatingButton")
-                .padding(.bottom, 18)
+                .padding(.horizontal, Theme.screenMargin)
+
+                // Weighted so the block sits a little above centre, where the eye lands,
+                // rather than marooned with equal air above and below.
+                Spacer(minLength: Theme.Space.regular)
+                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 24)
         }
     }
 
@@ -186,6 +211,7 @@ struct AddMealView: View {
                 ratingSection
                 detailsSection
             }
+            .listSectionSpacing(Theme.Space.snug)
             .scrollContentBackground(.hidden)
             .background(Theme.paper)
             .navigationTitle("Add a meal")
@@ -217,7 +243,7 @@ struct AddMealView: View {
 
     private var photosSection: some View {
         Section {
-            HStack(spacing: 8) {
+            HStack(spacing: Theme.Space.tight) {
                 ForEach(Array(photoData.enumerated()), id: \.offset) { index, data in
                     if let image = UIImage(data: data) {
                         Image(uiImage: image)
@@ -257,7 +283,7 @@ struct AddMealView: View {
 
                 Spacer(minLength: 0)
             }
-            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+            .listRowInsets(EdgeInsets(top: Theme.Space.tight, leading: Theme.screenMargin, bottom: Theme.Space.tight, trailing: Theme.screenMargin))
         }
     }
 
@@ -272,7 +298,7 @@ struct AddMealView: View {
                     targetName = name
                 }
             } label: {
-                HStack(spacing: 8) {
+                HStack(spacing: Theme.Space.tight) {
                     Image(systemName: "mappin.and.ellipse")
                         .font(.system(size: 13))
                         .foregroundStyle(Theme.lacquer)
@@ -345,7 +371,7 @@ struct AddMealView: View {
                         .foregroundStyle(Theme.lacquer)
                 }
             } label: {
-                HStack(spacing: 8) {
+                HStack(spacing: Theme.Space.tight) {
                     Image(systemName: "text.alignleft")
                         .font(.system(size: 13))
                         .foregroundStyle(Theme.inkSecondary)

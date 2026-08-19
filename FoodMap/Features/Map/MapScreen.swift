@@ -16,6 +16,7 @@ struct MapScreen: View {
         ))
     )
     @State private var selectedCluster: PlaceCluster?
+    @State private var detent: PresentationDetent = .height(MapScreen.peekHeight)
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -26,17 +27,22 @@ struct MapScreen: View {
         ZStack(alignment: .top) {
             map
             header
+            floatingActions
         }
         .sheet(isPresented: .constant(true)) {
             PlaceSheet(
                 dependencies: dependencies,
                 model: model,
-                onFocus: focus(on:)
+                onFocus: focus(on:),
+                detent: $detent
             )
-            // The peek detent has to clear the drag indicator *and* the action row and search
-            // field whole — 148 measured on an iPhone 17. Anything less clipped the buttons.
-            .presentationDetents([.height(148), .fraction(0.55), .large])
-            .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+            // With the actions on the map, the peek detent only has to clear the drag
+            // indicator and the search field whole: 104 measured on an iPhone 17.
+            .presentationDetents([.height(Self.peekHeight), .fraction(0.55), .large], selection: $detent)
+            // Must name a detent this sheet actually has: `.medium` is not one of them, and an
+            // unmatched detent silently disables background interaction — which made the map's
+            // floating buttons unreachable behind the sheet's blocking layer.
+            .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.55)))
             .presentationDragIndicator(.visible)
             .interactiveDismissDisabled()
         }
@@ -67,10 +73,50 @@ struct MapScreen: View {
         .ignoresSafeArea()
     }
 
+    /// UC-1, UC-4, UC-5 — the three things you do to a map, on the map.
+    ///
+    /// Anchored above the sheet's peek detent. The sheet insets the map's safe area, but only
+    /// partly — measured on an iPhone 17, a plain margin leaves the camera button behind the
+    /// sheet, so the peek height is added explicitly. Stacked vertically so each keeps a full
+    /// touch target on the narrowest iPhone.
+    private var floatingActions: some View {
+        VStack(spacing: Theme.Space.snug) {
+            Spacer(minLength: 0)
+
+            FloatingActionButton(
+                systemImage: "location.magnifyingglass",
+                label: "Saved places near me",
+                identifier: "nearMeButton"
+            ) { model.action = .nearMe }
+                .disabled(model.isEmpty)
+
+            FloatingActionButton(
+                systemImage: "bookmark",
+                label: "Save a place",
+                identifier: "savePlaceButton"
+            ) { model.action = .savePlace }
+
+            FloatingActionButton(
+                systemImage: "camera.fill",
+                label: "Add meal",
+                identifier: "addMealButton",
+                style: .primary
+            ) { model.action = .addMeal }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+        .padding(.trailing, Theme.screenMargin)
+        .padding(.bottom, Self.peekHeight + Theme.screenMargin)
+        .ignoresSafeArea(.keyboard)
+    }
+
+    /// The sheet's smallest detent, in points. Shared with `floatingActions` so the buttons
+    /// sit just above it by construction rather than by a guessed constant.
+    static let peekHeight: CGFloat = 104
+
     private var header: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: Theme.Space.tight) {
             Text("Food Map")
-                .font(Theme.display(.title3))
+                .font(Theme.display(.headline))
                 .foregroundStyle(Theme.ink)
 
             if !model.isEmpty {
@@ -86,15 +132,15 @@ struct MapScreen: View {
                 .frame(maxWidth: 320)
             }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 10)
+        .padding(.horizontal, Theme.screenMargin)
+        .padding(.vertical, Theme.Space.tight)
         .background(Theme.paper.opacity(0.94), in: RoundedRectangle(cornerRadius: Theme.cornerRadius))
         .overlay(
             RoundedRectangle(cornerRadius: Theme.cornerRadius)
                 .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
         )
-        .padding(.horizontal)
-        .padding(.top, 4)
+        .padding(.horizontal, Theme.screenMargin)
+        .padding(.top, Theme.Space.hairline)
     }
 
     private func select(_ cluster: PlaceCluster) {

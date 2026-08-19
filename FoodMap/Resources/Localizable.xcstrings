@@ -177,6 +177,17 @@
         }
       }
     },
+    "Back to the camera": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quay lại máy ảnh"
+          }
+        }
+      }
+    },
     "Been here": {
       "extractionState": "manual",
       "localizations": {
@@ -1217,6 +1228,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "ví dụ: Lan bảo thử bún chả"
+          }
+        }
+      }
+    },
+    "· %@ meals": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "· %@ bữa"
           }
         }
       }
