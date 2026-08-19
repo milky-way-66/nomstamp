@@ -36,7 +36,7 @@ struct FloatingActionButton: View {
                         .padding(diameter * 0.3)
                 }
                 // The token is a printed thing: the indigo underprint shows at its edge.
-                .misregistered(Circle(), ink: Theme.indigo, opacity: style == .primary ? 0.55 : 0.4)
+                .misregistered(Circle(), ink: Theme.printingInk, opacity: style == .primary ? 0.55 : 0.4)
                 .shadow(color: .black.opacity(0.18), radius: 6, y: 2)
         }
         .buttonStyle(.plain)
@@ -47,11 +47,11 @@ struct FloatingActionButton: View {
     }
 
     private var foreground: Color {
-        style == .primary ? Theme.onPandan : Theme.bay
+        style == .primary ? Theme.onAccent : Theme.wishlistInk
     }
 
     private var background: Color {
-        style == .primary ? Theme.pandan : Theme.paperRaised
+        style == .primary ? Theme.visitedInk : Theme.paperRaised
     }
 
     /// The primary token is solid ink, so a ring on it would only muddy its edge.

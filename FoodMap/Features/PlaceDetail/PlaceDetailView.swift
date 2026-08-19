@@ -20,7 +20,7 @@ struct PlaceDetailView: View {
     /// The place's own ink: how it scored, averaged over its rated meals. Everything the page
     /// rules and marks with follows it, so a five-star place reads differently from a two (ADR-005).
     private var placeInk: Color {
-        guard let average = current.averageRating else { return Theme.pandan }
+        guard let average = current.averageRating else { return Theme.visitedInk }
         return Theme.ratingInk(Int(average.rounded()))
     }
 
@@ -142,7 +142,7 @@ struct PlaceDetailView: View {
             }
             .accessibilityIdentifier("placeKindLabel")
             .font(Theme.label(.subheadline))
-            .foregroundStyle(current.kind == .visited ? placeInk : Theme.bay)
+            .foregroundStyle(current.kind == .visited ? placeInk : Theme.wishlistInk)
 
             if let address = current.address {
                 Text(address)
@@ -195,8 +195,8 @@ struct PlaceDetailView: View {
                     .padding(.vertical, Theme.Space.snug)
             }
             .buttonStyle(.borderedProminent)
-            .tint(Theme.pandan)
-            .foregroundStyle(Theme.onPandan)
+            .tint(Theme.visitedInk)
+            .foregroundStyle(Theme.onAccent)
             .accessibilityIdentifier("iAteHereButton")
         }
     }
@@ -231,7 +231,7 @@ struct PlaceDetailView: View {
                     .padding(.vertical, 12)
             }
             .buttonStyle(.bordered)
-            .tint(Theme.pandan)
+            .tint(Theme.visitedInk)
         }
     }
 

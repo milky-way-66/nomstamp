@@ -94,8 +94,10 @@ final class DesignSweep: XCTestCase {
     }
 
     func test_darkAndEmpty() {
+        // The app's light and dark follow the sun where the reader is, not the system setting
+        // (ADR-006), so the simulator's own appearance no longer reaches it.
         XCUIDevice.shared.appearance = .dark
-        let dark = AppLauncher.launch(seeded: true)
+        let dark = AppLauncher.launch(seeded: true, extraArguments: ["-ForceNight"])
         shoot(dark, "11-dark-map-and-list")
         open("Phở Thìn", "pho thin", in: dark)
         raiseSheet(dark)
@@ -105,5 +107,21 @@ final class DesignSweep: XCTestCase {
         XCUIDevice.shared.appearance = .light
         let empty = AppLauncher.launch(seeded: false)
         shoot(empty, "13-empty-state")
+    }
+
+    /// One frame per printing: the five skins the sky and the calendar choose between (ADR-006).
+    /// Photographed on the map, which is where a skin is most visible — the wash, the pins and the
+    /// sky effect all move at once.
+    func test_everySkin() {
+        for skin in ["pandan", "bay", "tamarind", "sim", "lotus"] {
+            let app = AppLauncher.launch(seeded: true, extraArguments: ["-ForceSkin", skin])
+            shoot(app, "13-skin-\(skin)")
+            app.terminate()
+        }
+
+        // And one at night, where the effect is lanterns rather than weather.
+        let night = AppLauncher.launch(seeded: true, extraArguments: ["-ForceSkin", "sim", "-ForceNight"])
+        shoot(night, "14-skin-sim-night")
+        night.terminate()
     }
 }

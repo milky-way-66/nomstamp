@@ -1,6 +1,6 @@
 name: FoodMap
 options:
-  bundleIdPrefix: com.foodmap
+  bundleIdPrefix: com.longnv
   developmentLanguage: en
   # Vietnamese is a target-market requirement (NFR-5.1), not an afterthought.
   knownRegions: [en, vi, Base]
@@ -37,9 +37,9 @@ targets:
       - package: FoodMapData
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.foodmap.app
+        PRODUCT_BUNDLE_IDENTIFIER: com.longnv.foodmap.app
         GENERATE_INFOPLIST_FILE: YES
-        INFOPLIST_KEY_CFBundleDisplayName: Food Map
+        INFOPLIST_KEY_CFBundleDisplayName: Nomstamp
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # Nothing beyond Apple's own encryption, so App Store Connect never has to ask.
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
@@ -50,9 +50,9 @@ targets:
         # iPhone only, portrait only (SRS 2.3)
         TARGETED_DEVICE_FAMILY: "1"
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
-        INFOPLIST_KEY_NSCameraUsageDescription: "Food Map uses the camera so you can photograph the food you are eating."
-        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Food Map reads photos you choose so you can log meals you photographed earlier."
-        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Food Map uses your location to find the restaurant you are in and to show saved places near you."
+        INFOPLIST_KEY_NSCameraUsageDescription: "Nomstamp uses the camera so you can photograph the food you are eating."
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Nomstamp reads photos you choose so you can log meals you photographed earlier."
+        INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Nomstamp uses your location to find the restaurant you are in and to show saved places near you."
 
   FoodMapUITests:
     type: bundle.ui-testing
@@ -63,7 +63,7 @@ targets:
       - target: FoodMap
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.foodmap.app.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: com.longnv.foodmap.app.uitests
         GENERATE_INFOPLIST_FILE: YES
 schemes:
   FoodMap:

@@ -223,7 +223,7 @@ struct PlaceSheet: View {
             VStack(spacing: Theme.Space.snug) {
                 Image(systemName: "fork.knife.circle")
                     .font(.system(size: 30))
-                    .foregroundStyle(Theme.pandan)
+                    .foregroundStyle(Theme.visitedInk)
                 Text("Your food map is empty")
                     .font(Theme.display(.subheadline))
                     .foregroundStyle(Theme.ink)

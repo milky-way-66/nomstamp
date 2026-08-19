@@ -1,4 +1,4 @@
-# Food Map — documentation
+# Nomstamp — documentation
 
 A private iPhone app for remembering the food you have eaten and the places you still want to
 try, both on a map. No account, no server; photos stay on the device.
@@ -12,11 +12,14 @@ try, both on a map. No account, no server; photos stay on the device.
 | 3 | [requirements/use-cases.md](requirements/use-cases.md) | How does a user achieve each goal, including when things go wrong? |
 | 4 | [architecture/adr-001-map-and-search.md](architecture/adr-001-map-and-search.md) | Which map, which search, and does it work in Vietnam? |
 | 5 | [architecture/adr-002-architecture-and-testing.md](architecture/adr-002-architecture-and-testing.md) | How is the code layered and how is it tested? |
-| 6 | [architecture/adr-004-location.md](architecture/adr-004-location.md) | Which position do we trust, and when? |
-| 7 | [architecture/project-structure.md](architecture/project-structure.md) | Where does each file go? |
-| 8 | [testing/test-cases.md](testing/test-cases.md) | What exactly is verified? |
-| 9 | [workflow.md](workflow.md) | In what order is anything allowed to be built? |
-| 10 | [traceability.md](traceability.md) | Which test proves which requirement? |
+| 6 | [architecture/adr-003-ui-design.md](architecture/adr-003-ui-design.md) | What does it look like, and why that? |
+| 7 | [architecture/adr-004-location.md](architecture/adr-004-location.md) | Which position do we trust, and when? |
+| 8 | [architecture/adr-005-art-direction.md](architecture/adr-005-art-direction.md) | How does it stop looking like stock SwiftUI? |
+| 9 | [architecture/adr-006-skins-and-weather.md](architecture/adr-006-skins-and-weather.md) | Why does it change colour, and what decides? |
+| 10 | [architecture/project-structure.md](architecture/project-structure.md) | Where does each file go? |
+| 11 | [testing/test-cases.md](testing/test-cases.md) | What exactly is verified? |
+| 12 | [workflow.md](workflow.md) | In what order is anything allowed to be built? |
+| 13 | [traceability.md](traceability.md) | Which test proves which requirement? |
 | 11 | [deployment/testflight.md](deployment/testflight.md) | How does a build reach TestFlight, and then the store? |
 
 ## The rule

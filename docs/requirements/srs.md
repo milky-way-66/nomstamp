@@ -1,4 +1,4 @@
-# Software Requirements Specification — Food Map
+# Software Requirements Specification — Nomstamp
 
 **Version:** 0.1 (draft) · **Date:** 2026-08-19 · **Status:** for review
 
@@ -7,13 +7,13 @@
 ## 1. Introduction
 
 ### 1.1 Purpose
-This document specifies the requirements for **Food Map**, an iPhone application that lets one
+This document specifies the requirements for **Nomstamp**, an iPhone application that lets one
 person remember the food they have eaten and the places they still want to try, both plotted
 on a map. It is the authoritative source for what the product must do; `use-cases.md` describes
 how users achieve it, and `test-cases.md` defines how each requirement is proven.
 
 ### 1.2 Scope
-Food Map is a **personal, on-device** food diary and wishlist on a map. A user photographs a
+Nomstamp is a **personal, on-device** food diary and wishlist on a map. A user photographs a
 dish where they eat it, and the photo becomes a pin at that restaurant. A user can also save a
 place they have merely heard about, and later find it again when they are nearby.
 

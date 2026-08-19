@@ -1,4 +1,4 @@
-# Food Map
+# Nomstamp
 
 A private iPhone app for remembering the food you have eaten and the places you still want to
 try — both on a map. Photograph a dish where you eat it and the photo becomes the pin.
@@ -23,7 +23,7 @@ Run the app with a demo map:
 xcodegen generate
 xcodebuild -project FoodMap.xcodeproj -scheme FoodMap \
   -destination 'platform=iOS Simulator,name=iPhone 17' build
-xcrun simctl launch booted com.foodmap.app -SeedDemoData
+xcrun simctl launch booted com.longnv.foodmap.app -SeedDemoData
 ```
 
 ## Documentation
