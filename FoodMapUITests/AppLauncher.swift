@@ -37,3 +37,17 @@ extension XCUIElement {
         tap()
     }
 }
+
+extension XCUIApplication {
+    /// Drags the bottom sheet from its peek up to full height.
+    ///
+    /// The grab has to start on the sheet's own grabber — a drag that starts on the map pans the
+    /// map, and one that starts inside the list scrolls the list. At the peek detent the grabber
+    /// sits just below the sheet's top edge, a little above the bottom sixth of the screen.
+    /// - Parameter from: where the grabber is, as a fraction down the screen. The default is the
+    ///   peek detent; a sheet already at its reading detent has its grabber around 0.46.
+    func raiseSheet(from: CGFloat = 0.84) {
+        coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: from))
+            .press(forDuration: 0.2, thenDragTo: coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06)))
+    }
+}

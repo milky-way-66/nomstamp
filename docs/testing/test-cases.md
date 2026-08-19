@@ -195,6 +195,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-12 | U | ADR-005 | Given the printing ink (indigo), then every pairing it renders in meets its contrast level in both appearances | **auto** |
 | TC-N-13 | U | ADR-005 | Given a place id, when its stamp tilt is computed, then it is stable across calls, within ±4°, and differs across places | **auto** |
 | TC-N-14 | U | ADR-005 | Given the paper grain tile, then it is deterministic for a seed, non-uniform, and its mean ink stays inside the documented bounds | **auto** |
+| TC-N-15 | E | ADR-005 | Given the drawn filter tabs, when one is chosen, then it reports itself selected to assistive technology and the list shows only that kind | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
 bound the work per frame, as TC-N-03 does, but only a device measurement can prove 55 fps), and
@@ -215,7 +216,7 @@ the omission is visible rather than forgotten.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 90 test cases** — 64 unit, 13 integration, 13 e2e. The shape is deliberate: the pyramid
+**Total: 91 test cases** — 64 unit, 13 integration, 14 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |

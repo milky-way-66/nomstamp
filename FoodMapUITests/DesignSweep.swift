@@ -27,9 +27,10 @@ final class DesignSweep: XCTestCase {
         _ = app.staticTexts["placeKindLabel"].waitForExistence(timeout: 10)
     }
 
-    private func raiseSheet(_ app: XCUIApplication) {
-        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.50))
-            .press(forDuration: 0.2, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.06)))
+    /// A drag that started mid-screen panned the map instead of lifting the sheet, so every
+    /// "full" shot was really the peek: grab the sheet's own grabber.
+    private func raiseSheet(_ app: XCUIApplication, from: CGFloat = 0.84) {
+        app.raiseSheet(from: from)
     }
 
     func test_lightSweep() {
@@ -45,7 +46,7 @@ final class DesignSweep: XCTestCase {
 
         // A visited place: heading, meal cards, ratings.
         open("Phở Thìn", "pho thin", in: app)
-        raiseSheet(app)
+        raiseSheet(app, from: 0.46)
         shoot(app, "04-place-visited")
 
         app.swipeUp()
@@ -54,7 +55,7 @@ final class DesignSweep: XCTestCase {
 
         // A wishlist place: the note is the content.
         open("Cà phê Giảng", "giang", in: app)
-        raiseSheet(app)
+        raiseSheet(app, from: 0.46)
         shoot(app, "06-place-wishlist")
         app.navigationBars.buttons.firstMatch.tap()
 

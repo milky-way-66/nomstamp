@@ -56,6 +56,7 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `PaperTexture` | One cached procedural noise tile, tiled under page grounds |
 | `InkLayer` | Reprints a shape 1.5 pt off in a second ink at low alpha — the misregistration |
 | `FoodMark` | The drawn glyph set that retires SF Symbols from primary chrome |
+| `InkTabs` | Drawn filter tabs — small caps over a brushed underline — in place of the stock segmented control |
 | `StampShape` family | Perforated stamp (visited), torn ticket (wishlist), deterministic tilt per place |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |
 
