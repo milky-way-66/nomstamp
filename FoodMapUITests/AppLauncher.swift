@@ -14,7 +14,7 @@ enum AppLauncher {
         app.launchArguments = ["-UITestMode"] + (seeded ? ["-SeedDemoData"] : []) + extraArguments
         app.launch()
         XCTAssertTrue(
-            app.staticTexts["Food Map"].waitForExistence(timeout: 20),
+            app.buttons["addMealButton"].waitForExistence(timeout: 20),
             "The map never appeared",
             file: file, line: line
         )

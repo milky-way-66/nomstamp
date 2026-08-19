@@ -3,12 +3,21 @@ import Observation
 import FoodMapDomain
 
 /// The three things the map itself can do (UC-1, UC-4, UC-5).
-enum MapAction: String, Identifiable {
+enum MapAction: Identifiable {
     case addMeal
     case savePlace
     case nearMe
+    /// A pin holding more than one place: the sheet lists them so one can be opened (FR-3.10).
+    case cluster(PlaceCluster)
 
-    var id: String { rawValue }
+    var id: String {
+        switch self {
+        case .addMeal: "addMeal"
+        case .savePlace: "savePlace"
+        case .nearMe: "nearMe"
+        case .cluster(let cluster): "cluster-\(cluster.id)"
+        }
+    }
 }
 
 /// Screen state for the map. Holds no business rules — it asks use cases and publishes results.
@@ -21,6 +30,10 @@ final class MapViewModel {
     var allPlaces: [Place] = []
     var filter: MapFilter = .all { didSet { refresh() } }
     var errorMessage: String?
+
+    /// A place the map asked the sheet to open — set by tapping a pin, or by choosing one out
+    /// of a cluster. The sheet consumes it and pushes the place (FR-3.10).
+    var placeToOpen: Place?
 
     /// Which of the map's floating actions is open. It lives here rather than in `MapScreen`
     /// because the map is already presenting the bottom sheet and cannot present a second one;

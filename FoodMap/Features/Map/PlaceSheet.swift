@@ -35,6 +35,13 @@ struct PlaceSheet: View {
                 content
             }
             .background(Theme.paper)
+            // A pin tap arrives here rather than on the map, because pushing belongs to this
+            // sheet's navigation stack (FR-3.10).
+            .onChange(of: model.placeToOpen) { _, place in
+                guard let place else { return }
+                path = [place]
+                model.placeToOpen = nil
+            }
             .navigationDestination(for: Place.self) { place in
                 PlaceDetailView(place: place, dependencies: dependencies, model: model)
             }
@@ -59,6 +66,11 @@ struct PlaceSheet: View {
                     AddMealView(dependencies: dependencies, preselected: nil) { model.refresh() }
                 case .savePlace:
                     SavePlaceView(dependencies: dependencies) { model.refresh() }
+                case .cluster(let cluster):
+                    ClusterSheet(cluster: cluster, dependencies: dependencies, model: model) { place in
+                        model.action = nil
+                        model.placeToOpen = place
+                    }
                 case .nearMe:
                     NearMeView(dependencies: dependencies) { place in
                         model.action = nil
@@ -112,6 +124,7 @@ struct PlaceSheet: View {
             emptyState
         } else {
             List {
+                filterRow
                 ForEach(shown) { place in
                     NavigationLink(value: place) {
                         PlaceRowView(place: place, distance: nil)
@@ -128,6 +141,27 @@ struct PlaceSheet: View {
                 }
             }
         }
+    }
+
+    /// FR-3.8 — filtering lives here rather than over the map. As a header over the
+    /// cartography it cost the map a strip of its height on every screen, to answer a question
+    /// the user only asks while reading the list.
+    private var filterRow: some View {
+        Picker("Show", selection: Binding(
+            get: { model.filter },
+            set: { model.filter = $0 }
+        )) {
+            Text("All").tag(MapFilter.all)
+            Text("Been here").tag(MapFilter.visited)
+            Text("Want to try").tag(MapFilter.wishlist)
+        }
+        .pickerStyle(.segmented)
+        .listRowBackground(Theme.paper)
+        .listRowSeparator(.hidden)
+        .listRowInsets(EdgeInsets(
+            top: 0, leading: Theme.screenMargin,
+            bottom: Theme.Space.tight, trailing: Theme.screenMargin
+        ))
     }
 
     /// UC-2 / 1a — never a blank screen (NFR-4.3).

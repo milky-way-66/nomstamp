@@ -23,8 +23,8 @@ struct StampPin: View {
             }
         }
         .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
+        // One element, no children: the label is applied by whoever makes this selectable.
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(accessibilityDescription)
     }
 
     @ViewBuilder
@@ -66,7 +66,7 @@ struct StampPin: View {
             .offset(x: 5, y: -4)
     }
 
-    private var accessibilityDescription: String {
+    var accessibilityDescription: String {
         guard let place else { return "Places" }
         if cluster.count > 1 {
             return "\(cluster.count) places here"

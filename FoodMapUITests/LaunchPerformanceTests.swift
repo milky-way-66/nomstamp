@@ -31,10 +31,9 @@ final class LaunchPerformanceTests: XCTestCase {
             let started = Date()
             app.launch()
             XCTAssertTrue(
-                app.staticTexts["Food Map"].waitForExistence(timeout: 30),
+                app.buttons["addMealButton"].waitForExistence(timeout: 30),
                 "the map never became interactive"
             )
-            XCTAssertTrue(app.buttons["addMealButton"].waitForExistence(timeout: 30))
             timings.append(Date().timeIntervalSince(started))
             app.terminate()
         }

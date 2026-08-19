@@ -157,6 +157,24 @@ inside it, which put paperwork between the user and the food in front of them.
   coordinate or the current fix (FR-1.11); dish name, note and time sit behind one disclosure
   on the confirm step. A wrong guess costs one tap to change — an absent guess costs a search.
 
+## The map has no header, and its pins are the way in (FR-3.10)
+
+The wordmark and the All / Been here / Want to try segments used to sit above the map, costing
+about 110 pt of the thing the app is named after. Both moved: the filter is the first row of the
+sheet, next to the search field it belongs with, and the title is gone — a map-first app does not
+need to introduce itself on every launch.
+
+That makes pins the map's only controls, so tapping one has to work. It must go through MapKit's
+own selection — `Map(position:selection:)` with `.tag()` on each `Annotation` — not a `Button` or
+a tap gesture inside the annotation. With the bottom sheet presented, SwiftUI content hosted
+inside the map never receives the touch, however correct its accessibility traits; only the map's
+native hit testing does. A single-place pin opens that place; a cluster opens a sheet listing its
+places, and choosing one opens it.
+
+The corollary for the journeys: while the sheet is raised, a pin is *present* in the accessibility
+tree but sits underneath the sheet, so a tap lands on the sheet instead. TC-2-11 drags the sheet
+back to its peek first — the same gesture a reader makes.
+
 ## Accessibility (NFR-6)
 - Dynamic Type throughout, including the serif display face; no fixed point sizes.
 - Every pin carries a VoiceOver label: *"Phở Thìn, been here, 2 meals"*.
@@ -175,5 +193,7 @@ more expensive than starting with it.
   mode this style invites.
 - The palette lives in `FoodMapDesign`, a package with no UIKit dependency, so contrast is
   computed and asserted (TC-N-07) rather than eyeballed in the simulator.
+- Pin selection is MapKit's, so a pin's accessibility label is applied to the annotation content
+  rather than to a control wrapping it.
 - Camera permission is now a real dependency of the primary flow; refusal is handled inside the
   camera screen, which offers the photo library instead rather than dead-ending.

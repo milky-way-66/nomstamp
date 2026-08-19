@@ -59,6 +59,8 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 3. Each place renders as a pin: Visited pins show a **thumbnail of the food photo**; Wishlist pins show a distinct “want to try” marker.
 4. Dense areas collapse into clusters showing a count; zooming in expands them.
 5. User pans/zooms; pins reload for the new bounds.
+6. User taps a pin and that place opens (UC-3) — the same destination as tapping its row in the
+   list. A cluster lists what is inside it first, and choosing one of those opens it too.
 
 **Alternate flows**
 - **1a. First run, no places yet** — an empty state explains the app and offers “Add your first meal”.
@@ -72,6 +74,7 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 - Given two meals at the same restaurant, then I see one pin, not two.
 - Given 200 pins in view, then the map stays responsive by clustering.
 - Visited and wishlist pins are distinguishable without tapping them.
+- Given a pin, when I tap it, then that place opens — a pin is not merely decoration.
 
 ---
 

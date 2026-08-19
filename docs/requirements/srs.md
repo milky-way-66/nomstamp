@@ -121,6 +121,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-3.7 | A cluster of one place shall be drawn at that place's exact coordinate | UC-2 | TC-2-06 |
 | FR-3.8 | The user shall filter the map by visited or wishlist | UC-2/5a | TC-2-08 |
 | FR-3.9 | With no places saved, the map shall show an explanatory empty state | UC-2/1a | TC-2-10 |
+| FR-3.10 | Tapping a pin shall open that place, exactly as tapping its row does; tapping a cluster shall list the places inside it, and choosing one shall open it | UC-2/6, UC-3 | TC-2-11 |
 
 ### FR-4 Place detail
 | ID | Requirement | UC | Tests |

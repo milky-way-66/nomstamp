@@ -51,12 +51,11 @@ final class MapJourneyTests: XCTestCase {
             "The place should be open"
         )
         // ...and the map is still on screen behind it, which is the point: the pin the map just
-        // centred on has to be visible. The filter lives on the map, not in the sheet.
+        // centred on has to be visible. The map's own actions are the proof — they float on it.
         XCTAssertTrue(
-            app.segmentedControls.firstMatch.exists,
+            app.buttons["addMealButton"].exists,
             "The sheet must not cover the map when a place is open"
         )
-        XCTAssertTrue(app.buttons["addMealButton"].exists, "The map's own actions stay reachable")
 
         // Going back returns the sheet to its peek, where the search field is the header.
         app.navigationBars.buttons.firstMatch.tap()
@@ -64,5 +63,38 @@ final class MapJourneyTests: XCTestCase {
             app.textFields["placeSearchField"].waitForExistence(timeout: 10),
             "Going back should return to the list at its peek"
         )
+    }
+
+    /// TC-2-11 — a pin is a way in, not decoration (FR-3.10).
+    func test_TC_2_11_tappingAPinOpensThePlace() {
+        let app = AppLauncher.launch(seeded: true)
+
+        // The simulator sits in San Francisco while the seeded places are in Hanoi, so the map
+        // is first moved to a place — opening one does that (FR-4.6) — and then dismissed,
+        // which leaves its pin on screen to tap.
+        let field = app.textFields["placeSearchField"]
+        field.tapWhenReady(timeout: 15)
+        field.typeText("pho thin")
+        app.staticTexts["Phở Thìn"].tapWhenReady(timeout: 10)
+        XCTAssertTrue(app.staticTexts["placeKindLabel"].waitForExistence(timeout: 10))
+        app.navigationBars.buttons.firstMatch.tap()
+
+        // Searching left the sheet raised with the keyboard up, which covers the pin: drag the
+        // sheet back to its peek so the map is on screen, the way a reader would.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.10))
+            .press(forDuration: 0.2, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+
+        // The pin carries the place's name in its accessibility label (TC-N-11).
+        let pin = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label BEGINSWITH %@", "Phở Thìn,"))
+            .firstMatch
+        XCTAssertTrue(pin.waitForExistence(timeout: 10), "The focused place's pin should be on screen")
+        pin.tap()
+
+        XCTAssertTrue(
+            app.staticTexts["placeKindLabel"].waitForExistence(timeout: 10),
+            "Tapping the pin should open the place"
+        )
+        XCTAssertEqual(app.staticTexts["placeKindLabel"].label, "Been here")
     }
 }

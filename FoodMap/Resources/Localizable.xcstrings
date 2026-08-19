@@ -549,17 +549,6 @@
         }
       }
     },
-    "Food Map": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Food Map"
-          }
-        }
-      }
-    },
     "How was it?": {
       "extractionState": "manual",
       "localizations": {

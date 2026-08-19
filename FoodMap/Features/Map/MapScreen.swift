@@ -15,7 +15,7 @@ struct MapScreen: View {
             longitudinalMeters: 4000
         ))
     )
-    @State private var selectedCluster: PlaceCluster?
+    @State private var selectedPinID: PlaceCluster.ID?
     @State private var detent: PresentationDetent = .height(MapScreen.peekHeight)
 
     init(dependencies: AppDependencies) {
@@ -26,7 +26,6 @@ struct MapScreen: View {
     var body: some View {
         ZStack(alignment: .top) {
             map
-            header
             floatingActions
         }
         .sheet(isPresented: .constant(true)) {
@@ -46,8 +45,10 @@ struct MapScreen: View {
             .presentationDragIndicator(.visible)
             .interactiveDismissDisabled()
         }
-        .sheet(item: $selectedCluster) { cluster in
-            ClusterSheet(cluster: cluster, dependencies: dependencies, model: model)
+        .onChange(of: selectedPinID) { _, id in
+            guard let id, let cluster = model.clusters.first(where: { $0.id == id }) else { return }
+            selectedPinID = nil
+            select(cluster)
         }
         .task {
             dependencies.requestLocationPermission()
@@ -56,13 +57,18 @@ struct MapScreen: View {
     }
 
     private var map: some View {
-        Map(position: $camera) {
+        Map(position: $camera, selection: $selectedPinID) {
             UserAnnotation()
             ForEach(model.clusters) { cluster in
                 Annotation("", coordinate: cluster.coordinate.clCoordinate, anchor: .center) {
                     StampPin(cluster: cluster)
-                        .onTapGesture { select(cluster) }
+                        .accessibilityLabel(StampPin(cluster: cluster).accessibilityDescription)
+                        .accessibilityIdentifier("mapPin")
                 }
+                // Selection is MapKit's own, not a Button or a tap gesture on the pin: with the
+                // bottom sheet presented, touches never reach content hosted inside the map, so
+                // only the map's native hit testing can open a pin (FR-3.10).
+                .tag(cluster.id)
             }
         }
         .mapStyle(.standard(pointsOfInterest: .including([.restaurant, .cafe, .bakery])))
@@ -113,41 +119,13 @@ struct MapScreen: View {
     /// sit just above it by construction rather than by a guessed constant.
     static let peekHeight: CGFloat = 116
 
-    private var header: some View {
-        VStack(spacing: Theme.Space.tight) {
-            Text("Food Map")
-                .font(Theme.display(.headline))
-                .foregroundStyle(Theme.ink)
-
-            if !model.isEmpty {
-                Picker("Show", selection: Binding(
-                    get: { model.filter },
-                    set: { model.filter = $0 }
-                )) {
-                    Text("All").tag(MapFilter.all)
-                    Text("Been here").tag(MapFilter.visited)
-                    Text("Want to try").tag(MapFilter.wishlist)
-                }
-                .pickerStyle(.segmented)
-                .frame(maxWidth: 320)
-            }
-        }
-        .padding(.horizontal, Theme.screenMargin)
-        .padding(.vertical, Theme.Space.tight)
-        .background(Theme.paper.opacity(0.94), in: RoundedRectangle(cornerRadius: Theme.cornerRadius))
-        .overlay(
-            RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                .strokeBorder(Theme.rule, lineWidth: Theme.hairline)
-        )
-        .padding(.horizontal, Theme.screenMargin)
-        .padding(.top, Theme.Space.hairline)
-    }
-
+    /// A pin is a way into its place, not decoration (FR-3.10). A cluster has to be resolved to
+    /// one place first, so it lists what is inside it.
     private func select(_ cluster: PlaceCluster) {
         if cluster.isSingle, let place = cluster.representative {
-            focus(on: place)
+            model.placeToOpen = place
         } else {
-            selectedCluster = cluster
+            model.action = .cluster(cluster)
         }
     }
 
@@ -180,19 +158,21 @@ struct MapScreen: View {
 }
 
 /// Tapping a cluster lists what is inside it rather than guessing which pin was meant.
-private struct ClusterSheet: View {
+struct ClusterSheet: View {
     let cluster: PlaceCluster
     let dependencies: AppDependencies
     let model: MapViewModel
+    let onOpen: (Place) -> Void
 
     var body: some View {
         NavigationStack {
             List(cluster.places) { place in
-                NavigationLink {
-                    PlaceDetailView(place: place, dependencies: dependencies, model: model)
+                Button {
+                    onOpen(place)
                 } label: {
                     PlaceRowView(place: place, distance: nil)
                 }
+                .buttonStyle(.plain)
                 .listRowBackground(Theme.paperRaised)
             }
             .scrollContentBackground(.hidden)
