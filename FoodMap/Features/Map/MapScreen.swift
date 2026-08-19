@@ -71,7 +71,27 @@ struct MapScreen: View {
                 .tag(cluster.id)
             }
         }
-        .mapStyle(.standard(pointsOfInterest: .including([.restaurant, .cafe, .bakery])))
+        // The only food on this map is the user's. Apple's own restaurant pins read louder than
+        // our stamps and, on an empty map, were the *only* food shown — which undercuts the whole
+        // premise (ADR-005).
+        // No points of interest at all. Excluding only the food categories backfired — Apple
+        // filled the space with piers, hotels and schools — and every borrowed pin competes with
+        // the user's own stamps, which are the only marks this map is for (ADR-005).
+        .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
+        // A paper wash, so the cartography and the sheet belong to one printed object rather than
+        // meeting as grey concrete against cream.
+        // A printed map, not a satellite one: the wash takes the cartography's hue and leaves its
+        // luminance, so streets, parks and water survive as tones of one warm ink. A cream
+        // multiply was invisible at any opacity that kept the map legible.
+        .overlay {
+            Theme.mapWash
+                // Not full strength: at 0.72 the bay and the streets became one olive tone and the
+                // map stopped being readable as a place. This leaves water faintly blue.
+                .opacity(0.55)
+                .blendMode(.color)
+                .allowsHitTesting(false)
+                .ignoresSafeArea()
+        }
         .mapControls { MapCompass() }
         .onMapCameraChange(frequency: .onEnd) { context in
             model.boundsChanged(to: MapBounds(context.region))
@@ -89,12 +109,15 @@ struct MapScreen: View {
         VStack(spacing: Theme.Space.snug) {
             Spacer(minLength: 0)
 
-            FloatingActionButton(
-                systemImage: "location.magnifyingglass",
-                label: "Saved places near me",
-                identifier: "nearMeButton"
-            ) { model.action = .nearMe }
-                .disabled(model.isEmpty)
+            // Hidden, not disabled: on an empty map a ghosted button read as a rendering fault
+            // rather than as "nothing saved yet" (design review, 19 Aug).
+            if !model.isEmpty {
+                FloatingActionButton(
+                    systemImage: "location.magnifyingglass",
+                    label: "Saved places near me",
+                    identifier: "nearMeButton"
+                ) { model.action = .nearMe }
+            }
 
             FloatingActionButton(
                 systemImage: "bookmark",

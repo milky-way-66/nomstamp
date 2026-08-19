@@ -21,6 +21,9 @@ enum Theme {
     static let lacquer = dynamic(Palette.lacquer)
     /// Jade, for places you still want to try.
     static let jade = dynamic(Palette.jade)
+    /// The printing ink (ADR-005): ornaments, stamp frames, and the second layer of a
+    /// misregistration. Never an accent — it does not mean anything on its own.
+    static let indigo = dynamic(Palette.indigo)
 
     /// Text drawn *on* a lacquer or jade fill. Not white in dark mode: the dark-mode fills are
     /// light, so white on them is 3.03:1, below AA (TC-N-07).
@@ -54,6 +57,28 @@ enum Theme {
     /// Stacked Vietnamese diacritics (ế, ộ, ữ) are clipped by tight leading, so line spacing
     /// never drops below this.
     static let minimumLineSpacing: CGFloat = 4
+
+    /// Letterspaced small caps, for the labels a printed page sets that way: BEEN HERE, MEAL 03.
+    static func smallCaps(_ style: Font.TextStyle = .caption) -> Font {
+        .system(style).smallCaps()
+    }
+
+    /// Dates and counts, set like something stamped rather than typed.
+    static func stamped(_ style: Font.TextStyle = .caption2) -> Font {
+        .system(style, design: .monospaced)
+    }
+
+    // MARK: - Printing (ADR-005)
+
+    /// How far the second ink misses the first by. Enough to see, not enough to read as a bug.
+    static let inkOffset: CGSize = CGSize(width: 1.5, height: 1.5)
+
+    /// The grain's strength over a page ground. Above this it reads as dirt (TC-N-14).
+    static let grainOpacity: Double = 0.55
+
+    /// The ink the cartography is printed in. Warm mid-tan in daylight; at night a deep indigo,
+    /// so the map reads as a night market rather than a switched-off screen.
+    static let mapWash = dynamic(Palette.mapWash)
 
     // MARK: - Spacing
     //

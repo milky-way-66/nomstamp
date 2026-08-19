@@ -192,6 +192,9 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-09 | I | NFR-3.3, FR-1.8 | Given a photo directory that cannot be written, when a meal is saved, then the error surfaces, nothing partial is stored, and nothing crashes | **auto** |
 | TC-N-10 | E | NFR-6.1 | Given the largest accessibility text size, when the map opens, then the primary actions are still present and hittable | **auto** |
 | TC-N-11 | E | NFR-6.2 | Given the map screen, then every control carries a VoiceOver label, not a bare image name | **auto** |
+| TC-N-12 | U | ADR-005 | Given the printing ink (indigo), then every pairing it renders in meets its contrast level in both appearances | **auto** |
+| TC-N-13 | U | ADR-005 | Given a place id, when its stamp tilt is computed, then it is stable across calls, within ±4°, and differs across places | **auto** |
+| TC-N-14 | U | ADR-005 | Given the paper grain tile, then it is deterministic for a seed, non-uniform, and its mean ink stays inside the documented bounds | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
 bound the work per frame, as TC-N-03 does, but only a device measurement can prove 55 fps), and
@@ -212,11 +215,11 @@ the omission is visible rather than forgotten.
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
 
-**Total: 87 test cases** — 61 unit, 13 integration, 13 e2e. The shape is deliberate: the pyramid
+**Total: 90 test cases** — 64 unit, 13 integration, 13 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 | | Specified | Automated | Passing | Implemented by |
 |---|---|---|---|---|
-| Unit | 61 | 61 | 61 | 73 test functions (`FoodMapDomain` 71, `FoodMapDesign` 2) |
+| Unit | 64 | 64 | 64 | 78 test functions (`FoodMapDomain` 71, `FoodMapDesign` 7) |
 | Integration | 13 | 13 | 13 | 38 test functions (`FoodMapData`) |
 | E2E | 13 | 13 | 13 | 16 XCUITest journeys (`FoodMapUITests`) |
