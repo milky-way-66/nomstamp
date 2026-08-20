@@ -57,10 +57,34 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `InkLayer` | Reprints a shape 1.5 pt off in a second ink at low alpha — the misregistration |
 | `FoodMark` | The drawn glyph set that retires SF Symbols from primary chrome |
 | `RatingMood` | The ink ramp a score paints, from slate at one star to leaf green at five |
+| `StampPress` | The *quality* ramp a score prints at, from a bad impression at one star to a perfect one at five |
 | `DeckleEdge` | A deterministic torn-paper edge, used where a photograph meets the page |
 | `InkTabs` | Drawn filter tabs — small caps over a brushed underline — in place of the stock segmented control |
 | `StampShape` family | Perforated stamp (visited), torn ticket (wishlist), deterministic tilt per place |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |
+
+## A score is printed, not annotated
+
+A stamp does not report its rating with a number beside it. It *is* the rating: the same score that
+picks the ink also decides how well the stamp was printed, so a one-star place and a five-star place
+are told apart across a room, at pin size, with no text and no colour vision.
+
+| | One star | Five stars |
+|---|---|---|
+| Stuck down | Crooked, well off square | Square, placed with care |
+| Registration | The second ink misses by a lot | Almost perfect |
+| The rule around it | Thin, faded, broken | Full weight, solid, with an inner hairline and corner ticks |
+| The impression | Soft and smudged, as if pressed with a rocking hand | Crisp |
+| How it sits | Flat on the page | Lifted, with its own shadow |
+
+The ramp is one number — how good the impression is — and every property above is read off it, so
+the steps stay ordered by construction: no dimension may improve as the score falls (TC-N-22).
+
+Two rules constrain it. **An unrated place is not a bad place.** No score at all prints at a plain,
+competent middle, never at the bottom of the ramp — the same rule `RatingMood` follows for ink.
+And **the ramp is decoration over an existing signal, never the only carrier of one**: the score
+stays in the text, the stars and the VoiceOver label, because a smudge is not something a reader
+can be asked to measure (NFR-6.3).
 
 ## Type
 
@@ -78,3 +102,7 @@ licensed face is chosen. Until then notes stay in the italic display serif.
 - SF Symbols remain acceptable in secondary places (menus, form rows) where drawing our own would
   cost more than it returns.
 - Reduce Motion turns the paper physics into simple fades; Reduce Transparency drops the washes.
+- Rule 1 costs something on the map: the wash is drawn over the map view, and the pins are hosted
+  inside it, so the ink lands on the photographs too unless it is stopped. It is stopped by masking
+  the wash with a soft hole at each stamp — which is also why the day map may be printed as strongly
+  as it likes without the meals turning the colour of the skin.

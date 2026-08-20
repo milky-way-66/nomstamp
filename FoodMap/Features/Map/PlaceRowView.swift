@@ -15,6 +15,9 @@ struct PlaceRowView: View {
     var index: Int?
 
     private var score: Int? { place.averageRating.map { Int($0.rounded()) } }
+    /// The same press the map prints this place's pin at, so a row and its pin say the same thing
+    /// about the same meal (ADR-005).
+    private var press: StampPress { StampPress.press(for: score) }
     private var kindInk: Color { place.kind == .visited ? Theme.ratingInk(score) : Theme.wishlistInk }
 
     var body: some View {
@@ -104,12 +107,20 @@ struct PlaceRowView: View {
                 .scaledToFill()
                 .frame(width: Self.stampSide, height: Self.stampSide)
                 // The same perforated frame as the pin, in the same rating ink (ADR-005).
+                // The same perforated frame as the pin, in the same rating ink and at the same
+                // quality of impression (ADR-005).
                 .clipShape(StampShape())
-                .overlay(StampShape().strokeBorder(Theme.paperRaised, lineWidth: 2))
-                .overlay(StampShape().strokeBorder(Theme.ratingInk(score).opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
-                .misregistered(StampShape(), ink: Theme.printingInk, opacity: 0.4)
+                .stampPressed(
+                    StampShape(),
+                    press: press,
+                    ink: Theme.ratingInk(score),
+                    showsInk: score != nil,
+                    paperRule: 2
+                )
                 .photoGlow(7)
-                .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) / 2))
+                // Halved: the list is a set page, so its stamps are calmer than the map's — but a
+                // one-star place still sits visibly more crooked than a five-star one.
+                .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) * press.tiltScale / 2))
         } else {
             StampShape()
                 .fill(Theme.wishlistInk.opacity(0.12))
@@ -123,7 +134,7 @@ struct PlaceRowView: View {
                 .overlay(
                     StampShape().strokeBorder(Theme.wishlistInk.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
                 )
-                .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) / 2))
+                .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) * press.tiltScale / 2))
         }
     }
 }

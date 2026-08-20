@@ -19,6 +19,9 @@ struct StampPin: View {
     /// map shows at a glance which places were worth it (ADR-005).
     private var score: Int? { place?.averageRating.map { Int($0.rounded()) } }
     private var scoreInk: Color { score == nil ? Theme.visitedInk : Theme.ratingInk(score) }
+    /// How well this stamp was printed. The score picks the ink and the craft both, so a bad meal
+    /// and a great one are told apart at pin size without reading anything (ADR-005).
+    private var press: StampPress { StampPress.press(for: score) }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -42,7 +45,9 @@ struct StampPin: View {
         .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
         // Stuck down by hand, not laid out: the angle comes from the place's id, so it never
         // changes between redraws (ADR-005, TC-N-13).
-        .rotationEffect(.degrees(StampTilt.degrees(for: cluster.id)))
+        // …and how far off square depends on how the place scored: a one-star stamp was banged
+        // on, a five-star one was placed.
+        .rotationEffect(.degrees(StampTilt.degrees(for: cluster.id) * press.tiltScale))
         .scaleEffect(isSelected ? 1.22 : 1)
         .animation(.spring(response: 0.28, dampingFraction: 0.55), value: isSelected)
         // One element, no children: the label is applied by whoever makes this selectable.
@@ -57,26 +62,37 @@ struct StampPin: View {
                 .scaledToFill()
                 .frame(width: size, height: size)
                 .clipShape(StampShape())
-                .overlay(StampShape().strokeBorder(Theme.paperRaised, lineWidth: 2.5))
-                // The frame carries the score: a plain paper edge for an unrated place, the
-                // rating's own ink around one that earned it.
-                .overlay(StampShape().strokeBorder(scoreInk.opacity(score == nil ? 0 : 0.9), lineWidth: 1.2))
-                // Two inks, one slightly off the other: the stamp's frame is printed, not drawn.
-                .misregistered(StampShape(), ink: Theme.printingInk, opacity: 0.55)
+                // The frame carries the score twice over: in the ink it is printed in, and in how
+                // well it is printed at all (ADR-005).
+                .stampPressed(StampShape(), press: press, ink: scoreInk, showsInk: score != nil, paperRule: 2.5)
                 .photoGlow(6)
-        } else {
+        } else if isVisited {
             StampShape()
-                .fill(isVisited ? Theme.visitedInk.opacity(0.16) : Theme.paperRaised)
+                .fill(Theme.visitedInk.opacity(0.16))
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
-                    Image(systemName: isVisited ? "fork.knife" : "bookmark.fill")
+                    Image(systemName: "fork.knife")
                         .font(.system(size: size * 0.3, weight: .semibold))
-                        .foregroundStyle(isVisited ? Theme.visitedInk : Theme.wishlistInk)
+                        .foregroundStyle(Theme.visitedInk)
+                )
+                // A meal with no photograph is still a meal with a score, so it is printed to the
+                // same standard the photographed ones are.
+                .stampPressed(StampShape(), press: press, ink: scoreInk, showsInk: score != nil, paperRule: 0)
+        } else {
+            // A wishlist place has not been judged, so it is never printed badly. It keeps its own
+            // dashed ticket edge, at the competent middle an unrated place always gets.
+            StampShape()
+                .fill(Theme.paperRaised)
+                .frame(width: size * 0.82, height: size * 0.82)
+                .overlay(
+                    Image(systemName: "bookmark.fill")
+                        .font(.system(size: size * 0.3, weight: .semibold))
+                        .foregroundStyle(Theme.wishlistInk)
                 )
                 .overlay(
                     StampShape().strokeBorder(
-                        isVisited ? scoreInk : Theme.wishlistInk,
-                        style: StrokeStyle(lineWidth: 2, dash: isVisited ? [] : [4, 3])
+                        Theme.wishlistInk,
+                        style: StrokeStyle(lineWidth: 2, dash: [4, 3])
                     )
                 )
                 .shadow(color: .black.opacity(0.15), radius: 2, y: 1)
