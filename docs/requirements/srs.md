@@ -47,8 +47,10 @@ accounts, cross-device sync, Android, iPad, offline map tiles, and restaurant bo
 
 ### 2.1 Product perspective
 A standalone iPhone app with **no backend of any kind**. All user data — meals, notes and
-photographs — is stored in the device's own container. The only external service contacted is
-Apple Maps, for map tiles and place lookup. There is no account, no login and no server to run.
+photographs — is stored in the device's own container. The only external services contacted are
+Apple Maps, for map tiles and place lookup, and, once a reader connects a friend, that friend's
+device directly (ADR-008). There is no account, no login and no server to run: identity is an
+ed25519 keypair the device generates for itself.
 
 ### 2.2 User characteristics
 A single private user. Assumed to be an ordinary smartphone owner, not a technical user.
@@ -65,7 +67,7 @@ unlisted street food are first-order design concerns, not localisation afterthou
 |---|---|---|
 | CON-1 | No backend, no server, no user accounts | Product decision |
 | CON-2 | No paid APIs and no API keys shipped in the app | ADR-001 |
-| CON-3 | Photographs never leave the device | Privacy decision |
+| CON-3 | Nothing leaves the device except by an explicit per-place share, and never more than a shared stamp defines | Privacy decision, ADR-008 |
 | CON-4 | iPhone only; no iPad or Android | Product decision |
 | CON-5 | Clean architecture with domain logic free of Apple frameworks | ADR-002 |
 | CON-6 | Every use-case flow covered by an automated test | ADR-002 |
@@ -77,6 +79,9 @@ unlisted street food are first-order design concerns, not localisation afterthou
   path is mandatory rather than a fallback.
 - **A-3** The device has enough free storage for the user's photo library growth.
 - **A-4** One user per device; no multi-user or profile switching.
+- **A-5** Friends are peers, not followers: a connection is mutual and both sides hold each
+  other's key. *Unverified: how often two friends' phones are awake together, which bounds how
+  fresh a friend's stamps can be — see ADR-008.*
 
 ---
 
@@ -108,7 +113,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 ### FR-2 Photograph storage
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-2.1 | Photographs shall be stored in the application's own container and never transmitted | CON-3 | TC-1-11 |
+| FR-2.1 | Photographs shall be stored in the application's own container. Originals shall never be transmitted; only 240 px thumbnails leave, and only under FR-11 | CON-3 | TC-1-11 |
 | FR-2.2 | A thumbnail shall be generated for each photograph for use on map pins | UC-2 | TC-1-11 |
 | FR-2.3 | The system shall read capture time and GPS coordinates from image metadata, handling southern and western hemispheres correctly | UC-1/1a | TC-1-12 |
 | FR-2.4 | Absent image metadata shall not be an error | UC-1/1a | TC-1-13 |
@@ -176,8 +181,6 @@ Each requirement names the use case it comes from and the test cases that prove 
 
 ---
 
-## 4. Non-functional requirements
-
 ### FR-9 Rating a meal
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
@@ -187,12 +190,68 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-9.4 | A place shall report the average of its rated meals, ignoring unrated ones | UC-7 | TC-7-05 |
 | FR-9.5 | Ratings shall be reachable in one tap from the meal, with no separate edit screen | UC-7/1a | TC-7-06 |
 
+### FR-10 Identity and connecting a friend
+| ID | Requirement | UC | Tests |
+|---|---|---|---|
+| FR-10.1 | The device shall generate an ed25519 keypair on first launch and hold the private key in the Keychain | UC-8 | — |
+| FR-10.2 | Friends shall be connectable **only in person**: a QR code carrying the ticket, and a handshake completed over local radio | UC-8 | — |
+| FR-10.3 | A connection shall not be establishable remotely by any means, including a forwarded QR code | UC-8/E1 | — |
+| FR-10.4 | Connecting shall require confirmation on the inviter's device before any data flows | UC-8 | — |
+| FR-10.5 | A connection shall be mutual; one-way following shall not exist | UC-8 | — |
+| FR-10.6 | The interface shall show a friend's key fingerprint wherever their self-asserted name is trusted | UC-8 | — |
+| FR-10.7 | Removing a friend shall delete their stamps and revoke the connection | UC-8/2a | — |
+| FR-10.8 | The friend list shall be capped at **eight**; a full circle shall be explained and offer removal, never presented as an error | UC-8/E2 | — |
+| FR-10.9 | The first sync shall run immediately on connecting, while both devices are still together | UC-8 | — |
+
+### FR-11 Sharing a place
+| ID | Requirement | UC | Tests |
+|---|---|---|---|
+| FR-11.1 | No place shall be shared unless the user explicitly shares it | UC-9 | — |
+| FR-11.2 | A shared stamp shall carry only place, average rating, visit count, latest dish, month last visited and one thumbnail | UC-9 | — |
+| FR-11.3 | A shared stamp shall never carry price, per-meal ratings, exact dates or full-size photographs | UC-9 | — |
+| FR-11.4 | A note shall be shared only where the user opted in for that place | UC-9/1a | — |
+| FR-11.5 | Every thumbnail shall be stripped of EXIF before it leaves the device | UC-9 | — |
+| FR-11.6 | Unsharing a place shall propagate a retraction on the next connection | UC-9/2a | — |
+
+### FR-12 Friends' stamps on the map
+| ID | Requirement | UC | Tests |
+|---|---|---|---|
+| FR-12.1 | Friends' stamps shall appear as their own map layer, off by default | UC-10 | — |
+| FR-12.2 | A friend's stamp matching a place the user has also stamped shall render as a countersignature on one pin | UC-10 | — |
+| FR-12.3 | Matching shall use `providerPlaceID` first, then name-and-distance, then stand alone | UC-10 | — |
+| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from the palette's curated set | UC-10 | — |
+| FR-12.5 | Friend stamps shall be distinguishable without colour (NFR-6.3) | UC-10 | — |
+| FR-12.6 | A friend's stamps shall be shown with the date they were last received, never implied to be current | UC-10 | — |
+
+### FR-13 Synchronising
+| ID | Requirement | UC | Tests |
+|---|---|---|---|
+| FR-13.1 | The app shall reconcile with each connected friend opportunistically, on foreground, network change and background refresh | UC-10 | — |
+| FR-13.2 | Reconciliation shall exchange a manifest and transfer only what changed | UC-10 | — |
+| FR-13.3 | Thumbnails shall be addressed by content hash and never fetched twice | UC-10 | — |
+| FR-13.4 | Friend data shall be a disposable cache, reconstructible by re-syncing | UC-10 | — |
+| FR-13.5 | Failure to reach a friend shall never surface as an error, only as staleness | UC-10/E1 | — |
+| FR-13.6 | The whole friends feature shall be optional; with no friends or no network the app shall behave exactly as before | UC-10 | — |
+
+---
+
+## 4. Non-functional requirements
+
 ### NFR-1 Privacy *(the product's core promise)*
-- **NFR-1.1** No photograph, note, rating or place shall be transmitted off the device.
+- **NFR-1.1** Nothing shall be transmitted off the device automatically. A place leaves only when
+  the user shares that place, and then only the fields FR-11.2 permits.
 - **NFR-1.2** No analytics, telemetry, advertising identifier or crash reporter shall be included.
-- **NFR-1.3** The only outbound network traffic shall be Apple Maps tile and place requests.
-- **NFR-1.4** No account, login or personally identifying data shall be collected.
-- *Verification:* a network-traffic inspection during an e2e run shows no host other than Apple's.
+- **NFR-1.3** Outbound traffic shall be limited to Apple Maps requests and peer connections to
+  connected friends, relayed only where a direct connection fails.
+- **NFR-1.4** No account, login or personally identifying data shall be collected. Identity is a
+  keypair the device generates; nothing is registered anywhere.
+- **NFR-1.5** Shared data shall travel encrypted end to end. No third party — including any relay —
+  shall be able to read it or retain a copy.
+- **NFR-1.6** Photographs that leave shall be 240 px thumbnails with EXIF stripped, never originals.
+- **NFR-1.7** Retraction is best-effort by design: unsharing propagates on the next connection and
+  shall never be described to the user as immediate deletion.
+- *Verification:* a network-traffic inspection during an e2e run shows no host other than Apple's
+  and the configured relays, and no traffic at all before a friend is connected.
 
 ### NFR-2 Performance
 - **NFR-2.1** Cold launch to an interactive map: **≤ 2 s** on an iPhone 12 or newer.
@@ -243,5 +302,8 @@ Each requirement names the use case it comes from and the test cases that prove 
 |---|---|---|
 | ~~OPEN-1~~ | ~~Visual design language and colour palette~~ | **Resolved** — travel-journal/editorial, see ADR-003 |
 | OPEN-2 | Whether photo backup/export is offered, given there is no server | Post-v1 |
+| OPEN-5 | How often two friends' phones are awake together — bounds stamp freshness, and decides whether friend-of-friend carriage is needed (ADR-008) | **Spike before build** |
+| OPEN-6 | Direct-connection rate over Vietnamese mobile carriers, which lean on CGNAT | **Spike before build** |
+| OPEN-7 | Whether eight friends proves too tight in use. Raising the cap is invisible and safe; lowering it orphans existing connections | Post-v1 |
 | OPEN-3 | Whether ratings are stars, a simple like, or absent | FR-1.5 |
 | ~~OPEN-4~~ | ~~Vietnamese or English as the default language on first launch~~ | **Resolved** — follows the device language, see ADR-003 |

@@ -196,6 +196,93 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 
 ---
 
+## UC-8 — Connect a friend
+
+**Actor:** a reader who wants to see a friend's stamps
+**Precondition:** both are **in the same room**, both have the app, and identity keypairs already
+exist from first launch
+
+**Main flow**
+1. User A opens *Add friend* and shows a QR code.
+2. User B scans it, and the exchange completes over local radio.
+3. A confirms B.
+4. The connection is live, and the first sync runs immediately — A's shared stamps appear on B's map
+   while they are still at the table.
+
+**Alternate flow**
+- **2a. Removing a friend** — user removes a friend; their stamps are deleted and the connection
+  revoked, freeing a slot.
+
+**Exceptions**
+- **E1. Not in the same room** — there is no remote path. A screenshotted QR code sent to someone
+  elsewhere cannot complete the handshake, because the radio leg cannot be faked at a distance.
+- **E2. Circle full** — a reader with eight friends is told the circle is full and offered a removal.
+  This is an explanation, not an error, and there is nothing to buy.
+
+**Acceptance criteria**
+- Given two phones at one table, when B scans A's code and A confirms, then A's shared stamps are on
+  B's map before they leave.
+- Given a QR code forwarded to a distant device, then no connection is formed.
+- Given eight existing friends, when the reader tries to add a ninth, then they are offered a removal
+  rather than shown a failure.
+
+---
+
+## UC-9 — Share a place with my friends
+
+**Actor:** a reader who wants a place to be visible to friends
+**Precondition:** the place is on their map
+
+**Main flow**
+1. User opens a place and turns on *Share*.
+2. The place's stamp — name, coordinate, average rating, visit count, latest dish, the month last
+   visited and one EXIF-stripped thumbnail — becomes available to connected friends.
+3. It reaches each friend the next time both phones are awake together.
+
+**Alternate flows**
+- **1a. Sharing the note too** — user opts in per place; the note travels with that stamp only.
+- **2a. Unsharing** — user turns *Share* off; a retraction propagates on the next connection.
+- **1b. Sharing everything** — from settings, user shares all visited places at once, after being
+  shown the count.
+
+**Exception**
+- **E1. Nothing shared by default** — a place is never shared as a side effect of any other action.
+
+**Acceptance criteria**
+- Given a shared place, then the stamp carries no price, no per-meal rating, no exact date and no
+  full-size photograph.
+- Given a photograph with GPS metadata, when its thumbnail is shared, then the metadata is absent.
+- Given a place is unshared, then friends lose it on their next connection.
+
+---
+
+## UC-10 — See where my friends have eaten
+
+**Actor:** a reader browsing their map
+**Precondition:** at least one connected friend has shared at least one place
+
+**Main flow**
+1. User turns on the friends layer.
+2. Friends' stamps appear in each friend's own ink, alongside their own.
+3. A place both have stamped shows a countersignature — two overlapping stamps on one pin.
+4. Opening a place lists who else has stamped it, their score, and which month.
+
+**Alternate flows**
+- **1a. Layer off** — the default; the map is exactly as it was.
+- **2a. No overlap yet** — a friend's stamps show the date they were last received, so a stale
+  layer reads as stale rather than as current.
+
+**Exception**
+- **E1. Friend unreachable** — sync fails; nothing is reported as an error, the layer simply keeps
+  the stamps and the date it last received them.
+
+**Acceptance criteria**
+- Given a friend has stamped a place I have also stamped, then one pin shows both stamps.
+- Given the friends layer is off, then the map renders exactly as it did before the feature.
+- Given no network, then the map still opens and a meal can still be logged.
+
+---
+
 ## Domain model (implied by the above)
 
 ```
@@ -207,6 +294,11 @@ User 1───* Place 1───* Meal 1───* Photo
   `kind` is derived: a place with ≥1 meal is *visited*, otherwise *wishlist*.
 - **Meal** — `id`, `place_id`, `eaten_at`, `dish_name?`, `rating?`, `note?`, `price?`, `created_at`.
 - **Photo** — `id`, `meal_id`, `storage_path`, `width`, `height`, `taken_at?`, `exif_lat?`, `exif_lng?`.
+- **Friend** — `public_key` (the identity), `display_name` (self-asserted), `connected_at`,
+  `last_reached_at`.
+- **FriendStamp** — `friend_key`, `place_name`, `lat`, `lng`, `provider_place_id?`, `rating_avg?`,
+  `visit_count`, `latest_dish?`, `last_visited_month`, `note?`, `thumbnail_hash?`, `version`.
+  Read-only and single-author, so no merge machinery is needed — see ADR-008.
 
 Splitting **Meal** from **Place** is what makes UC-2's "one pin per restaurant, many photos"
 work; if photos hung directly off places, repeat visits could not be told apart.
@@ -215,8 +307,12 @@ work; if photos hung directly off places, repeat visits could not be told apart.
 
 ## Open questions (my assumptions in **bold** — correct me and I will adjust)
 
-1. **Private by default.** No sharing, following, or public feed in v1. Sharing is a large second system; I've left it out until you ask.
-2. **Mobile-first.** The core loop (UC-1) happens standing in a restaurant holding a phone. I'll build a responsive web app that works well on a phone; a native app is a later step if you want camera/offline to feel truly native.
-3. **One user, one map.** No shared/group maps in v1.
+1. ~~**Private by default.** No sharing, following, or public feed in v1.~~ **Superseded** — friends
+   are in, see UC-8 … UC-10 and ADR-008. Still true in spirit: nothing is shared unless the reader
+   shares that place, there is no feed, and there are no followers — a connection is mutual or it
+   does not exist.
+2. ~~**Mobile-first.**~~ **Superseded** — native SwiftUI, iPhone only (CON-4).
+3. **One user, one map.** No shared or group maps: friends' stamps are a layer over your own map,
+   never a map you jointly edit (ADR-008).
 4. **Ratings are 1–5 stars**, optional.
 5. **Wishlist entries are places, not dishes.** "Try the ramen at X" is a note on the place, not its own entity.

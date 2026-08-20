@@ -1,7 +1,6 @@
 # Research — how two phones share stamps
 
-**Status:** research, no decision taken. Feeds ADR-008, which is currently a proposal written
-against one of these options and may be rewritten against another.
+**Status:** research, complete. **Decision taken in ADR-008: iroh** — Family C, direct peer to peer.
 **Date:** 2026-08-20
 
 Two problems, independent of each other, usually conflated:
