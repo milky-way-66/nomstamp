@@ -60,7 +60,7 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `StampPress` | The *quality* ramp a score prints at, from a bad impression at one star to a perfect one at five |
 | `DeckleEdge` | A deterministic torn-paper edge, used where a photograph meets the page |
 | `InkTabs` | Drawn filter tabs — small caps over a brushed underline — in place of the stock segmented control |
-| `StampCut` family | Five frames — classic, gallery, modern, country, city — dealt out per place, with a deterministic tilt |
+| `StampCut` family | Eight frames — classic, gallery, modern, country, city, ticket, seaside, pennant — dealt out per place, with a deterministic tilt |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |
 
 ## No two stamps are the same stamp
@@ -84,15 +84,36 @@ photograph filling it:
   itself irregular. The only cut with no repeating rhythm in it at all.
 - **City** — the metropolitan issue. Hard square corners and a stepped skyline along the top edge,
   a block of buildings seen end-on.
+- **Ticket** — the transport issue. A bite taken out of both sides halfway down, where a hand or a
+  machine tore it off the roll.
+- **Seaside** — the holiday issue. Scalloped waves along the top and the bottom, straight down the
+  sides.
+- **Pennant** — the festival issue. A flag: square shoulders and a V cut out of the bottom edge.
 
 The cut carries no meaning: it is not the kind, it is not the score, and nothing may ever be read
 off it. It exists so that six pins on a map look like six stamps rather than six copies of one, and
 so that the same place is recognisably itself in the list and on the map.
 
-The tilt widens with it. Four degrees was chosen when every stamp was the same shape, and at that
-range it read as a rendering tolerance rather than as a hand; ±9° is the point at which a row of
-them looks stuck down rather than laid out. The score still narrows it — a five-star stamp is placed
-squarely, whatever cut it was dealt (TC-N-13, TC-N-22).
+The tilt widens with them. Four degrees was chosen when every stamp was the same shape, and at that
+range it read as a rendering tolerance rather than as a hand. With eight silhouettes on the page the
+angle has something to be measured against, so it goes to **±14°** — properly stuck down, the way a
+child sticks things in an album. The score still narrows it: a five-star stamp is placed nearly
+square whatever cut it was dealt (TC-N-13, TC-N-22).
+
+## Drawn, not rendered — the cartoon rule
+
+Everything the app draws itself is drawn the way a comic panel is: a **bold dark contour** around
+every object, **flat colour** inside it, and a **hard shadow** — the shape again in ink, offset a
+couple of points, with no blur on it. No soft glow stands in for an edge, and no gradient stands in
+for a form.
+
+This is what makes a hand-drawn interface hold together at a glance, and it is why the chrome must
+never fall back on system materials: a blurred iOS panel next to a contoured token reads as two
+apps. Where a thing has weight it earns it from its contour and its offset shadow, not from a
+diffuse drop shadow.
+
+The one exception is the page itself — paper, grain and the weather's border are still soft, because
+paper is the ground everything is drawn *on*, not an object drawn on it.
 
 ## A score is printed, not annotated
 

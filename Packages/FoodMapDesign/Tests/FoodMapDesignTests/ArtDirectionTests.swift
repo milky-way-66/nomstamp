@@ -118,31 +118,6 @@ struct ArtDirectionTests {
         #expect(StampPress(quality: 42).quality == 1)
     }
 
-    /// TC-N-23 — the weather is the one thing in the app allowed to move on its own, and the
-    /// condition of that licence is that it is slow enough to ignore.
-    @Test("TC-N-23 the sky drifts rather than animates, and is still when there is nothing to draw")
-    func TC_N_23_skyMotion() {
-        for effect in SkyEffectKind.allCases where effect != .none {
-            let period = SkyMotion.period(for: effect)
-            #expect(period >= SkyMotion.fastest, "\(effect) at \(period)s would twitch")
-            #expect(period <= SkyMotion.slowest, "\(effect) at \(period)s would look stuck")
-            #expect(SkyMotion.amplitude(for: effect) > 0, "\(effect) is drawn, so it has to move")
-        }
-
-        // Nothing known about the sky, nothing drawn, and so nothing moving.
-        #expect(SkyMotion.period(for: .none) == 0)
-        #expect(SkyMotion.amplitude(for: .none) == 0)
-
-        // Rain falls, fog leans: the busiest sky must not be the slowest one.
-        #expect(SkyMotion.period(for: .rain) < SkyMotion.period(for: .haze))
-
-        // Only rain redraws its whole window each cycle; everything else stays where it was
-        // printed and merely changes its light.
-        for effect in SkyEffectKind.allCases where effect != .none && effect != .rain {
-            #expect(SkyMotion.amplitude(for: effect) <= 0.2, "\(effect) would visibly wander")
-        }
-    }
-
     /// TC-N-12 — the third ink is held to the same standard as the first two.
     @Test("TC-N-12 the printing ink is registered in the pairings the interface renders")
     func TC_N_12_printingInkIsRegistered() {

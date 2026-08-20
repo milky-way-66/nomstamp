@@ -72,27 +72,16 @@ legibility — which is a bad trade on the one screen the whole app is.
 What is left of the weather is the sky itself: a drawn effect in a band at the top of the map,
 where a sky belongs. It is decoration over the horizon, not a filter over the city.
 
-**The weather is the border of the page.** A window in the corner was tried first and rejected: it
-was one more object on a screen that already has pins, actions, a compass and a sheet, and for all
-that furniture it only ever said what a glance out of a window says. So the sky stops being a thing
-*on* the page and becomes the edge *of* it — a printed rule just inside the screen, ornamented by
-the weather, the way a stamped page is ruled.
+**The weather is not drawn at all.** This was tried three ways in one day and taken out three
+times. A wash over the map cost legibility at every strength — and the map is the app. A lit window
+in the corner cost room on a screen that already carries pins, actions, a compass and a sheet, for
+what a glance out of a real window says. A ruled border around the page cost least of all, and was
+still furniture: an ornament the reader has to look past on the way to their own city.
 
-- **Rain** rules fine ticks down the two sides, drifting.
-- **Fog** softens the rule until it has no edge left, and breathes.
-- **A clear sky** warms it: a hairline with a slow bloom along the top.
-- **After dark** hangs small lanterns along it, coming up in turn.
-- **An unknown sky** leaves the page unruled. An ornament would be a claim.
-
-It earns its place by being the one piece of chrome that costs no room: it lives in the margin the
-layout already leaves, it never covers the map, and it is the frame around everything rather than
-another thing inside it. The rules it is held to are unchanged — slow enough to ignore, still under
-Reduce Motion, and labelled, because the sky is information.
-
-**Effects are drawn, never photographed.** Rain is ruled ink streaks, haze is a paper wash,
-`bloom` a warm halo, `lanterns` a scatter of specks. They are drawn in the margin and nowhere else
-— never over the cartography, a photograph, a form or a paragraph (ADR-005 rules 1 and 2) — and
-they are suppressed under Reduce Transparency.
+So the sky keeps exactly one job, the one it does not have to draw anything to do: **it decides
+whether the lights are on**. Rain, fog and cloud change nothing. The atmosphere the app has is the
+atmosphere it prints — the stamps, the paper, the drawn chrome — and none of that is on loan from
+the forecast.
 
 **Two accents are told apart by hue, not by lightness.** Both have to clear AAA against the same
 paper, which forces their luminances close together, so a contrast test between them would only be

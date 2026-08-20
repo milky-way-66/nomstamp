@@ -10,9 +10,6 @@ struct FoodMapApp: App {
             let appearance = dependencies.appearanceStore.appearance
 
             MapScreen(dependencies: dependencies)
-                // The weather is the border of the page, so it is drawn around the whole app
-                // rather than on any one screen (ADR-006).
-                .overlay { SkyFrame(effect: appearance.effect) }
                 .tint(Theme.visitedInk)
                 // Light and dark follow the sun where the reader is standing, not the system
                 // setting: someone at a night market at nine has the lights down (ADR-006).
@@ -23,7 +20,6 @@ struct FoodMapApp: App {
                 .id(appearance.skin)
                 .transition(.opacity)
                 .animation(.easeInOut(duration: 0.4), value: appearance.skin)
-                .environment(\.skyEffect, appearance.effect)
                 .task { await dependencies.appearanceStore.refresh() }
                 .onChange(of: scenePhase) { _, phase in
                     // Between two sessions it can have started raining, or got dark.

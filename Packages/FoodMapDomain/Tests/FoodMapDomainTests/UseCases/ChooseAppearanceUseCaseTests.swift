@@ -8,31 +8,26 @@ struct ChooseAppearanceUseCaseTests {
     /// A fixed date, so the rotation cases are about the rule and not about today.
     private let noon = Date(timeIntervalSinceReferenceDate: 800_000_000)
 
-    /// TC-N-19 — every documented sky maps to its documented effect.
+    /// TC-N-19 — the sun, and nothing else. Every version of drawn weather was tried and taken
+    /// out again (ADR-006, revised twice on 20 August): what survives is whether the lights are on.
     @Test(arguments: [
-        (WeatherCondition.clear, true, SkyEffect.bloom),
-        (.clear, false, .lanterns),
-        (.cloudy, true, .haze),
-        (.fog, true, .haze),
-        (.rain, true, .rain),
-        (.storm, true, .rain),
-        (.snow, true, .haze),
+        (WeatherCondition.clear, true, false),
+        (.clear, false, true),
+        (.cloudy, true, false),
+        (.fog, false, true),
+        (.rain, true, false),
+        (.storm, false, true),
+        (.snow, true, false),
     ])
-    func skyChoosesTheEffect(condition: WeatherCondition, isDaylight: Bool, effect: SkyEffect) {
+    func theSkyOnlyDecidesTheLights(condition: WeatherCondition, isDaylight: Bool, isNight: Bool) {
         let appearance = choose.execute(
             weather: WeatherSnapshot(condition: condition, isDaylight: isDaylight),
             on: noon
         )
 
-        #expect(appearance.effect == effect)
-    }
-
-    /// TC-N-19 (second half) — a clear sky is the one condition that reads differently after dark.
-    @Test func aClearNightIsNotAClearDay() {
-        let day = choose.execute(weather: WeatherSnapshot(condition: .clear, isDaylight: true), on: noon)
-        let night = choose.execute(weather: WeatherSnapshot(condition: .clear, isDaylight: false), on: noon)
-
-        #expect(day.effect != night.effect)
+        #expect(appearance.isNight == isNight)
+        // Whatever the sky is doing, the app is printed in the same inks.
+        #expect(appearance.skin == .house)
     }
 
     /// TC-N-20 — the rule that replaced the skin rotation (ADR-006, revised 20 August). The app is
@@ -53,9 +48,11 @@ struct ChooseAppearanceUseCaseTests {
         #expect(Set(week.map { choose.execute(weather: nil, on: $0).skin }) == [Skin.house])
     }
 
-    /// TC-N-20 — an unknown sky draws nothing: an effect would be a claim about the weather.
-    @Test func anUnknownSkyIsLeftEmpty() {
-        #expect(choose.execute(weather: nil, on: noon).effect == .none)
+    /// TC-N-20 — an unknown sky changes nothing at all: with no reading there is no claim to make
+    /// about either the printing or the light.
+    @Test func anUnknownSkyChangesNothing() {
+        let unknown = choose.execute(weather: nil, on: noon)
+        #expect(unknown == Appearance(skin: .house, isNight: false))
     }
 
     /// TC-N-21 — light and dark follow the sun where the user is standing, not the system setting,
