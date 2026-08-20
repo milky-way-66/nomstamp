@@ -15,9 +15,13 @@ extension View {
         press: StampPress,
         ink: Color,
         showsInk: Bool,
-        paperRule: Double
+        paperRule: Double,
+        paper: Color = Theme.paperRaised
     ) -> some View {
-        modifier(StampPrinting(shape: shape, press: press, ink: ink, showsInk: showsInk, paperRule: paperRule))
+        modifier(StampPrinting(
+            shape: shape, press: press, ink: ink,
+            showsInk: showsInk, paperRule: paperRule, paper: paper
+        ))
     }
 }
 
@@ -28,19 +32,18 @@ private struct StampPrinting<S: InsettableShape>: ViewModifier {
     /// False where the place has no score to print in — the frame is still made well or badly,
     /// but in plain paper, because an unrated place must not borrow a rating's colour.
     let showsInk: Bool
-    /// The white paper edge every stamp has, before any rating ink goes on it.
+    /// The paper edge every stamp has, before any rating ink goes on it.
     let paperRule: Double
+    /// What colour that paper is — dealt from the place's id, and carrying no meaning (ADR-005).
+    let paper: Color
 
     func body(content: Content) -> some View {
         content
-            .overlay(shape.strokeBorder(Theme.paperRaised, lineWidth: paperRule))
+            .overlay(shape.strokeBorder(paper, lineWidth: paperRule))
             .overlay(rules)
-            // The house misregistration, the same on every stamp: it is what makes the frame look
-            // printed rather than drawn, and it says nothing about the score.
-            .misregistered(shape, ink: Theme.printingInk, opacity: 0.45)
-            // The cartoon shadow: the shape again, in ink, moved a couple of points. A blurred
-            // shadow would be the one soft edge on an object made entirely of hard ones (ADR-005).
-            .background(shape.fill(Theme.ink.opacity(0.5)).offset(x: 1.5, y: 2.5))
+            // No second impression and no shadow. Both were here, and both read at pin size as a
+            // heavier border rather than as printing — thirteen small shapes, each with a grey
+            // ghost behind it, made a map of blots (ADR-005).
     }
 
     /// The rule around the stamp, and — at five stars — the hairline inside it.
@@ -52,12 +55,12 @@ private struct StampPrinting<S: InsettableShape>: ViewModifier {
             // The contour first — the dark line every drawn object in the app is bounded by — and
             // the rating's own rule inside it, so the score is a colour held by a line rather than
             // a line of its own colour floating on the map.
-            shape.strokeBorder(Theme.ink.opacity(0.85), lineWidth: 1.2)
-            shape.inset(by: 1.2).strokeBorder(ruleInk, lineWidth: press.ruleWidth)
+            shape.strokeBorder(Theme.ink.opacity(0.85), lineWidth: 0.7)
+            shape.inset(by: 0.7).strokeBorder(ruleInk, lineWidth: press.ruleWidth)
 
             if press.hasInnerRule {
                 shape
-                    .inset(by: press.ruleWidth + 3)
+                    .inset(by: press.ruleWidth + 2)
                     .strokeBorder(ruleInk.opacity(0.55), lineWidth: 0.8)
             }
         }

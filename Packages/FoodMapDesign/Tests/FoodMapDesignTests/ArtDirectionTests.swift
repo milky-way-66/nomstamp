@@ -43,6 +43,15 @@ struct ArtDirectionTests {
             #expect(share > even / 2 && share < even * 2.5, "\(cut) is dealt \(share) of the time")
         }
 
+        // The paper is a second, independent draw: every colour turns up, and a cut does not come
+        // with a colour attached.
+        let papers = ids.map { StampPaper.paper(for: $0) }
+        for (id, paper) in zip(ids, papers) {
+            #expect(StampPaper.paper(for: id) == paper, "a place must keep the paper it was printed on")
+        }
+        #expect(Set(papers) == Set(StampPaper.allCases))
+        #expect(Set(ids.filter { StampCut.cut(for: $0) == .gallery }.map { StampPaper.paper(for: $0) }).count >= 3)
+
         // A page of one cut must not also be a page of one angle.
         let galleryAngles = Set(ids.filter { StampCut.cut(for: $0) == .gallery }
             .map { Int(StampTilt.degrees(for: $0).rounded()) })
@@ -112,6 +121,30 @@ struct ArtDirectionTests {
         // Anything off the scale is unjudged too, not badly judged.
         #expect(StampPress.press(for: 0) == unrated)
         #expect(StampPress.press(for: 9) == unrated)
+    }
+
+    /// TC-N-24 — the map's actions are painted rather than printed, and paint still has to be
+    /// legible: whatever is drawn on one of these has to clear the component floor in both
+    /// appearances, and the three of them have to be three colours rather than one.
+    @Test("TC-N-24 every action ink carries its glyph legibly, in both appearances")
+    func TC_N_24_actionInks() {
+        for ink in ActionInk.allCases {
+            for appearance in [Palette.Appearance.light, .dark] {
+                let fill = Palette.value(ink.fill, in: appearance)
+                let glyph = Palette.value(ink.glyph, in: appearance)
+                let ratio = Contrast.ratio(fill, glyph)
+                #expect(ratio >= Contrast.normalTextMinimum, "\(ink) in \(appearance) is \(ratio):1")
+            }
+        }
+
+        // Three toys, three colours — not one hue at three brightnesses.
+        for pair in [(ActionInk.sun, ActionInk.berry), (.sun, .leaf), (.berry, .leaf)] {
+            let separation = Contrast.hueSeparation(
+                Palette.value(pair.0.fill, in: .light),
+                Palette.value(pair.1.fill, in: .light)
+            )
+            #expect(separation >= 40, "\(pair.0) and \(pair.1) are \(separation)° apart")
+        }
     }
 
     /// A quality is a fraction, whatever it is handed.

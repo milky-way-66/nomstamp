@@ -45,10 +45,10 @@ public struct StampPress: Sendable, Equatable {
     /// Small numbers on purpose: the tilt is a hint, and past a few degrees it reads as breakage.
     public var tiltScale: Double { interpolate(from: 1.3, to: 0.2) }
 
-    /// The weight of the rule printed around the stamp. Heavy even at the bottom of the ramp: the
-    /// app is drawn with a contour around everything (ADR-005, the cartoon rule), and a bad print is
-    /// a wobbly bold line, not a faint one.
-    public var ruleWidth: Double { interpolate(from: 1.6, to: 3) }
+    /// The weight of the rule printed around the stamp. Lighter than the app's other contours on
+    /// purpose: a stamp is small, it is drawn thirteen different ways, and a heavy border swallowed
+    /// the cut it was drawn around.
+    public var ruleWidth: Double { interpolate(from: 1, to: 2) }
 
     /// How solid that rule comes out — pale at the bottom of the ramp, full ink at the top.
     public var ruleOpacity: Double { interpolate(from: 0.7, to: 1) }

@@ -102,6 +102,8 @@ struct PlaceRowView: View {
     /// The same frame the map deals this place, so a stamp is recognisably itself in both places
     /// (ADR-005, TC-N-13).
     private var shape: StampCutShape { StampCutShape(cut: StampCut.cut(for: place.id.uuidString)) }
+    /// The same paper the map deals this place.
+    private var paper: Color { Theme.stampPaper(StampPaper.paper(for: place.id.uuidString)) }
 
     @ViewBuilder
     private var stamp: some View {
@@ -119,15 +121,15 @@ struct PlaceRowView: View {
                     press: press,
                     ink: Theme.ratingInk(score),
                     showsInk: score != nil,
-                    paperRule: 2
+                    paperRule: 3.5,
+                    paper: paper
                 )
-                .photoGlow(7)
                 // Halved: the list is a set page, so its stamps are calmer than the map's — but a
                 // one-star place still sits visibly more crooked than a five-star one.
                 .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) * press.tiltScale / 2))
         } else {
             shape
-                .fill(Theme.wishlistInk.opacity(0.12))
+                .fill(paper)
                 .frame(width: Self.stampSide, height: Self.stampSide)
                 .overlay(
                     FoodMark(glyph: .ribbon)
@@ -136,7 +138,7 @@ struct PlaceRowView: View {
                         .padding(Self.stampSide * 0.3)
                 )
                 .overlay(
-                    shape.strokeBorder(Theme.wishlistInk.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
+                    shape.strokeBorder(Theme.wishlistInk.opacity(0.7), style: StrokeStyle(lineWidth: 1.2, dash: [4, 3]))
                 )
                 .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) * press.tiltScale / 2))
         }

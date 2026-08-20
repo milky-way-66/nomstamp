@@ -6,17 +6,19 @@ import Foundation
 /// because the stamps on it came from everywhere, so a place is dealt one of these from its own id
 /// and keeps it for good — the same reason `StampTilt` is a hash rather than a random number.
 ///
-/// The five are five different imaginary post offices, not five roundings of one rectangle: the
-/// difference has to survive being shrunk to pin size and filled with a photograph, which means it
-/// has to be in the silhouette. Nothing may ever be *read* off a cut: it is not the kind, not the
+/// Each one is a *thing*, not a rounding of a rectangle: an old stamp, the moulding round an oil
+/// painting, a lego brick, a tube television, a comic burst. The difference has to survive being
+/// shrunk to pin size and filled with a photograph, which means it has to be in the silhouette —
+/// abstract cuts (a chamfer, a lean, an octagon) were tried first and read as the same square with
+/// its corners done differently. Nothing may ever be *read* off a cut: it is not the kind, not the
 /// score, and carries no meaning at all.
 public enum StampCut: String, CaseIterable, Sendable {
-    /// The old-fashioned issue: perforated teeth the whole way round.
+    /// An old postage stamp: perforated teeth the whole way round.
     case classic
     /// The art issue: an arched top on square shoulders, like a canvas.
     case gallery
-    /// The future issue: two opposite corners cut clean off, every line straight.
-    case modern
+    /// A lego brick, studs and all.
+    case lego
     /// The rural issue: four torn deckle edges, none of them straight.
     case country
     /// The metropolitan issue: hard corners and a stepped skyline along the top.
@@ -31,12 +33,12 @@ public enum StampCut: String, CaseIterable, Sendable {
     case comic
     /// The arcade issue: corners built out of square pixels, 8-bit.
     case arcade
-    /// The travel issue: all four corners taken off, the shape of a stamped document.
-    case passport
+    /// An old painting frame: scooped sides and blocked corners, the moulding round an oil.
+    case painting
     /// The street-party issue: triangular bunting hanging off the bottom edge.
     case bunting
-    /// The airmail issue: the whole stamp leaning, as though it were already moving.
-    case airmail
+    /// An old television: a screen that bulges, the way a tube does.
+    case television
 
     /// The cut a place is dealt. Deterministic, so a place is the same stamp in the list as on the
     /// map, and the same stamp tomorrow.

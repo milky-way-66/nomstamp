@@ -70,13 +70,19 @@ struct FloatingActionButton: View {
         .accessibilityIdentifier(identifier)
     }
 
-    private var foreground: Color {
-        style == .primary ? Theme.onAccent : Theme.ink
+    private var foreground: Color { Theme.actionGlyph(paint) }
+
+    /// Three actions, three paints (ADR-005): yellow for finding yourself, pink for keeping a
+    /// place, bright leaf for the camera.
+    private var paint: ActionInk {
+        switch glyph {
+        case .needle: .sun
+        case .ribbon: .berry
+        default: .leaf
+        }
     }
 
-    private var background: Color {
-        style == .primary ? Theme.visitedInk : Theme.paperRaised
-    }
+    private var background: Color { Theme.actionFill(paint) }
 }
 
 /// The press: the token drops onto its own shadow and comes back up.

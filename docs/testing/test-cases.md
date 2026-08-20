@@ -193,10 +193,11 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-10 | E | NFR-6.1 | Given the largest accessibility text size, when the map opens, then the primary actions are still present and hittable | **auto** |
 | TC-N-11 | E | NFR-6.2 | Given the map screen, then every control carries a VoiceOver label, not a bare image name | **auto** |
 | TC-N-12 | U | ADR-005 | Given the printing ink (indigo), then every pairing it renders in meets its contrast level in both appearances | **auto** |
-| TC-N-13 | U | ADR-005 | Given a place id, when its stamp tilt and cut are computed, then both are stable across calls, the tilt is within ±14°, and a page of places uses every cut | **auto** |
+| TC-N-13 | U | ADR-005 | Given a place id, when its stamp tilt, cut and paper are computed, then all three are stable across calls, the tilt is within ±14°, and a page of places uses every cut and every paper | **auto** |
 | TC-N-14 | U | ADR-005 | Given the paper grain tile, then it is deterministic for a seed, non-uniform, and its mean ink stays inside the documented bounds | **auto** |
 | TC-N-16 | U | ADR-005 | Given a deckle edge of n points, then the amplitudes are deterministic for a seed, within bounds, and not all equal | **auto** |
 | TC-N-17 | U | ADR-005 | Given a score, then its mood is defined only for 1...5, each step has its own ink, and every ink is a contrast-checked pairing | **auto** |
+| TC-N-24 | U | ADR-005 | Given each action ink, then its glyph clears the contrast floor on it in both appearances, and the three inks are three distinct hues | **auto** |
 | TC-N-22 | U | ADR-005 | Given a score, then its stamp press is ordered — every quality improves as the score rises, none of them backwards — and an unrated place prints at the competent middle rather than at the bottom | **auto** |
 | TC-N-18 | U | ADR-006 | Given every skin, then all of its rendered pairings meet their contrast level in both appearances | **auto** |
 | TC-N-19 | U | ADR-006 | Given a weather condition and whether it is daylight, then only the light changes — the sky is never drawn | **auto** |

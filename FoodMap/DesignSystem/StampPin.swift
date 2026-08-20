@@ -28,6 +28,9 @@ struct StampPin: View {
     private var stampID: String { place?.id.uuidString ?? cluster.id }
     /// Which of the five frames this place was dealt, once and for good (ADR-005, TC-N-13).
     private var shape: StampCutShape { StampCutShape(cut: StampCut.cut(for: stampID)) }
+    /// The colour of the paper this one was printed on — dealt with the cut, and meaning as little
+    /// (ADR-005).
+    private var paper: Color { Theme.stampPaper(StampPaper.paper(for: stampID)) }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -70,11 +73,10 @@ struct StampPin: View {
                 .clipShape(shape)
                 // The frame carries the score twice over: in the ink it is printed in, and in how
                 // well it is printed at all (ADR-005).
-                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 2.5)
-                .photoGlow(6)
+                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 4, paper: paper)
         } else if isVisited {
             shape
-                .fill(Theme.visitedInk.opacity(0.16))
+                .fill(paper)
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
                     Image(systemName: "fork.knife")
@@ -83,12 +85,12 @@ struct StampPin: View {
                 )
                 // A meal with no photograph is still a meal with a score, so it is printed to the
                 // same standard the photographed ones are.
-                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 0)
+                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 0, paper: paper)
         } else {
             // A wishlist place has not been judged, so it is never printed badly. It keeps its own
             // dashed ticket edge, at the competent middle an unrated place always gets.
             shape
-                .fill(Theme.paperRaised)
+                .fill(paper)
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
                     Image(systemName: "bookmark.fill")
@@ -98,10 +100,9 @@ struct StampPin: View {
                 .overlay(
                     shape.strokeBorder(
                         Theme.wishlistInk,
-                        style: StrokeStyle(lineWidth: 2, dash: [4, 3])
+                        style: StrokeStyle(lineWidth: 1.5, dash: [4, 3])
                     )
                 )
-                .shadow(color: .black.opacity(0.15), radius: 2, y: 1)
         }
     }
 

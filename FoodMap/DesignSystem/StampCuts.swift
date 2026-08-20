@@ -23,7 +23,7 @@ struct StampCutShape: InsettableShape {
         switch cut {
         case .classic: return StampShape(insetAmount: insetAmount).path(in: rect)
         case .gallery: return Self.gallery(inner)
-        case .modern: return Self.modern(inner)
+        case .lego: return Self.lego(inner)
         case .country: return Self.country(inner)
         case .city: return Self.city(inner)
         case .ticket: return Self.ticket(inner)
@@ -31,9 +31,9 @@ struct StampCutShape: InsettableShape {
         case .pennant: return Self.pennant(inner)
         case .comic: return Self.comic(inner)
         case .arcade: return Self.arcade(inner)
-        case .passport: return Self.passport(inner)
+        case .painting: return Self.painting(inner)
         case .bunting: return Self.bunting(inner)
-        case .airmail: return Self.airmail(inner)
+        case .television: return Self.television(inner)
         }
     }
 
@@ -52,17 +52,56 @@ struct StampCutShape: InsettableShape {
         return path
     }
 
-    /// The future issue: two opposite corners taken off at 45°, everything else dead straight. No
-    /// perforation, no rounding — the only cut in the family a machine could have made.
-    private static func modern(_ rect: CGRect) -> Path {
-        let chamfer = min(rect.width, rect.height) * 0.3
+    /// A lego brick: a squared-off body with three studs along the top. The studs are unioned
+    /// rather than drawn, so the contour runs round them and the photograph fills them too.
+    private static func lego(_ rect: CGRect) -> Path {
+        let studs = 3
+        let radius = rect.width / CGFloat(studs) * 0.3
+        let body = rect.insetBy(dx: 0, dy: radius * 0.5).offsetBy(dx: 0, dy: radius * 0.5)
+        var path = Path(roundedRect: body, cornerRadius: min(rect.width, rect.height) * 0.06)
+
+        for stud in 0..<studs {
+            let x = body.minX + body.width * (CGFloat(stud) + 0.5) / CGFloat(studs)
+            path = path.union(Path(ellipseIn: CGRect(
+                x: x - radius, y: body.minY - radius,
+                width: radius * 2, height: radius * 2
+            )))
+        }
+        return path
+    }
+
+    /// The moulding round an old oil painting: every side scooped inwards, and a block left at each
+    /// corner where the mitre is. Concave sides are the whole trick — a frame is the one rectangle
+    /// in the world whose edges curve the wrong way.
+    private static func painting(_ rect: CGRect) -> Path {
+        let scoop = min(rect.width, rect.height) * 0.1
+        let block = min(rect.width, rect.height) * 0.2
         var path = Path()
-        path.move(to: CGPoint(x: rect.minX + chamfer, y: rect.minY))
+
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.minX + block, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - block, y: rect.minY),
+            control: CGPoint(x: rect.midX, y: rect.minY + scoop * 2)
+        )
         path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - chamfer))
-        path.addLine(to: CGPoint(x: rect.maxX - chamfer, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + block))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.maxY - block),
+            control: CGPoint(x: rect.maxX - scoop * 2, y: rect.midY)
+        )
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.maxX - block, y: rect.maxY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + block, y: rect.maxY),
+            control: CGPoint(x: rect.midX, y: rect.maxY - scoop * 2)
+        )
         path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + chamfer))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY - block))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.minY + block),
+            control: CGPoint(x: rect.minX + scoop * 2, y: rect.midY)
+        )
         path.closeSubpath()
         return path
     }
@@ -269,15 +308,46 @@ struct StampCutShape: InsettableShape {
         return path
     }
 
-    /// The airmail issue: the same rectangle, leaning. Nothing else changes, which is the joke —
-    /// the stamp is in a hurry.
-    private static func airmail(_ rect: CGRect) -> Path {
-        let lean = rect.width * 0.14
+    /// An old television: a tube screen, which is a rectangle that has been inflated slightly and
+    /// has corners far rounder than any of the paper cuts.
+    private static func television(_ rect: CGRect) -> Path {
+        let bulge = min(rect.width, rect.height) * 0.09
+        let corner = min(rect.width, rect.height) * 0.26
         var path = Path()
-        path.move(to: CGPoint(x: rect.minX + lean, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
-        path.addLine(to: CGPoint(x: rect.maxX - lean, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+
+        path.move(to: CGPoint(x: rect.minX + corner, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - corner, y: rect.minY),
+            control: CGPoint(x: rect.midX, y: rect.minY - bulge)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.minY + corner),
+            control: CGPoint(x: rect.maxX, y: rect.minY)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.maxY - corner),
+            control: CGPoint(x: rect.maxX + bulge, y: rect.midY)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - corner, y: rect.maxY),
+            control: CGPoint(x: rect.maxX, y: rect.maxY)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + corner, y: rect.maxY),
+            control: CGPoint(x: rect.midX, y: rect.maxY + bulge)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.maxY - corner),
+            control: CGPoint(x: rect.minX, y: rect.maxY)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.minY + corner),
+            control: CGPoint(x: rect.minX - bulge, y: rect.midY)
+        )
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + corner, y: rect.minY),
+            control: CGPoint(x: rect.minX, y: rect.minY)
+        )
         path.closeSubpath()
         return path
     }

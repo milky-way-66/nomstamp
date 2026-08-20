@@ -43,6 +43,13 @@ enum Theme {
     /// white on them is 3.03:1, below AA (TC-N-07).
     static var onAccent: Color { dynamic(skin.onAccent) }
 
+    /// The paper a stamp was dealt (ADR-005). Decoration, never information.
+    static func stampPaper(_ paper: StampPaper) -> Color { dynamic(paper.ink) }
+
+    /// The paint the map's three actions wear, and what is drawn on it (ADR-005, TC-N-24).
+    static func actionFill(_ ink: ActionInk) -> Color { dynamic(ink.fill) }
+    static func actionGlyph(_ ink: ActionInk) -> Color { dynamic(ink.glyph) }
+
     static func accent(for kind: PlaceKindStyle) -> Color {
         switch kind {
         case .visited: return visitedInk

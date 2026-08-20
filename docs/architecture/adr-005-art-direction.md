@@ -60,7 +60,9 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `StampPress` | The *quality* ramp a score prints at, from a bad impression at one star to a perfect one at five |
 | `DeckleEdge` | A deterministic torn-paper edge, used where a photograph meets the page |
 | `InkTabs` | Drawn filter tabs — small caps over a plain bottom rule — in place of the stock segmented control |
-| `StampCut` family | Eight frames — classic, gallery, modern, country, city, ticket, seaside, pennant — dealt out per place, with a deterministic tilt |
+| `StampPaper` family | Seven paper colours, dealt per place with its cut and carrying no meaning |
+| `StampCut` family | Thirteen frames — an old stamp, a painting's moulding, a lego brick, a tube television, a comic burst, arcade pixels, bunting… — dealt out per place, with a deterministic tilt |
+| `ActionInk` | The three bright paints the map's actions wear — yellow, pink, leaf — each carrying a near-black glyph |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |
 
 ## No two stamps are the same stamp
@@ -78,20 +80,25 @@ photograph filling it:
   draws when asked to draw a stamp. This is the one the app started with.
 - **Gallery** — the art issue. An arched top, like a canvas or a museum doorway, on square
   shoulders. The only cut with a curve for a top edge.
-- **Modern** — the future issue. Two opposite corners cut clean off at an angle, every line
-  straight, no perforation and no wobble. Machined rather than torn.
+- **Lego** — a brick, studs along the top, the photograph filling the studs too.
+- **Painting** — the moulding round an oil: every side scooped *inwards*, with a block left at each
+  mitred corner. The one rectangle whose edges curve the wrong way.
+- **Television** — a tube screen, inflated, with corners rounder than any paper cut has.
 - **Country** — the rural issue. Hand-cut: four torn deckle edges, none of them straight, the paper
   itself irregular. The only cut with no repeating rhythm in it at all.
 - **City** — the metropolitan issue. Hard square corners and a stepped skyline along the top edge,
   a block of buildings seen end-on.
-- **Ticket** — the transport issue. A bite taken out of both sides halfway down, where a hand or a
-  machine tore it off the roll.
+- **Ticket** — a bite taken out of both sides halfway down, where a hand or a machine tore it off
+  the roll.
 - **Seaside** — the holiday issue. Scalloped waves along the top and the bottom, straight down the
   sides.
 - **Pennant** — the festival issue. A flag: square shoulders and a V cut out of the bottom edge.
 
-The cut carries no meaning: it is not the kind, it is not the score, and nothing may ever be read
-off it. It exists so that six pins on a map look like six stamps rather than six copies of one, and
+Each cut is dealt a paper colour to go with it (`StampPaper`), from a second, independent draw, so
+a page of pins is a page of coloured stamps rather than white ones. Neither the cut nor the paper
+carries any meaning: neither is the kind, neither is the score, and nothing may ever be read off
+either — which is why the colour is only ever the *paper*, and the rule inside it stays the rating's
+ink. It exists so that six pins on a map look like six stamps rather than six copies of one, and
 so that the same place is recognisably itself in the list and on the map.
 
 The tilt widens with them. Four degrees was chosen when every stamp was the same shape, and at that
@@ -117,14 +124,21 @@ The map's actions are a wobbly hand-drawn circle, a luggage tag and a fat blob; 
 small angle; and a reader tells them apart at the edge of vision, before the glyph on them is read.
 The same goes for the thirteen stamp cuts and for anything else the app repeats.
 
+**The map's actions are painted, not printed.** The journal's inks are deep and slightly dusty
+because type sits on them; the three floating actions are toys, and a cartoon paints its toys in
+primaries — yellow, hot pink, bright leaf (`ActionInk`). They carry a near-black glyph in both
+appearances rather than white, which is what lets the yellow be yellow instead of mustard (TC-N-24).
+
 **Nothing stock survives contact with this.** `.borderedProminent`, `.bordered` and the stock
 segmented control were all removed: a system control in a drawn interface is the one object on the
 screen nobody drew, and it is always the first thing the eye finds. `CartoonButtonStyle` replaces
 them, and it carries the press — the button drops onto its own shadow and the gap closes, which is
 feedback a drawn interface can afford where a tint change is not.
 
-The one exception is the page itself — paper and grain are still soft, because paper is the ground
-everything is drawn *on*, not an object drawn on it.
+Two exceptions. The page itself — paper and grain — is still soft, because paper is the ground
+everything is drawn *on*, not an object drawn on it. And the stamps take the contour but not the
+hard shadow: they are stuck *to* the page rather than floating over it, and thirteen small shapes
+each carrying a slab of ink behind it turned a map of pins into a map of blots.
 
 ## A score is printed, not annotated
 
