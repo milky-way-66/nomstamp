@@ -1,8 +1,9 @@
 /// The inks the app is printed in today (ADR-006).
 ///
 /// A skin re-inks the *press*, not the paper: the page, the body ink and the rating ramp are
-/// constant, so what a reader reads never moves, and only the accents, the printing ink and the
-/// map wash change. That is why a skin cannot break body-text contrast, and why the five of them
+/// constant, so what a reader reads never moves, and only the accents and the printing ink change.
+/// Since ADR-006 was revised the running app stays on one skin; the others are kept for design
+/// review, and the map is left as Apple draws it. That is why a skin cannot break body-text contrast, and why the five of them
 /// read as five printings of one journal rather than five apps.
 ///
 /// The names are berries and leaves rather than "green" and "blue" because the roles they fill —
@@ -58,21 +59,6 @@ public enum Skin: String, CaseIterable, Sendable {
     /// What the cartography is printed in. Not a text colour, and it carries no pairing: it is
     /// blended into the map rather than drawn on top of it.
     ///
-    /// Only the hue and the saturation of these are ever used — the map keeps its own light — so
-    /// the light values are chosen for how clearly they read as an ink, not for how bright they
-    /// are. They are more saturated than the old ones on purpose: a desaturated wash does not
-    /// re-ink a map, it greys it, and a greyed map reads as a sheet laid over the city rather than
-    /// as a city printed in colour.
-    public var mapWash: PaletteColor {
-        switch self {
-        case .pandan: PaletteColor(light: 0x2E8B67, dark: 0x0E2C36)
-        case .bay: PaletteColor(light: 0x2C6D96, dark: 0x0B2436)
-        case .tamarind: PaletteColor(light: 0xC07A22, dark: 0x2A1B0C)
-        case .sim: PaletteColor(light: 0x6A4E9E, dark: 0x1B1330)
-        case .lotus: PaletteColor(light: 0xC33F6C, dark: 0x2C1220)
-        }
-    }
-
     /// Text on a `visitedInk` or `wishlistInk` fill. In dark mode those fills are the light ones,
     /// so the page's own ground reads back instead of white.
     public var onAccent: PaletteColor { PaletteColor(light: 0xFFFFFF, dark: 0x0A1210) }

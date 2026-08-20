@@ -20,7 +20,6 @@ change. A skin decides:
 | The visited ink | The accent doing most of the talking: pins, actions, ratings |
 | The wishlist ink | Its counterpoint, always a different hue family |
 | The printing ink | The misregistration under stamps and chrome |
-| The map wash | The hue the cartography is printed in |
 
 Five skins, named for things you eat or drink or sit next to:
 
@@ -50,37 +49,33 @@ the app should be dark. It is pure, so the rule is a unit test and not a screens
 one — the night market. The system setting is overridden because "night" is a fact about where the
 user is standing, and the app already knows it from the same weather reading.
 
-**With no weather, the skin rotates by day.** No reading (no permission, no network, no entitlement)
-means the skin comes from the date: the same skin all day, a different one tomorrow. Random per
-launch was rejected — an app that changes colour while you look at it reads as broken, not alive.
+## Revision, 20 August: the weather stopped repainting the app
+
+The first version of this decision let the sky choose the whole printing — both accents, the
+printing ink and the map wash — so a rainy morning turned every pin, every button and the
+cartography itself blue. In use that was too much: the app looked like a different app from one day
+to the next, the map became hard to read underneath the wash, and none of it told the reader
+anything they had not already got by looking out of the window.
+
+So the scope shrinks to the thing weather is actually about, and the two rules that follow are the
+decision now:
+
+**The app has one printing.** The house inks — pandan for visited, bay for wishlist, indigo for the
+printing ink — are constant. Nothing in the sky, the date or the forecast changes them. `Skin` and
+the five printings stay in `FoodMapDesign` and remain reachable through `-ForceSkin` for design
+review, but nothing in the running app chooses between them.
+
+**The cartography is Apple's, unmodified.** No wash of any strength, in either appearance. A map is
+a thing you read street names off, and every wash we tried bought atmosphere by spending
+legibility — which is a bad trade on the one screen the whole app is.
+
+What is left of the weather is the sky itself: a drawn effect in a band at the top of the map,
+where a sky belongs. It is decoration over the horizon, not a filter over the city.
 
 **Effects are drawn, never photographed.** Rain is ruled ink streaks, haze is a paper wash,
 `bloom` a warm halo, `lanterns` a scatter of specks. They sit over the map only — never over a
 photograph, a form or a paragraph (ADR-005 rules 1 and 2) — and they are suppressed under Reduce
 Transparency.
-
-**The map wash re-inks the cartography; it never covers it.** The wash is blended so that it lends
-its hue and saturation and leaves the map's own luminance alone. That is the rule, not an
-implementation note: it means no strength of wash can make the day map darker than Apple's, and it
-is why the wash carries no contrast pairing.
-
-It also means the wash has to be *saturated*. The first one was a dark, desaturated teal, and a
-desaturated ink does not print a map, it greys one: block, park and street all arrived at the same
-cool tone, and a city with none of its own colour differences left reads as a city with a sheet
-over it — which is exactly the complaint that produced this rule. The light values are chosen for
-how clearly they read as an ink; their own lightness is discarded by the blend and so is not a
-consideration. By night the mix is gentler, because the dark cartography is close to monochrome
-before any ink reaches it.
-
-**By day the map is also burned, so it has more contrast than Apple's, not less.** Apple's day
-cartography sits almost entirely above the midtone. That rules out the blends that key off 50% grey
-— they can only ever lighten it — and it rules out a multiply, which scales the whole range down
-together. A second pass of the same ink in `colorBurn` darkens each feature in proportion to how
-dark it already is, so water, parks and arterials fall away from the blocks while the streets stay
-paper-white, and the colour deepens in the same move. Measured against the unwashed map at the same
-place and zoom, the day map keeps roughly its original brightness, carries more tonal spread, and
-around three times its saturation. Night is not burned: there is no headroom below the blocks to
-find.
 
 **Two accents are told apart by hue, not by lightness.** Both have to clear AAA against the same
 paper, which forces their luminances close together, so a contrast test between them would only be

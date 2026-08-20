@@ -66,25 +66,30 @@ The direction ships as design-system pieces, so no screen invents its own versio
 ## A score is printed, not annotated
 
 A stamp does not report its rating with a number beside it. It *is* the rating: the same score that
-picks the ink also decides how well the stamp was printed, so a one-star place and a five-star place
-are told apart across a room, at pin size, with no text and no colour vision.
+picks the ink also decides how carefully the stamp was printed, so a one-star place and a five-star
+place are told apart at pin size with no text and no colour vision.
+
+The ramp is deliberately narrow. An earlier version reached for the whole vocabulary of a bad print
+— broken rules, smudged impressions, a second ink missing by three points — and the result was
+mess, not craft: a one-star stamp read as a rendering fault, and a five-star one as a badge. What is
+left is the smallest set of moves that still orders five steps, and all of them are quiet.
 
 | | One star | Five stars |
 |---|---|---|
-| Stuck down | Crooked, well off square | Square, placed with care |
-| Registration | The second ink misses by a lot | Almost perfect |
-| The rule around it | Thin, faded, broken | Full weight, solid, with an inner hairline and corner ticks |
-| The impression | Soft and smudged, as if pressed with a rocking hand | Crisp |
-| How it sits | Flat on the page | Lifted, with its own shadow |
+| Stuck down | A little off square | Square |
+| The rule around it | Fine and pale | Full weight and solid |
+| Inside it | Nothing | One hairline, set in from the first |
 
-The ramp is one number — how good the impression is — and every property above is read off it, so
-the steps stay ordered by construction: no dimension may improve as the score falls (TC-N-22).
+Everything else — the perforated edge, the white paper margin, the misregistration — is the same on
+every stamp, because those are what make it a stamp rather than what make it a good one.
+
+The ramp is one number, and every property above is read off it, so the steps stay ordered by
+construction: no dimension may improve as the score falls (TC-N-22).
 
 Two rules constrain it. **An unrated place is not a bad place.** No score at all prints at a plain,
 competent middle, never at the bottom of the ramp — the same rule `RatingMood` follows for ink.
 And **the ramp is decoration over an existing signal, never the only carrier of one**: the score
-stays in the text, the stars and the VoiceOver label, because a smudge is not something a reader
-can be asked to measure (NFR-6.3).
+stays in the text, the stars and the VoiceOver label (NFR-6.3).
 
 ## Type
 
@@ -96,13 +101,9 @@ licensed face is chosen. Until then notes stay in the italic display serif.
 ## Consequences
 
 - `FoodMapDesign` gains the indigo ink and its pairings, so contrast stays machine-checked.
-- The map is no longer Apple's: food points of interest are excluded so the only food on the map is
-  the user's, and the cartography is re-inked in the skin's colour — its own light left intact —
-  to sit in the same world as the sheet (ADR-006).
+- The map stays Apple's, unwashed: only the food points of interest are excluded, so the only food
+  on it is the user's. The cartography is where the app is read, and it is left legible; the
+  direction is carried by everything drawn *on* the page instead (ADR-006).
 - SF Symbols remain acceptable in secondary places (menus, form rows) where drawing our own would
   cost more than it returns.
 - Reduce Motion turns the paper physics into simple fades; Reduce Transparency drops the washes.
-- Rule 1 costs something on the map: the wash is drawn over the map view, and the pins are hosted
-  inside it, so the ink lands on the photographs too unless it is stopped. It is stopped by masking
-  the wash with a soft hole at each stamp — which is also why the day map may be printed as strongly
-  as it likes without the meals turning the colour of the skin.

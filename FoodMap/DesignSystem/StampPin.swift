@@ -45,8 +45,8 @@ struct StampPin: View {
         .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
         // Stuck down by hand, not laid out: the angle comes from the place's id, so it never
         // changes between redraws (ADR-005, TC-N-13).
-        // …and how far off square depends on how the place scored: a one-star stamp was banged
-        // on, a five-star one was placed.
+        // …and how far off square depends on how the place scored: a stamp nobody was thinking
+        // about goes on slightly askew, a five-star one goes on straight.
         .rotationEffect(.degrees(StampTilt.degrees(for: cluster.id) * press.tiltScale))
         .scaleEffect(isSelected ? 1.22 : 1)
         .animation(.spring(response: 0.28, dampingFraction: 0.55), value: isSelected)
@@ -125,8 +125,10 @@ struct StampPin: View {
 /// A rounded rectangle with scalloped edges — the perforated border of a postage stamp.
 struct StampShape: InsettableShape {
     var insetAmount: CGFloat = 0
-    /// Roughly how many perforations run along the shorter edge.
-    private let perforations: Int = 7
+    /// Roughly how many perforations run along the shorter edge. Ten rather than seven: at pin
+    /// size seven bites are big enough to read as a scalloped blob, and the finer teeth are what
+    /// make the shape look like a stamp instead of a decorated square.
+    private let perforations: Int = 10
 
     func inset(by amount: CGFloat) -> StampShape {
         var copy = self

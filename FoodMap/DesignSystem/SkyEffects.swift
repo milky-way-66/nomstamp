@@ -24,6 +24,10 @@ struct SkyEffectLayer: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorScheme) private var scheme
 
+    /// How deep the sky is, in points. The weather gets the top of the page and no more: below
+    /// this the reader is looking at streets, and nothing may be drawn over those (ADR-006).
+    static let depth: CGFloat = 240
+
     var body: some View {
         if effect != .none && !reduceTransparency {
             Canvas { context, size in
@@ -35,6 +39,16 @@ struct SkyEffectLayer: View {
                 case .none: break
                 }
             }
+            .frame(height: Self.depth)
+            // Faded out well before the band ends, so there is no edge where the weather stops —
+            // a hard line across the map would read as a rendering fault, not as a horizon.
+            .mask(
+                LinearGradient(
+                    colors: [.black, .black, .black.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
             .allowsHitTesting(false)
             // Decoration, and never the only carrier of anything: the sky is not information the
             // app is responsible for conveying.
@@ -61,11 +75,11 @@ struct SkyEffectLayer: View {
         }
     }
 
-    /// Soft bands lying across the page, the way fog sits in a street.
+    /// Soft bands lying across the top of the page, the way fog sits over a city seen from above.
     private func drawHaze(in context: inout GraphicsContext, size: CGSize) {
         let bands = 5
         let offsets = DeckleEdge.amplitudes(count: bands, seed: 9_311)
-        let wash = Theme.paper.opacity(scheme == .dark ? 0.10 : 0.22)
+        let wash = Theme.paper.opacity(scheme == .dark ? 0.10 : 0.16)
 
         for band in 0..<bands {
             let y = (Double(band) + offsets[band]) / Double(bands) * size.height

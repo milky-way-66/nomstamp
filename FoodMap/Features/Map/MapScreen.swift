@@ -22,8 +22,6 @@ struct MapScreen: View {
     )
     @State private var selectedPinID: PlaceCluster.ID?
     @State private var detent: PresentationDetent = .height(MapScreen.peekHeight)
-    /// Bumped on every camera frame so the wash's mask keeps up with the pins as the map moves.
-    @State private var cameraTick: UInt64 = 0
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -69,14 +67,6 @@ struct MapScreen: View {
     }
 
     private var map: some View {
-        // The reader is here for the wash's mask, not for the map: it is the only way to ask where
-        // a coordinate has landed on screen, and the wash has to know that to stay off the stamps.
-        MapReader { proxy in
-            mapBody(proxy)
-        }
-    }
-
-    private func mapBody(_ proxy: MapProxy) -> some View {
         Map(position: $camera, selection: $selectedPinID) {
             UserAnnotation()
             ForEach(model.clusters) { cluster in
@@ -98,98 +88,22 @@ struct MapScreen: View {
         // filled the space with piers, hotels and schools — and every borrowed pin competes with
         // the user's own stamps, which are the only marks this map is for (ADR-005).
         .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
-        // The cartography is re-inked, not covered. The wash lends its own hue and saturation and
-        // leaves the map's luminance alone, so no strength of it can make the day map darker than
-        // Apple's — it only decides what colour the light comes out.
-        //
-        // That distinction is the whole fix for how this used to read. The old wash was a dark,
-        // desaturated teal, and mixing it into a cream-and-white day map pulled block, park and
-        // street towards one cool grey: the brightness survived, but the colour differences did
-        // not, and a city with no colour differences left reads as a city with a sheet over it.
-        .overlay {
-            Theme.mapWash
-                // Night keeps the gentler mix: the dark cartography is nearly monochrome already,
-                // so it takes far less ink before the bay and the streets are one tone.
-                .opacity(scheme == .dark ? 0.45 : 0.85)
-                .blendMode(.color)
-                .mask(washMask(proxy))
-                .allowsHitTesting(false)
-                .ignoresSafeArea()
-        }
-        // Day only: the punch, and the reason the map has more contrast than Apple's rather than
-        // less. Apple's day map sits almost entirely above the midtone, so every blend that keys
-        // off 50% grey — `.overlay`, `.softLight` — can only screen it, and a `.multiply` scales
-        // the whole range down together; all three spend contrast. A burn darkens in proportion to
-        // how dark a thing already is, so the river, the park edges and the arterials drop away
-        // from the blocks instead of towards them, and the streets stay paper-white. It saturates
-        // as it goes, which is the second half of what it is for.
-        .overlay {
-            if scheme != .dark {
-                Theme.mapWash
-                    // Measured against Apple's own cartography, and this is where the numbers turn
-                    // in our favour: from 0.18 the map holds more tonal spread than it started
-                    // with, at nearly the brightness it started with. Past about 0.3 the blocks
-                    // start to fill in and the small parks are lost inside them.
-                    .opacity(0.18)
-                    .blendMode(.colorBurn)
-                    .mask(washMask(proxy))
-                    .allowsHitTesting(false)
-                    .ignoresSafeArea()
-            }
-        }
-        // The weather, printed over the cartography and nowhere else (ADR-006).
-        .overlay {
+        // Apple's cartography, unmodified (ADR-006, revised 20 August). Every wash we tried —
+        // any blend, at any strength — bought atmosphere by spending legibility, and this is the
+        // one screen the whole app is. The direction is carried by what is printed *on* the map:
+        // the stamps, the sheet, the drawn chrome.
+        // The weather, in the sky, where a sky is: a band along the top of the map that fades out
+        // long before the streets do (ADR-006).
+        .overlay(alignment: .top) {
             SkyEffectLayer(effect: skyEffect)
-                .ignoresSafeArea()
+                .allowsHitTesting(false)
+                .ignoresSafeArea(edges: .top)
         }
         .mapControls { MapCompass() }
         .onMapCameraChange(frequency: .onEnd) { context in
             model.boundsChanged(to: MapBounds(context.region))
         }
-        // The mask has to follow the pins while the map is being dragged, which the end-of-gesture
-        // callback above is far too late for. Only a counter changes, so the map itself is not
-        // rebuilt — the mask is.
-        .onMapCameraChange(frequency: .continuous) { _ in
-            cameraTick &+= 1
-        }
         .ignoresSafeArea()
-    }
-
-    /// The wash, everywhere except the stamps.
-    ///
-    /// ADR-005 rule 1: a wash goes over the cartography and never over a photograph. The wash is a
-    /// SwiftUI overlay and the pins are content the map hosts underneath it, so without this the
-    /// ink lands on the food as well as on the streets — and at the strength the day map is printed
-    /// at, that turned every meal the colour of the skin. The mask punches each stamp back out.
-    ///
-    /// The holes are soft-edged and only just larger than the stamp. A hard rectangle of unwashed
-    /// cartography read as a card slipped under the pin — the eye found the patch before it found
-    /// the photograph. Blurred, the ink simply fades out as it reaches the stamp, which is what a
-    /// wash does around something laid on top of it. The blur doubles as slack for the tilt and for
-    /// the frame or two the mask can lag behind MapKit's own annotation layer mid-drag.
-    private func washMask(_ proxy: MapProxy) -> some View {
-        Canvas { context, size in
-            context.fill(Path(CGRect(origin: .zero, size: size)), with: .color(.white))
-            context.blendMode = .destinationOut
-
-            for cluster in model.clusters {
-                guard let point = proxy.convert(cluster.coordinate.clCoordinate, to: .local) else { continue }
-                let side = Theme.pinSize * (selectedPinID == cluster.id ? 1.24 : 1.0)
-                let hole = CGRect(
-                    x: point.x - side / 2,
-                    y: point.y - side / 2,
-                    width: side,
-                    height: side
-                )
-                context.fill(Path(roundedRect: hole, cornerRadius: side * 0.22), with: .color(.black))
-            }
-        }
-        .blur(radius: 7)
-        // Nothing here is information; it exists so the photographs keep their own colour.
-        .accessibilityHidden(true)
-        // Redrawn as the camera moves: `Canvas` would otherwise keep the holes where the pins were
-        // when the view was built.
-        .id(cameraTick)
     }
 
     /// UC-1, UC-4, UC-5 — the three things you do to a map, on the map.
@@ -299,4 +213,5 @@ struct ClusterSheet: View {
         .presentationDetents([.medium, .large])
     }
 }
+
 

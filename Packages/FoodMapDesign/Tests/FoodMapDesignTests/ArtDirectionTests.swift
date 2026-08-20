@@ -58,25 +58,16 @@ struct ArtDirectionTests {
         for (worse, better) in zip(presses, presses.dropFirst()) {
             #expect(better.quality > worse.quality)
             #expect(better.tiltScale < worse.tiltScale, "a better-rated stamp must sit straighter")
-            #expect(better.misregistration < worse.misregistration, "and register more tightly")
-            #expect(better.smudge < worse.smudge, "and print more crisply")
             #expect(better.ruleWidth > worse.ruleWidth, "and carry a heavier rule")
             #expect(better.ruleOpacity > worse.ruleOpacity, "in more solid ink")
-            #expect(better.lift > worse.lift, "and sit further off the page")
         }
 
         // The two ends are the ends: one star is the worst impression, five the best.
         #expect(presses.first?.quality == 0)
         #expect(presses.last?.quality == 1)
 
-        // The ornaments arrive at the top of the ramp and nowhere else.
-        #expect(presses.filter(\.hasInnerRule).count == 2, "an inner rule is a four- and five-star mark")
-        #expect(presses.filter(\.hasCornerTicks).count == 1, "corner ticks are five stars alone")
-
-        // A broken rule is a bad impression only: from three stars it holds all the way round.
-        #expect(presses[0].ruleDash != nil)
-        #expect(presses[1].ruleDash != nil)
-        #expect(presses.dropFirst(2).allSatisfy { $0.ruleDash == nil })
+        // The one ornament arrives at the top of the ramp and nowhere else.
+        #expect(presses.filter(\.hasInnerRule).count == 1, "an inner rule is a five-star mark")
     }
 
     /// The other half of TC-N-22, and the same rule `RatingMood` follows for ink: nobody has judged
@@ -89,8 +80,7 @@ struct ArtDirectionTests {
         #expect(unrated.quality > StampPress.press(for: 1).quality)
         #expect(unrated.quality > StampPress.press(for: 2).quality)
         #expect(unrated.quality < StampPress.press(for: 5).quality)
-        #expect(unrated.ruleDash == nil, "an unjudged stamp is printed whole")
-        #expect(!unrated.hasCornerTicks, "and is not decorated as though it had earned it")
+        #expect(!unrated.hasInnerRule, "and is not decorated as though it had earned it")
 
         // Anything off the scale is unjudged too, not badly judged.
         #expect(StampPress.press(for: 0) == unrated)

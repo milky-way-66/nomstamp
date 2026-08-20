@@ -199,8 +199,8 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-17 | U | ADR-005 | Given a score, then its mood is defined only for 1...5, each step has its own ink, and every ink is a contrast-checked pairing | **auto** |
 | TC-N-22 | U | ADR-005 | Given a score, then its stamp press is ordered — every quality improves as the score rises, none of them backwards — and an unrated place prints at the competent middle rather than at the bottom | **auto** |
 | TC-N-18 | U | ADR-006 | Given every skin, then all of its rendered pairings meet their contrast level in both appearances | **auto** |
-| TC-N-19 | U | ADR-006 | Given a weather condition and whether it is daylight, then the documented skin and effect are chosen | **auto** |
-| TC-N-20 | U | ADR-006 | Given no weather reading, then the skin comes from the date, is stable within a day, changes the next day, and covers every skin | **auto** |
+| TC-N-19 | U | ADR-006 | Given a weather condition and whether it is daylight, then the documented sky effect is chosen | **auto** |
+| TC-N-20 | U | ADR-006 | Given any weather reading or none at all, then the printing is unchanged — one set of inks — and only the sky effect and night follow the weather | **auto** |
 | TC-N-21 | U | ADR-006 | Given daylight or its absence, then the appearance is light or dark accordingly | **auto** |
 | TC-N-15 | E | ADR-005 | Given the drawn filter tabs, when one is chosen, then it reports itself selected to assistive technology and the list shows only that kind | **auto** |
 

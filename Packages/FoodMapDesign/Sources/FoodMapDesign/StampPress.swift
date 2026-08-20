@@ -35,46 +35,25 @@ public struct StampPress: Sendable, Equatable {
 
     // MARK: - What the press decides
     //
-    // Each of these is monotonic in `quality` by construction. The constants are the two ends of
-    // the ramp; nothing in between is special-cased, because a special case is how a ramp stops
-    // being ordered.
+    // Three moves, and no more. An earlier version reached for the whole vocabulary of a bad print
+    // — a broken rule, a smudged impression, a second ink missing by three points — and the result
+    // read as a rendering fault at one star and as a badge at five. Each of these is monotonic in
+    // `quality` by construction, and nothing in between is special-cased, because a special case is
+    // how a ramp stops being ordered.
 
-    /// Multiplies the place's own tilt. A bad stamp is banged on crooked; a good one is square.
-    public var tiltScale: Double { interpolate(from: 2.4, to: 0.15) }
-
-    /// How far the second ink misses, in points. The whole point of the misregistration is that a
-    /// press is a physical thing — a bad one misses by a mile.
-    public var misregistration: Double { interpolate(from: 3.2, to: 0.4) }
+    /// Multiplies the place's own tilt. A stamp nobody was thinking about goes on slightly askew.
+    /// Small numbers on purpose: the tilt is a hint, and past a few degrees it reads as breakage.
+    public var tiltScale: Double { interpolate(from: 1.3, to: 0.2) }
 
     /// The weight of the rule printed around the stamp.
-    public var ruleWidth: Double { interpolate(from: 0.8, to: 2.2) }
+    public var ruleWidth: Double { interpolate(from: 0.9, to: 2) }
 
-    /// How solid that rule comes out. A worn pad prints grey where it should print ink.
-    public var ruleOpacity: Double { interpolate(from: 0.42, to: 1) }
+    /// How solid that rule comes out — pale at the bottom of the ramp, full ink at the top.
+    public var ruleOpacity: Double { interpolate(from: 0.5, to: 1) }
 
-    /// The dash pattern of the rule, in points, or `nil` for a solid one. A bad impression breaks
-    /// up; from three stars the rule holds all the way round.
-    public var ruleDash: [Double]? {
-        switch quality {
-        case ..<0.15: return [2.2, 2.6]
-        case ..<0.40: return [5, 2.2]
-        default: return nil
-        }
-    }
-
-    /// How soft the impression is, in points of blur. A rocking hand smears the ink.
-    public var smudge: Double { interpolate(from: 1.5, to: 0) }
-
-    /// How far off the page the stamp sits: a shadow radius. A good stamp has been pressed hard
-    /// enough to sit proud of the paper; a bad one lies flat and dull.
-    public var lift: Double { interpolate(from: 1, to: 8) }
-
-    /// A second, finer rule inside the first. Four stars and up — this is where a stamp starts to
-    /// look deliberate rather than merely correct.
-    public var hasInnerRule: Bool { quality >= 0.7 }
-
-    /// Ticks at the four corners, the way an engraved stamp is finished. Five stars only.
-    public var hasCornerTicks: Bool { quality >= 0.99 }
+    /// A second, finer rule set inside the first. Five stars alone: an ornament that arrived at
+    /// three would stop meaning anything.
+    public var hasInnerRule: Bool { quality >= 0.99 }
 
     private func interpolate(from worst: Double, to best: Double) -> Double {
         worst + (best - worst) * quality

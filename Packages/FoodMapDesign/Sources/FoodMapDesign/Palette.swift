@@ -34,11 +34,6 @@ public enum Palette {
     /// ornaments, stamp frames and rules. Always quieter than the two accents.
     public static let printingInk = Skin.default.printingInk
 
-    /// The ink the map itself is printed in (ADR-005). Not a text colour: it lends the cartography
-    /// its hue and saturation and leaves the map's own luminance alone, which is why it carries no
-    /// pairing — and why it can never darken the map it is printed into.
-    public static let mapWash = Skin.default.mapWash
-
     /// What text on an accent fill must be. In dark mode those fills are light, so white text on
     /// them would fail AA — the ink of the surface reads instead.
     public static let onAccent = Skin.default.onAccent

@@ -91,7 +91,6 @@ enum Theme {
 
     /// The ink the cartography is printed in. Warm mid-tan in daylight; at night a deep indigo,
     /// so the map reads as a night market rather than a switched-off screen.
-    static var mapWash: Color { dynamic(skin.mapWash) }
 
     /// The ink a score paints (ADR-005, TC-N-17). An unrated meal takes the secondary ink: the
     /// absence of a score is not a low score.

@@ -4,7 +4,13 @@ import Foundation
 ///
 /// The names are semantic, not colours: the domain decides *which* skin, and the design package
 /// decides what a skin looks like. That keeps this rule a unit test rather than a screenshot.
+/// The five printings the design package can draw. Since ADR-006 was revised the running app only
+/// ever uses `house`; the rest stay reachable through `-ForceSkin` so a design review can still
+/// photograph them.
 public enum Skin: String, Sendable, CaseIterable {
+    /// What the app is always printed in.
+    public static let house: Skin = .pandan
+
     case pandan
     case bay
     case tamarind
@@ -12,7 +18,8 @@ public enum Skin: String, Sendable, CaseIterable {
     case lotus
 }
 
-/// What is drawn over the map on top of the skin. Never over a photograph or a paragraph.
+/// What the sky over the map is doing. Drawn in a band at the top of the map, never over a
+/// photograph, a paragraph or the streets a reader is trying to read.
 public enum SkyEffect: String, Sendable, CaseIterable {
     case none
     case rain
@@ -38,6 +45,11 @@ public struct Appearance: Equatable, Sendable {
 ///
 /// Pure and synchronous: everything uncertain — permission, network, the forecast itself — has
 /// already happened by the time this is called, and arrives as `nil` or `.unknown`.
+///
+/// It chooses the *sky*, and nothing else. The printing is constant (ADR-006, revised 20 August):
+/// letting the weather pick the inks turned the whole app a different colour from one day to the
+/// next and made the map hard to read, for no information the reader did not already have by
+/// looking out of the window.
 public struct ChooseAppearanceUseCase: Sendable {
     public init() {}
 
@@ -45,37 +57,19 @@ public struct ChooseAppearanceUseCase: Sendable {
         let reading = weather ?? .unknown
         let isNight = !reading.isDaylight
 
+        return Appearance(skin: .house, effect: Self.effect(for: reading), isNight: isNight)
+    }
+
+    private static func effect(for reading: WeatherSnapshot) -> SkyEffect {
         switch reading.condition {
-        case .clear:
-            // The one condition that reads differently by day and by night: sun, then dusk.
-            return Appearance(
-                skin: isNight ? .sim : .tamarind,
-                effect: isNight ? .lanterns : .bloom,
-                isNight: isNight
-            )
-        case .cloudy:
-            return Appearance(skin: .pandan, effect: .haze, isNight: isNight)
-        case .fog:
-            return Appearance(skin: .sim, effect: .haze, isNight: isNight)
-        case .rain, .storm:
-            return Appearance(skin: .bay, effect: .rain, isNight: isNight)
-        case .snow:
-            return Appearance(skin: .bay, effect: .haze, isNight: isNight)
-        case .unknown:
-            // No reading at all: the date decides, so the app still changes — one skin per day,
-            // never mid-look. Random per launch was rejected: an app that changes colour while you
-            // watch reads as broken rather than alive (ADR-006).
-            return Appearance(skin: Self.rotation(on: date, in: calendar), effect: .none, isNight: isNight)
+        // The one condition that reads differently by day and by night: sun, then lanterns.
+        case .clear: return reading.isDaylight ? .bloom : .lanterns
+        case .cloudy, .fog, .snow: return .haze
+        case .rain, .storm: return .rain
+        // Nothing is drawn when the sky is unknown: an effect would be a claim.
+        case .unknown: return .none
         }
     }
 
-    /// The skin for a given day. Days since the reference date, modulo the skins, so it is stable
-    /// within a day, different tomorrow, and covers every skin over five days.
-    public static func rotation(on date: Date, in calendar: Calendar = .current) -> Skin {
-        let days = calendar.startOfDay(for: date).timeIntervalSinceReferenceDate / 86_400
-        let count = Skin.allCases.count
-        // Dates before the reference date give a negative remainder, which is not an index.
-        let index = ((Int(days.rounded(.down)) % count) + count) % count
-        return Skin.allCases[index]
-    }
+
 }
