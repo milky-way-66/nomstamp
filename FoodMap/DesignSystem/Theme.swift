@@ -136,7 +136,13 @@ enum Theme {
     // MARK: - Metrics
 
     static let cornerRadius: CGFloat = 12
+    /// A card is rounder than a photograph, because everything drawn in the app got rounder.
+    static let cardCorner: CGFloat = 18
     static let hairline: CGFloat = 1
+    /// The weight of every drawn contour in the app — cards, chips, tokens, photo edges.
+    /// One fine line, not a marker outline: a heavy border swallowed the thing it was drawn
+    /// around, and made the detail page read as a sticker sheet (design note, 20 August).
+    static let contour: CGFloat = 1
     static let pinSize: CGFloat = 56
     /// Apple's minimum touch target; pins are never drawn smaller (NFR-6.4).
     static let minimumTouchTarget: CGFloat = 44
@@ -180,19 +186,25 @@ struct PaperCard<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        content
+        // Drawn to the same rule as the map's tokens and the stamps: flat paper, one bold dark
+        // contour, and a hard shadow — never a hairline and a soft blur, which is what made the
+        // detail page read as a different app from the map (ADR-005, the cartoon rule).
+        let shape = RoundedRectangle(cornerRadius: Theme.cardCorner, style: .continuous)
+
+        return content
             .background(Theme.paperRaised)
-            .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.cornerRadius)
-                    .strokeBorder(edge ?? Theme.rule, lineWidth: edge == nil ? Theme.hairline : 1.6)
-            )
-            .misregistered(
-                RoundedRectangle(cornerRadius: Theme.cornerRadius),
-                ink: edge ?? Theme.printingInk,
-                opacity: edge == nil ? 0.22 : 0.35
-            )
+            .clipShape(shape)
+            .overlay(shape.strokeBorder(Theme.ink, lineWidth: Theme.contour))
+            // The score, where there is one, is a second rule *inside* the contour rather than a
+            // recolouring of it: the card's outline belongs to the drawing, the ink to the meal.
+            .overlay {
+                if let edge {
+                    shape.inset(by: 2.5).strokeBorder(edge, lineWidth: Theme.contour)
+                }
+            }
+            .background(shape.fill(Theme.ink.opacity(0.7)).offset(y: 2))
     }
+
 }
 
 struct SectionHeading: View {

@@ -138,7 +138,7 @@ struct CartoonButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
         let shape = RoundedRectangle(cornerRadius: 16, style: .continuous)
-        let drop: CGFloat = 4
+        let drop: CGFloat = 3
 
         return configuration.label
             .font(Theme.label(.headline))
@@ -146,10 +146,39 @@ struct CartoonButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
             .padding(.vertical, Theme.Space.snug)
             .background(shape.fill(kind == .primary ? Theme.visitedInk : Theme.paperRaised))
-            .overlay(shape.strokeBorder(Theme.ink, lineWidth: kind == .primary ? 2.6 : 2.2))
-            .background(shape.fill(Theme.ink.opacity(0.85)).offset(y: drop))
+            .overlay(shape.strokeBorder(Theme.ink, lineWidth: Theme.contour))
+            .background(shape.fill(Theme.ink.opacity(0.7)).offset(y: drop))
             .offset(y: pressed ? drop * 0.8 : 0)
             .rotationEffect(.degrees(tilt))
             .animation(.spring(response: 0.22, dampingFraction: 0.6), value: pressed)
     }
 }
+
+/// A small drawn chip, for the two or three words that get someone off a screen — Back, Skip.
+///
+/// Same rule as `CartoonButtonStyle` at a smaller size: paper, a contour, a hard shadow that the
+/// press closes. It exists because tinted text on a drawn page reads as a hyperlink, and there are
+/// no hyperlinks in a journal.
+struct ChipButtonStyle: ButtonStyle {
+    var tilt: Double = 0
+
+    func makeBody(configuration: Configuration) -> some View {
+        let pressed = configuration.isPressed
+        let shape = Capsule()
+        let drop: CGFloat = 2
+
+        return configuration.label
+            .font(Theme.smallCaps(.subheadline))
+            .tracking(0.9)
+            .foregroundStyle(Theme.ink)
+            .padding(.horizontal, Theme.Space.regular)
+            .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget - 6)
+            .background(shape.fill(Theme.paperRaised))
+            .overlay(shape.strokeBorder(Theme.ink, lineWidth: Theme.contour))
+            .background(shape.fill(Theme.ink.opacity(0.7)).offset(y: drop))
+            .offset(y: pressed ? drop * 0.8 : 0)
+            .rotationEffect(.degrees(tilt))
+            .animation(.spring(response: 0.22, dampingFraction: 0.6), value: pressed)
+    }
+}
+

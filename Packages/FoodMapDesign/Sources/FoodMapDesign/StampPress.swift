@@ -48,7 +48,7 @@ public struct StampPress: Sendable, Equatable {
     /// The weight of the rule printed around the stamp. Lighter than the app's other contours on
     /// purpose: a stamp is small, it is drawn thirteen different ways, and a heavy border swallowed
     /// the cut it was drawn around.
-    public var ruleWidth: Double { interpolate(from: 1, to: 2) }
+    public var ruleWidth: Double { interpolate(from: 0.7, to: 1.3) }
 
     /// How solid that rule comes out — pale at the bottom of the ramp, full ink at the top.
     public var ruleOpacity: Double { interpolate(from: 0.7, to: 1) }

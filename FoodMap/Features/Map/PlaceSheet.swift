@@ -125,8 +125,8 @@ struct PlaceSheet: View {
         // The same contour and hard shadow every drawn object in the app has, so the field is a
         // thing on the page rather than a system search bar borrowed onto it (ADR-005).
         .background(Theme.paperRaised, in: Capsule())
-        .overlay(Capsule().strokeBorder(Theme.ink, lineWidth: 2))
-        .background(Capsule().fill(Theme.ink.opacity(0.85)).offset(y: 3))
+        .overlay(Capsule().strokeBorder(Theme.ink, lineWidth: Theme.contour))
+        .background(Capsule().fill(Theme.ink.opacity(0.6)).offset(y: 2))
         .padding(.horizontal, Theme.screenMargin)
         // Clear of the drag indicator above and the first row below, rather than crowding both.
         .padding(.top, Theme.Space.regular)

@@ -195,10 +195,10 @@ struct AddMealView: View {
                         step = .capture
                     } label: {
                         Text("Back")
-                            .font(Theme.smallCaps(.subheadline))
-                            .foregroundStyle(Theme.inkSecondary)
-                            .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
                     }
+                    // Drawn chips rather than bare words: on a page whose only other object is a
+                    // row of stars, two pieces of tinted text read as links on a web page.
+                    .buttonStyle(ChipButtonStyle(tilt: -1.5))
                     .accessibilityLabel("Back to the camera")
                     .accessibilityIdentifier("backToCameraButton")
 
@@ -208,10 +208,8 @@ struct AddMealView: View {
                         step = .confirm
                     } label: {
                         Text("Skip")
-                            .font(Theme.smallCaps(.subheadline))
-                            .foregroundStyle(Theme.wishlistInk)
-                            .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
                     }
+                    .buttonStyle(ChipButtonStyle(tilt: 1.5))
                     .accessibilityLabel("Skip the rating")
                     .accessibilityIdentifier("skipRatingButton")
                 }

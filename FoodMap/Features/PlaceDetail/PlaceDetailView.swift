@@ -56,6 +56,9 @@ struct PlaceDetailView: View {
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        // The navigation bar stays the system's. A drawn token was tried here and the bar wrapped
+        // it in its own glass capsule, so the paper disc read as a grey blob inside a pill — worse
+        // than the stock control it replaced (design note, 20 August).
         .toolbar {
             ToolbarItem(placement: .principal) {
                 if isTitleStuck {
@@ -281,8 +284,13 @@ private struct MealCard: View {
                         .resizable()
                         .scaledToFill()
                 )
-                .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
-                .photoGlow()
+                .clipShape(RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous))
+                // A photograph is an object on the page too, so it carries the contour every
+                // other object does — and no glow, which was the page's last soft edge.
+                .overlay(
+                    RoundedRectangle(cornerRadius: Theme.cornerRadius, style: .continuous)
+                        .strokeBorder(Theme.ink.opacity(0.65), lineWidth: Theme.contour)
+                )
                 .contentShape(RoundedRectangle(cornerRadius: Theme.cornerRadius))
                 .onTapGesture { onTapPhoto(photo) }
                 .accessibilityAddTraits(.isButton)
@@ -310,8 +318,12 @@ private struct MealCard: View {
                                         .resizable()
                                         .scaledToFill()
                                         .frame(width: Self.stripSide, height: Self.stripSide)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        .contentShape(RoundedRectangle(cornerRadius: 8))
+                                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                                .strokeBorder(Theme.ink.opacity(0.65), lineWidth: Theme.contour)
+                                        )
+                                        .contentShape(RoundedRectangle(cornerRadius: 10))
                                         .onTapGesture { onTapPhoto(photo) }
                                 }
                             }

@@ -109,10 +109,18 @@ square whatever cut it was dealt (TC-N-13, TC-N-22).
 
 ## Drawn, not rendered — the cartoon rule
 
-Everything the app draws itself is drawn the way a comic panel is: a **bold dark contour** around
-every object, **flat colour** inside it, and a **hard shadow** — the shape again in ink, offset a
-couple of points, with no blur on it. No soft glow stands in for an edge, and no gradient stands in
-for a form.
+Everything the app draws itself is drawn the way a comic panel is: a **dark contour** around every
+object, **flat colour** inside it, and a **hard shadow** — the shape again in ink, offset a couple
+of points, with no blur on it. No soft glow stands in for an edge, and no gradient stands in for a
+form.
+
+**The contour is one fine line, and there is only one of it: `Theme.contour`.** It was two and a
+half points for a while — marker weight — and at that width the line stopped being an edge and
+became the object: cards read as stickers, the meal photographs as fridge magnets, and the stars on
+the rating screen as black blots, because a stroke that scales with its shape grows faster than the
+shape does. Every contour in the app now goes through the one constant, capped where it is drawn
+proportionally, and the shadow under a drawn object is a couple of points at most (design note,
+20 August).
 
 This is what makes a hand-drawn interface hold together at a glance, and it is why the chrome must
 never fall back on system materials: a blurred iOS panel next to a contoured token reads as two
@@ -138,6 +146,11 @@ segmented control were all removed: a system control in a drawn interface is the
 screen nobody drew, and it is always the first thing the eye finds. `CartoonButtonStyle` replaces
 them, and it carries the press — the button drops onto its own shadow and the gap closes, which is
 feedback a drawn interface can afford where a tint change is not.
+
+The navigation bar is the one place this loses. A drawn token was fitted to the detail page's back
+and menu buttons, and iOS wrapped each one in its own glass capsule, so the paper disc showed
+through as a grey blob inside a pill — further from the drawing than the stock control it replaced.
+The bar stays the system's until the page stops using one.
 
 Two exceptions. The page itself — paper and grain — is still soft, because paper is the ground
 everything is drawn *on*, not an object drawn on it. And the stamps take the contour but not the

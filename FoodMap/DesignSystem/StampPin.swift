@@ -73,7 +73,7 @@ struct StampPin: View {
                 .clipShape(shape)
                 // The frame carries the score twice over: in the ink it is printed in, and in how
                 // well it is printed at all (ADR-005).
-                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 4, paper: paper)
+                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 2.5, paper: paper)
         } else if isVisited {
             shape
                 .fill(paper)

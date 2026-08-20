@@ -121,7 +121,7 @@ struct PlaceRowView: View {
                     press: press,
                     ink: Theme.ratingInk(score),
                     showsInk: score != nil,
-                    paperRule: 3.5,
+                    paperRule: 2,
                     paper: paper
                 )
                 // Halved: the list is a set page, so its stamps are calmer than the map's — but a

@@ -99,7 +99,7 @@ private struct ActionTokenStyle: ButtonStyle {
         return configuration.label
             .background(
                 shape
-                    .fill(Theme.ink.opacity(0.85))
+                    .fill(Theme.ink.opacity(0.7))
                     .offset(y: drop)
             )
             .offset(y: pressed ? drop * 0.8 : 0)
@@ -111,7 +111,7 @@ private struct ActionTokenStyle: ButtonStyle {
 struct InkToken: View {
     let shape: AnyInsettableShape
     let fill: Color
-    var contour: CGFloat = 2.4
+    var contour: CGFloat = Theme.contour
 
     var body: some View {
         shape

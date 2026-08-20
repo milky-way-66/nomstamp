@@ -87,8 +87,10 @@ struct StarRatingView: View {
             .overlay(
                 FoodMark(glyph: .star)
                     .stroke(
-                        Theme.ink.opacity(filled ? 0.9 : 0.5),
-                        style: StrokeStyle(lineWidth: max(1.6, size / 7), lineJoin: .round)
+                        Theme.ink.opacity(filled ? 0.8 : 0.55),
+                        // Capped: the stroke scales with the star, and at rating size a
+                        // proportional line turned every star into a black blot.
+                        style: StrokeStyle(lineWidth: min(1.6, max(1, size / 18)), lineJoin: .round)
                     )
             )
             .frame(width: size, height: size)
