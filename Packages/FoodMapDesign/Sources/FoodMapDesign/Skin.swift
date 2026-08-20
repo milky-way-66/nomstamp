@@ -55,15 +55,21 @@ public enum Skin: String, CaseIterable, Sendable {
         }
     }
 
-    /// What the cartography is washed with. Blended over the map, taking its hue and leaving its
-    /// luminance, so it carries no pairing and is free to be saturated.
+    /// What the cartography is printed in. Not a text colour, and it carries no pairing: it is
+    /// blended into the map rather than drawn on top of it.
+    ///
+    /// Only the hue and the saturation of these are ever used — the map keeps its own light — so
+    /// the light values are chosen for how clearly they read as an ink, not for how bright they
+    /// are. They are more saturated than the old ones on purpose: a desaturated wash does not
+    /// re-ink a map, it greys it, and a greyed map reads as a sheet laid over the city rather than
+    /// as a city printed in colour.
     public var mapWash: PaletteColor {
         switch self {
-        case .pandan: PaletteColor(light: 0x4E7C72, dark: 0x0E2C36)
-        case .bay: PaletteColor(light: 0x3F6E92, dark: 0x0B2436)
-        case .tamarind: PaletteColor(light: 0x9A6A32, dark: 0x2A1B0C)
-        case .sim: PaletteColor(light: 0x6B5A93, dark: 0x1B1330)
-        case .lotus: PaletteColor(light: 0xA0637E, dark: 0x2C1220)
+        case .pandan: PaletteColor(light: 0x2E8B67, dark: 0x0E2C36)
+        case .bay: PaletteColor(light: 0x2C6D96, dark: 0x0B2436)
+        case .tamarind: PaletteColor(light: 0xC07A22, dark: 0x2A1B0C)
+        case .sim: PaletteColor(light: 0x6A4E9E, dark: 0x1B1330)
+        case .lotus: PaletteColor(light: 0xC33F6C, dark: 0x2C1220)
         }
     }
 

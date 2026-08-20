@@ -7,6 +7,8 @@ import FoodMapDomain
 struct MapScreen: View {
     /// What the sky is doing where the reader is, set at the root (ADR-006).
     @Environment(\.skyEffect) private var skyEffect
+    /// Day or night: the map is re-inked differently in each, see `map`.
+    @Environment(\.colorScheme) private var scheme
 
     let dependencies: AppDependencies
 
@@ -86,20 +88,42 @@ struct MapScreen: View {
         // filled the space with piers, hotels and schools — and every borrowed pin competes with
         // the user's own stamps, which are the only marks this map is for (ADR-005).
         .mapStyle(.standard(elevation: .flat, pointsOfInterest: .excludingAll))
-        // A paper wash, so the cartography and the sheet belong to one printed object rather than
-        // meeting as grey concrete against cream.
-        // A printed map, not a satellite one: the wash takes the cartography's hue and leaves its
-        // luminance, so streets, parks and water survive as tones of one warm ink. A cream
-        // multiply was invisible at any opacity that kept the map legible.
+        // The cartography is re-inked, not covered. The wash lends its own hue and saturation and
+        // leaves the map's luminance alone, so no strength of it can make the day map darker than
+        // Apple's — it only decides what colour the light comes out.
+        //
+        // That distinction is the whole fix for how this used to read. The old wash was a dark,
+        // desaturated teal, and mixing it into a cream-and-white day map pulled block, park and
+        // street towards one cool grey: the brightness survived, but the colour differences did
+        // not, and a city with no colour differences left reads as a city with a sheet over it.
         .overlay {
             Theme.mapWash
-                // Not full strength: at 0.72 land and water collapsed into one tone and the map
-                // stopped being readable as a place. At full saturation the bay went neon. This
-                // leaves the water deep and the streets pale.
-                .opacity(0.45)
+                // Night keeps the gentler mix: the dark cartography is nearly monochrome already,
+                // so it takes far less ink before the bay and the streets are one tone.
+                .opacity(scheme == .dark ? 0.45 : 0.85)
                 .blendMode(.color)
                 .allowsHitTesting(false)
                 .ignoresSafeArea()
+        }
+        // Day only: the punch, and the reason the map has more contrast than Apple's rather than
+        // less. Apple's day map sits almost entirely above the midtone, so every blend that keys
+        // off 50% grey — `.overlay`, `.softLight` — can only screen it, and a `.multiply` scales
+        // the whole range down together; all three spend contrast. A burn darkens in proportion to
+        // how dark a thing already is, so the river, the park edges and the arterials drop away
+        // from the blocks instead of towards them, and the streets stay paper-white. It saturates
+        // as it goes, which is the second half of what it is for.
+        .overlay {
+            if scheme != .dark {
+                Theme.mapWash
+                    // Measured against Apple's own cartography, and this is where the numbers turn
+                    // in our favour: from 0.18 the map holds more tonal spread than it started
+                    // with, at nearly the brightness it started with. Past about 0.3 the blocks
+                    // start to fill in and the small parks are lost inside them.
+                    .opacity(0.18)
+                    .blendMode(.colorBurn)
+                    .allowsHitTesting(false)
+                    .ignoresSafeArea()
+            }
         }
         // The weather, printed over the cartography and nowhere else (ADR-006).
         .overlay {
@@ -220,3 +244,4 @@ struct ClusterSheet: View {
         .presentationDetents([.medium, .large])
     }
 }
+

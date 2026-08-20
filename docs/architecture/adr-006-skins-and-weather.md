@@ -59,6 +59,29 @@ launch was rejected — an app that changes colour while you look at it reads as
 photograph, a form or a paragraph (ADR-005 rules 1 and 2) — and they are suppressed under Reduce
 Transparency.
 
+**The map wash re-inks the cartography; it never covers it.** The wash is blended so that it lends
+its hue and saturation and leaves the map's own luminance alone. That is the rule, not an
+implementation note: it means no strength of wash can make the day map darker than Apple's, and it
+is why the wash carries no contrast pairing.
+
+It also means the wash has to be *saturated*. The first one was a dark, desaturated teal, and a
+desaturated ink does not print a map, it greys one: block, park and street all arrived at the same
+cool tone, and a city with none of its own colour differences left reads as a city with a sheet
+over it — which is exactly the complaint that produced this rule. The light values are chosen for
+how clearly they read as an ink; their own lightness is discarded by the blend and so is not a
+consideration. By night the mix is gentler, because the dark cartography is close to monochrome
+before any ink reaches it.
+
+**By day the map is also burned, so it has more contrast than Apple's, not less.** Apple's day
+cartography sits almost entirely above the midtone. That rules out the blends that key off 50% grey
+— they can only ever lighten it — and it rules out a multiply, which scales the whole range down
+together. A second pass of the same ink in `colorBurn` darkens each feature in proportion to how
+dark it already is, so water, parks and arterials fall away from the blocks while the streets stay
+paper-white, and the colour deepens in the same move. Measured against the unwashed map at the same
+place and zoom, the day map keeps roughly its original brightness, carries more tonal spread, and
+around three times its saturation. Night is not burned: there is no headroom below the blocks to
+find.
+
 **Two accents are told apart by hue, not by lightness.** Both have to clear AAA against the same
 paper, which forces their luminances close together, so a contrast test between them would only be
 re-asserting that. TC-N-18 measures hue separation instead and requires 40°. This is a legibility

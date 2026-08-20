@@ -73,7 +73,8 @@ licensed face is chosen. Until then notes stay in the italic display serif.
 
 - `FoodMapDesign` gains the indigo ink and its pairings, so contrast stays machine-checked.
 - The map is no longer Apple's: food points of interest are excluded so the only food on the map is
-  the user's, and the cartography is warmed by a paper wash to sit in the same world as the sheet.
+  the user's, and the cartography is re-inked in the skin's colour — its own light left intact —
+  to sit in the same world as the sheet (ADR-006).
 - SF Symbols remain acceptable in secondary places (menus, form rows) where drawing our own would
   cost more than it returns.
 - Reduce Motion turns the paper physics into simple fades; Reduce Transparency drops the washes.
