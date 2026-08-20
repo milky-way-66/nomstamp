@@ -23,13 +23,13 @@ public enum StampPaper: String, CaseIterable, Sendable {
 
     public var ink: PaletteColor {
         switch self {
-        case .cream: PaletteColor(light: 0xFFE1A8, dark: 0x8A6B33)
-        case .blush: PaletteColor(light: 0xFFB2CB, dark: 0x8E3F5B)
-        case .sky: PaletteColor(light: 0x9AD4FF, dark: 0x2E6288)
-        case .mint: PaletteColor(light: 0x9CE8BE, dark: 0x2C6E4C)
-        case .butter: PaletteColor(light: 0xFFDE72, dark: 0x8A6E1F)
-        case .lilac: PaletteColor(light: 0xCFBBFF, dark: 0x54428E)
-        case .coral: PaletteColor(light: 0xFFB49A, dark: 0x8C4630)
+        case .cream: PaletteColor(light: 0xFFE1A8, dark: 0xB08A44)
+        case .blush: PaletteColor(light: 0xFFB2CB, dark: 0xBD627F)
+        case .sky: PaletteColor(light: 0x9AD4FF, dark: 0x4A86B4)
+        case .mint: PaletteColor(light: 0x9CE8BE, dark: 0x439268)
+        case .butter: PaletteColor(light: 0xFFDE72, dark: 0xB08C2A)
+        case .lilac: PaletteColor(light: 0xCFBBFF, dark: 0x8473C0)
+        case .coral: PaletteColor(light: 0xFFB49A, dark: 0xBE674B)
         }
     }
 

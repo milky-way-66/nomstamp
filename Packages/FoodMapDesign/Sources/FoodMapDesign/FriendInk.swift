@@ -16,14 +16,14 @@ public enum FriendInk {
     /// separation, in the same register as the skins' own accents, so a fixed plate still reads
     /// as this journal's box of inks rather than as a foreign object on the page.
     public static let plate: [PaletteColor] = [
-        PaletteColor(light: 0x6B4023, dark: 0xE39968),  // rust
-        PaletteColor(light: 0x524B1E, dark: 0xBFAE3B),  // gold
-        PaletteColor(light: 0x2A541B, dark: 0x61BF3F),  // leaf
-        PaletteColor(light: 0x175442, dark: 0x3BBF98),  // jade
-        PaletteColor(light: 0x1B515E, dark: 0x78B3C2),  // teal
-        PaletteColor(light: 0x254694, dark: 0x8BA9F0),  // harbour
-        PaletteColor(light: 0x761E94, dark: 0xD193E6),  // violet
-        PaletteColor(light: 0x852552, dark: 0xEB8DB9)   // rose
+        PaletteColor(light: 0x6B4023, dark: 0xEAB38E),  // rust
+        PaletteColor(light: 0x524B1E, dark: 0xCEC060),  // gold
+        PaletteColor(light: 0x2A541B, dark: 0x8AD070),  // leaf
+        PaletteColor(light: 0x175442, dark: 0x68D1B2),  // jade
+        PaletteColor(light: 0x1B515E, dark: 0x99C6D1),  // teal
+        PaletteColor(light: 0x254694, dark: 0xA8BEF4),  // harbour
+        PaletteColor(light: 0x761E94, dark: 0xDDAEEC),  // violet
+        PaletteColor(light: 0x852552, dark: 0xF0ABCB)   // rose
     ]
 
     /// Names for the inks, so a failure message and a VoiceOver label can both say which one.

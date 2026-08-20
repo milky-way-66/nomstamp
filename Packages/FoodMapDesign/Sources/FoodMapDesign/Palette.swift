@@ -15,12 +15,25 @@ public struct PaletteColor: Sendable, Equatable {
 /// inks are now the greens and blues of the food itself and of the water a market sits on: fresher,
 /// and with more energy at the same contrast levels.
 public enum Palette {
-    public static let paper = PaletteColor(light: 0xF1F5F1, dark: 0x0A1210)
-    public static let paperRaised = PaletteColor(light: 0xFBFDFA, dark: 0x14201C)
-    public static let ink = PaletteColor(light: 0x14201C, dark: 0xEDF4F0)
-    public static let inkSecondary = PaletteColor(light: 0x39463F, dark: 0xB2C2BA)
+    /// The two grounds everything else is drawn on.
+    ///
+    /// The night pair used to be `#0A1210` and `#14201C` — 1.13:1, which is below the level at
+    /// which two greys read as two surfaces at all, so every card in the app was held together by
+    /// its one-point contour alone (design note, 20 August). They are now a third of a stop apart
+    /// and a card is a card before its outline is read. Still a dark page: this is a night market,
+    /// not a grey app.
+    public static let paper = PaletteColor(light: 0xF1F5F1, dark: 0x111A17)
+    public static let paperRaised = PaletteColor(light: 0xFBFDFA, dark: 0x243230)
+    /// Body ink. The night value is a shade off white on purpose — see `Contrast.comfortMaximum`.
+    public static let ink = PaletteColor(light: 0x14201C, dark: 0xE6EFEA)
+    public static let inkSecondary = PaletteColor(light: 0x39463F, dark: 0xB3C2BB)
     /// Separators are interface components, so they aim at 3:1 rather than a text level.
-    public static let rule = PaletteColor(light: 0x6F817A, dark: 0x6C7C76)
+    public static let rule = PaletteColor(light: 0x6F817A, dark: 0x8A9A93)
+
+    /// How far apart the page and a card have to be before they read as two surfaces rather than
+    /// as one field with a line drawn on it (TC-N-28). Not a WCAG level — nothing in WCAG is about
+    /// two backgrounds — but the same kind of floor, and the app holds its night grounds to it.
+    public static let surfaceSeparationMinimum = 1.30
 
     // The three accents below are the *default* printing. Since ADR-006 the press can be re-inked
     // per day and per sky, so anything that draws should read them from the current `Skin`; these

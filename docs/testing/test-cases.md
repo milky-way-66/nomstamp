@@ -286,10 +286,12 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-18 | U | ADR-006 | Given every skin, then all of its rendered pairings meet their contrast level in both appearances | **auto** |
 | TC-N-19 | U | ADR-006 | Given a weather condition and whether it is daylight, then only the light changes — the sky is never drawn | **auto** |
 | TC-N-20 | U | ADR-006 | Given any weather reading or none at all, then the printing is unchanged — one set of inks — and night is the only thing the weather decides | **auto** |
+| TC-N-29 | U | ADR-006 | Given no weather reading, or one that says nothing, then the reader's clock decides the lights: dark before 06:00 and from 18:00, light between — and a real daylight reading still overrules it | **auto** |
 | TC-N-21 | U | ADR-006 | Given daylight or its absence, then the appearance is light or dark accordingly | **auto** |
 | TC-N-15 | E | ADR-005 | Given the drawn filter tabs, when one is chosen, then it reports itself selected to assistive technology and the list shows only that kind | **auto** |
 | TC-N-25 | U | ADR-009, NFR-6.4 | Given the plate of eight friend inks, then each clears the contrast floor over paper in both appearances, and no two are the same ink | **auto** |
 | TC-N-26 | U | ADR-009 | Given the plate of eight, then it is identical under every skin — a friend's ink is not re-inked by the weather | **auto** |
+| TC-N-28 | U | ADR-003, NFR-6.4 | Given the night palette, then the page and a card separate as two surfaces, no ink glares against the page, and every stamp paper clears the component floor on both grounds | **auto** |
 | TC-N-27 | U | ADR-009, NFR-6.3 | Given a reader's stamp and a friend's, then they differ by cut as well as by colour, so the map answers *mine or theirs* without colour | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can

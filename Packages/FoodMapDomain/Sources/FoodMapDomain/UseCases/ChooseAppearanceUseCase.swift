@@ -43,7 +43,28 @@ public struct ChooseAppearanceUseCase: Sendable {
     public init() {}
 
     public func execute(weather: WeatherSnapshot?, on date: Date, in calendar: Calendar = .current) -> Appearance {
-        let reading = weather ?? .unknown
-        return Appearance(skin: .house, isNight: !reading.isDaylight)
+        return Appearance(skin: .house, isNight: isNight(weather: weather, on: date, in: calendar))
     }
+
+    /// The sky if it said anything, the clock if it did not (ADR-006, revised 20 August).
+    ///
+    /// `.unknown` is not a sky, it is the absence of one, and its `isDaylight` is a placeholder
+    /// rather than a reading — so it falls through here exactly as `nil` does. Reading that
+    /// placeholder as a fact is what used to leave a phone with no location permission, no network
+    /// or no WeatherKit entitlement printed in daylight at midnight, with no way to reach the night
+    /// market at all.
+    private func isNight(weather: WeatherSnapshot?, on date: Date, in calendar: Calendar) -> Bool {
+        guard let weather, weather.condition != .unknown else {
+            return !Self.lampsOut.contains(calendar.component(.hour, from: date))
+        }
+        return !weather.isDaylight
+    }
+
+    /// The hours the app assumes the sun is up when nobody has told it otherwise: six in the
+    /// morning to six in the evening, local.
+    ///
+    /// Deliberately blunt rather than a sunrise calculation. A calculation needs the reader's
+    /// coordinate, and a missing coordinate is one of the reasons this fallback is reached in the
+    /// first place. A real daylight reading always wins over it.
+    static let lampsOut: Range<Int> = 6..<18
 }

@@ -20,8 +20,8 @@ public enum RatingMood: Int, CaseIterable, Sendable {
 
     public var ink: PaletteColor {
         switch self {
-        case .poor: return PaletteColor(light: 0x414C56, dark: 0xA8B4BD)
-        case .fair: return PaletteColor(light: 0x2C5670, dark: 0x9CC0D6)
+        case .poor: return PaletteColor(light: 0x414C56, dark: 0xB6C0C7)
+        case .fair: return PaletteColor(light: 0x2C5670, dark: 0xA2C3D8)
         case .good: return PaletteColor(light: 0x0F5A66, dark: 0x86CBD4)
         case .great: return PaletteColor(light: 0x0B5E45, dark: 0x5FE4A6)
         case .best: return PaletteColor(light: 0x235509, dark: 0xA6D97A)

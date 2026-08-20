@@ -262,6 +262,81 @@ struct ArtDirectionTests {
     }
 }
 
+/// The design note of 20 August: the night market was hard to read, and the contrast suite could
+/// not see why. Three faults, all of them in the gap between "this pairing passes WCAG" and "this
+/// page is comfortable in the dark".
+@Suite("Night legibility")
+struct NightLegibilityTests {
+
+    /// TC-N-28 — the page and a card must read as two surfaces before either one's outline is
+    /// read. At 1.13:1 they did not, and the whole app at night was a field of thin contours with
+    /// no sense of one thing sitting on another.
+    /// A night rule rather than a rule for both appearances, and deliberately so: on a bright
+    /// page a card is also separated by its shadow and by the edge of the light falling on it,
+    /// and the eye has far more to work with. In the dark, luminance is nearly all there is.
+    @Test("TC-N-28 the night page and a card separate as two surfaces")
+    func TC_N_28_surfacesSeparate() {
+        let paper = Palette.value(Palette.paper, in: .dark)
+        let raised = Palette.value(Palette.paperRaised, in: .dark)
+        let separation = Contrast.ratio(paper, raised)
+
+        #expect(
+            separation >= Palette.surfaceSeparationMinimum,
+            "the night page and a card are \(separation):1 apart"
+        )
+    }
+
+    /// TC-N-28 — the ceiling nobody thinks to set. Body ink at 16.98:1 on a near-black page passes
+    /// AAA nearly two and a half times over, and that is exactly what makes a phone unpleasant in
+    /// a dark room: the letters bloom at their edges. The floor keeps text readable; this keeps it
+    /// comfortable.
+    @Test("TC-N-28 no ink glares against the night page", arguments: Skin.allCases)
+    func TC_N_28_noInkGlares(skin: Skin) {
+        let paper = Palette.value(Palette.paper, in: .dark)
+        let inks: [(String, PaletteColor)] = [
+            ("body ink", Palette.ink),
+            ("secondary ink", Palette.inkSecondary),
+            ("visited ink", skin.visitedInk),
+            ("wishlist ink", skin.wishlistInk),
+            ("printing ink", skin.printingInk)
+        ] + RatingMood.allCases.map { ("\($0) rating ink", $0.ink) }
+            + FriendInk.plate.enumerated().map { ("the \(FriendInk.name(forSlot: $0.offset)) friend ink", $0.element) }
+
+        for (name, ink) in inks {
+            let ratio = Contrast.ratio(Palette.value(ink, in: .dark), paper)
+            #expect(
+                ratio <= Contrast.comfortMaximum,
+                "\(name) is \(ratio):1 against the night page, which glares"
+            )
+            // Still a floor as well as a ceiling: this test must not be passable by going grey.
+            #expect(ratio >= Contrast.enhancedTextMinimum, "\(name) is \(ratio):1 against the night page")
+        }
+    }
+
+    /// TC-N-28 — stamp papers carry no information, which is not the same as being allowed to be
+    /// invisible. At night five of the seven fell below 3:1 against a card, and the album lost the
+    /// one device that makes it look like an album (ADR-005).
+    /// Night only, and for a reason worth writing down: in daylight these are pale pastels on a
+    /// bright page, told apart by hue, and a luminance floor applied there would force the whole
+    /// set dark and take the album's colour away in the appearance where it works. Chroma is what
+    /// the eye loses first as luminance falls, so at night the same band has to carry a difference
+    /// in light as well.
+    @Test("TC-N-28 every stamp paper is visible on both night grounds")
+    func TC_N_28_stampPapersAreVisible() {
+        let paper = Palette.value(Palette.paper, in: .dark)
+        let raised = Palette.value(Palette.paperRaised, in: .dark)
+
+        for stamp in StampPaper.allCases {
+            let ink = Palette.value(stamp.ink, in: .dark)
+            let onPaper = Contrast.ratio(ink, paper)
+            let onRaised = Contrast.ratio(ink, raised)
+
+            #expect(onPaper >= Contrast.componentMinimum, "\(stamp.rawValue) on the night page is \(onPaper):1")
+            #expect(onRaised >= Contrast.componentMinimum, "\(stamp.rawValue) on a night card is \(onRaised):1")
+        }
+    }
+}
+
 /// ADR-009 — a friend's ink.
 @Suite("Friend inks")
 struct FriendInkTests {

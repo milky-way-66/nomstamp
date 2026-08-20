@@ -26,9 +26,9 @@ public enum Skin: String, CaseIterable, Sendable {
         switch self {
         case .pandan: PaletteColor(light: 0x0B5E45, dark: 0x5FE4A6)
         case .bay: PaletteColor(light: 0x134A72, dark: 0x82D0FF)
-        case .tamarind: PaletteColor(light: 0x813807, dark: 0xF2A25C)
-        case .sim: PaletteColor(light: 0x5B2A78, dark: 0xC9A0F0)
-        case .lotus: PaletteColor(light: 0x9B1B4A, dark: 0xFF9DBE)
+        case .tamarind: PaletteColor(light: 0x813807, dark: 0xF4B175)
+        case .sim: PaletteColor(light: 0x5B2A78, dark: 0xD3B1F3)
+        case .lotus: PaletteColor(light: 0x9B1B4A, dark: 0xFFA4C2)
         }
     }
 
@@ -39,7 +39,7 @@ public enum Skin: String, CaseIterable, Sendable {
         case .pandan: PaletteColor(light: 0x15496F, dark: 0x79CEFF)
         case .bay: PaletteColor(light: 0x0F5B3E, dark: 0x74E0A6)
         case .tamarind: PaletteColor(light: 0x1F5560, dark: 0x86CEDC)
-        case .sim: PaletteColor(light: 0x2F3E86, dark: 0xA8B6F5)
+        case .sim: PaletteColor(light: 0x2F3E86, dark: 0xAFBCF6)
         case .lotus: PaletteColor(light: 0x1F5A63, dark: 0x86D8DE)
         }
     }
@@ -48,11 +48,11 @@ public enum Skin: String, CaseIterable, Sendable {
     /// Always the quietest of the three, so it never competes with the accents it sits under.
     public var printingInk: PaletteColor {
         switch self {
-        case .pandan: PaletteColor(light: 0x1E3A4A, dark: 0x86C6DE)
-        case .bay: PaletteColor(light: 0x1B3550, dark: 0x8FC4E8)
-        case .tamarind: PaletteColor(light: 0x5A3418, dark: 0xD7A98A)
-        case .sim: PaletteColor(light: 0x3B2A55, dark: 0xB9A5D8)
-        case .lotus: PaletteColor(light: 0x63304A, dark: 0xE0A8C0)
+        case .pandan: PaletteColor(light: 0x1E3A4A, dark: 0x89C8DF)
+        case .bay: PaletteColor(light: 0x1B3550, dark: 0x90C5E8)
+        case .tamarind: PaletteColor(light: 0x5A3418, dark: 0xDDB79D)
+        case .sim: PaletteColor(light: 0x3B2A55, dark: 0xC7B8E0)
+        case .lotus: PaletteColor(light: 0x63304A, dark: 0xE3B1C6)
         }
     }
 
@@ -61,7 +61,7 @@ public enum Skin: String, CaseIterable, Sendable {
     ///
     /// Text on a `visitedInk` or `wishlistInk` fill. In dark mode those fills are the light ones,
     /// so the page's own ground reads back instead of white.
-    public var onAccent: PaletteColor { PaletteColor(light: 0xFFFFFF, dark: 0x0A1210) }
+    public var onAccent: PaletteColor { PaletteColor(light: 0xFFFFFF, dark: 0x111A17) }
 
     /// The skin the app is printed in when nothing has said otherwise.
     public static let `default`: Skin = .pandan

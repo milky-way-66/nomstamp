@@ -11,6 +11,14 @@ public enum Contrast {
     public static let enhancedTextMinimum = 7.0
     /// Non-text interface components: separators, borders, pin outlines.
     public static let componentMinimum = 3.0
+    /// The other end of the scale, which no accessibility standard sets because standards are
+    /// written to stop text being too faint (design note, 20 August).
+    ///
+    /// Near-white type on a near-black page passes AAA two and a half times over and is still
+    /// unpleasant to read in a dark room: at that separation the letters bloom at their edges. The
+    /// night palette holds itself under this, which costs nothing — everything stays well clear of
+    /// the floor — and takes the glare off.
+    public static let comfortMaximum = 16.0
 
     public static func relativeLuminance(_ hex: UInt32) -> Double {
         let channels = [(hex >> 16) & 0xFF, (hex >> 8) & 0xFF, hex & 0xFF]

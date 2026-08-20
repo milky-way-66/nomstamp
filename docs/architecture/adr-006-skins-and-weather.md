@@ -120,3 +120,29 @@ the night market would otherwise only be capturable after sunset.
   the WeatherKit capability on the Apple Developer account. Without it the app runs on rotation.
 - One more reason to keep the palette in a package: five skins × two appearances × every pairing is
   a test that runs in a second on a Mac, and could not run at all in the app.
+
+## Revision, 20 August: the clock is the fallback, and the lights are re-checked while the app runs
+
+Two faults, both of which made the night market unreachable in practice.
+
+**An unreadable sky was treated as daylight.** `WeatherSnapshot.unknown` carries `isDaylight: true`,
+and the rule read nothing else — so on any device without location permission, without a network,
+or without the WeatherKit entitlement, the app was printed in the day inks at midnight and there
+was no way for a reader to get the night market at all. The intent was "do not drop a reader into a
+night market at noon", and that intent is right; the implementation of it was a constant.
+
+The rule now falls back to **the reader's own clock**: with no reading, or a reading that says
+nothing (`.unknown`), the lights are on between **06:00 and 18:00** local, and off outside it. This
+is deliberately a blunt rule rather than a sunrise calculation — a calculation needs the coordinate,
+and the coordinate is exactly what is missing in every case that reaches this fallback. A real
+daylight reading still wins: WeatherKit knows the actual sunset where the reader is standing, and
+six o'clock is only what the app assumes when nobody has told it better. The calendar is a
+parameter, so the boundary is tested at a fixed instant rather than at whatever hour the suite
+happens to run.
+
+**Nothing re-asked while the app was open.** The appearance was decided at launch and on
+foregrounding, so an app left open through six o'clock stayed in the wrong printing until the
+reader backgrounded it. `AppearanceStore` now also carries a ticker that re-runs the rule
+periodically, which flips the lights at the boundary without the reader touching anything. It is a
+cheap check — a pure function over a clock reading — so the interval is a minute rather than
+something clever, and the store only rebuilds the tree when the answer actually changes.
