@@ -125,9 +125,13 @@ small angle; and a reader tells them apart at the edge of vision, before the gly
 The same goes for the thirteen stamp cuts and for anything else the app repeats.
 
 **The map's actions are painted, not printed.** The journal's inks are deep and slightly dusty
-because type sits on them; the three floating actions are toys, and a cartoon paints its toys in
-primaries — yellow, hot pink, bright leaf (`ActionInk`). They carry a near-black glyph in both
-appearances rather than white, which is what lets the yellow be yellow instead of mustard (TC-N-24).
+because type sits on them; the three floating actions are toys, and a cartoon paints its toys —
+soft yellow, soft rose, soft leaf (`ActionInk`). They carry a near-black glyph in both appearances
+rather than white, which is what lets the yellow be yellow instead of mustard (TC-N-24).
+
+They are pastel rather than primary on purpose. Full-strength yellow, hot pink and signal green
+made the three discs the loudest objects on a pale map, and the map is what the screen is for: the
+paint has to be friendly at a glance and forgettable while the reader is looking at their city.
 
 **Nothing stock survives contact with this.** `.borderedProminent`, `.bordered` and the stock
 segmented control were all removed: a system control in a drawn interface is the one object on the
