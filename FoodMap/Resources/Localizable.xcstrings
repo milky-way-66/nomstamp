@@ -104,6 +104,23 @@
         }
       }
     },
+    "After dark": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After dark"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trời đã tối"
+          }
+        }
+      }
+    },
     "All": {
       "extractionState": "manual",
       "localizations": {
@@ -359,6 +376,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Xoá tìm kiếm"
+          }
+        }
+      }
+    },
+    "Clear sky": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear sky"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trời quang"
           }
         }
       }
@@ -826,6 +860,23 @@
         }
       }
     },
+    "Overcast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Overcast"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trời nhiều mây"
+          }
+        }
+      }
+    },
     "Photograph a meal where you are, or save a place someone told you about.": {
       "extractionState": "manual",
       "localizations": {
@@ -850,6 +901,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ảnh của bữa ăn này"
+          }
+        }
+      }
+    },
+    "Raining": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raining"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trời mưa"
           }
         }
       }

@@ -72,10 +72,27 @@ legibility — which is a bad trade on the one screen the whole app is.
 What is left of the weather is the sky itself: a drawn effect in a band at the top of the map,
 where a sky belongs. It is decoration over the horizon, not a filter over the city.
 
+**The weather is the border of the page.** A window in the corner was tried first and rejected: it
+was one more object on a screen that already has pins, actions, a compass and a sheet, and for all
+that furniture it only ever said what a glance out of a window says. So the sky stops being a thing
+*on* the page and becomes the edge *of* it — a printed rule just inside the screen, ornamented by
+the weather, the way a stamped page is ruled.
+
+- **Rain** rules fine ticks down the two sides, drifting.
+- **Fog** softens the rule until it has no edge left, and breathes.
+- **A clear sky** warms it: a hairline with a slow bloom along the top.
+- **After dark** hangs small lanterns along it, coming up in turn.
+- **An unknown sky** leaves the page unruled. An ornament would be a claim.
+
+It earns its place by being the one piece of chrome that costs no room: it lives in the margin the
+layout already leaves, it never covers the map, and it is the frame around everything rather than
+another thing inside it. The rules it is held to are unchanged — slow enough to ignore, still under
+Reduce Motion, and labelled, because the sky is information.
+
 **Effects are drawn, never photographed.** Rain is ruled ink streaks, haze is a paper wash,
-`bloom` a warm halo, `lanterns` a scatter of specks. They sit over the map only — never over a
-photograph, a form or a paragraph (ADR-005 rules 1 and 2) — and they are suppressed under Reduce
-Transparency.
+`bloom` a warm halo, `lanterns` a scatter of specks. They are drawn in the margin and nowhere else
+— never over the cartography, a photograph, a form or a paragraph (ADR-005 rules 1 and 2) — and
+they are suppressed under Reduce Transparency.
 
 **Two accents are told apart by hue, not by lightness.** Both have to clear AAA against the same
 paper, which forces their luminances close together, so a contrast test between them would only be

@@ -99,6 +99,10 @@ struct PlaceRowView: View {
 
     private static let stampSide: CGFloat = 62
 
+    /// The same frame the map deals this place, so a stamp is recognisably itself in both places
+    /// (ADR-005, TC-N-13).
+    private var shape: StampCutShape { StampCutShape(cut: StampCut.cut(for: place.id.uuidString)) }
+
     @ViewBuilder
     private var stamp: some View {
         if let photo = place.pinPhoto, let image = PhotoImageLoader.shared.thumbnail(named: photo.thumbnailFilename) {
@@ -109,9 +113,9 @@ struct PlaceRowView: View {
                 // The same perforated frame as the pin, in the same rating ink (ADR-005).
                 // The same perforated frame as the pin, in the same rating ink and at the same
                 // quality of impression (ADR-005).
-                .clipShape(StampShape())
+                .clipShape(shape)
                 .stampPressed(
-                    StampShape(),
+                    shape,
                     press: press,
                     ink: Theme.ratingInk(score),
                     showsInk: score != nil,
@@ -122,7 +126,7 @@ struct PlaceRowView: View {
                 // one-star place still sits visibly more crooked than a five-star one.
                 .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) * press.tiltScale / 2))
         } else {
-            StampShape()
+            shape
                 .fill(Theme.wishlistInk.opacity(0.12))
                 .frame(width: Self.stampSide, height: Self.stampSide)
                 .overlay(
@@ -132,7 +136,7 @@ struct PlaceRowView: View {
                         .padding(Self.stampSide * 0.3)
                 )
                 .overlay(
-                    StampShape().strokeBorder(Theme.wishlistInk.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
+                    shape.strokeBorder(Theme.wishlistInk.opacity(0.7), style: StrokeStyle(lineWidth: 1.4, dash: [4, 3]))
                 )
                 .rotationEffect(.degrees(StampTilt.degrees(for: place.id.uuidString) * press.tiltScale / 2))
         }

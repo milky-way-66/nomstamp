@@ -6,9 +6,11 @@ import Foundation
 /// every redraw looks broken, and a place should keep its own angle the way a stamp keeps the way it
 /// was stuck down.
 public enum StampTilt {
-    /// Degrees. Beyond about four the pin stops reading as "placed by hand" and starts reading as
-    /// "laid out wrong".
-    public static let limit: Double = 4
+    /// Degrees. Four was the limit while every stamp was the same shape, and at that range it read
+    /// as a rendering tolerance rather than as a hand. With five cuts on the page (`StampCut`) the
+    /// eye has something to measure the angle against, and ±9° is where a row of pins starts
+    /// looking stuck down rather than laid out. Past it they read as broken.
+    public static let limit: Double = 9
 
     public static func degrees(for id: String) -> Double {
         // A small deterministic hash — FNV-1a — because `hashValue` is seeded per process and would

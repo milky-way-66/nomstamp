@@ -22,6 +22,12 @@ struct StampPin: View {
     /// How well this stamp was printed. The score picks the ink and the craft both, so a bad meal
     /// and a great one are told apart at pin size without reading anything (ADR-005).
     private var press: StampPress { StampPress.press(for: score) }
+    /// What this pin is a stamp *of*. A single pin is its place, so the same meal is the same
+    /// stamp — same frame, same lean — in the list and on the map; a cluster falls back to its own
+    /// grid key, because a cluster is not a place.
+    private var stampID: String { place?.id.uuidString ?? cluster.id }
+    /// Which of the five frames this place was dealt, once and for good (ADR-005, TC-N-13).
+    private var shape: StampCutShape { StampCutShape(cut: StampCut.cut(for: stampID)) }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -47,7 +53,7 @@ struct StampPin: View {
         // changes between redraws (ADR-005, TC-N-13).
         // …and how far off square depends on how the place scored: a stamp nobody was thinking
         // about goes on slightly askew, a five-star one goes on straight.
-        .rotationEffect(.degrees(StampTilt.degrees(for: cluster.id) * press.tiltScale))
+        .rotationEffect(.degrees(StampTilt.degrees(for: stampID) * press.tiltScale))
         .scaleEffect(isSelected ? 1.22 : 1)
         .animation(.spring(response: 0.28, dampingFraction: 0.55), value: isSelected)
         // One element, no children: the label is applied by whoever makes this selectable.
@@ -61,13 +67,13 @@ struct StampPin: View {
                 .resizable()
                 .scaledToFill()
                 .frame(width: size, height: size)
-                .clipShape(StampShape())
+                .clipShape(shape)
                 // The frame carries the score twice over: in the ink it is printed in, and in how
                 // well it is printed at all (ADR-005).
-                .stampPressed(StampShape(), press: press, ink: scoreInk, showsInk: score != nil, paperRule: 2.5)
+                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 2.5)
                 .photoGlow(6)
         } else if isVisited {
-            StampShape()
+            shape
                 .fill(Theme.visitedInk.opacity(0.16))
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
@@ -77,11 +83,11 @@ struct StampPin: View {
                 )
                 // A meal with no photograph is still a meal with a score, so it is printed to the
                 // same standard the photographed ones are.
-                .stampPressed(StampShape(), press: press, ink: scoreInk, showsInk: score != nil, paperRule: 0)
+                .stampPressed(shape, press: press, ink: scoreInk, showsInk: score != nil, paperRule: 0)
         } else {
             // A wishlist place has not been judged, so it is never printed badly. It keeps its own
             // dashed ticket edge, at the competent middle an unrated place always gets.
-            StampShape()
+            shape
                 .fill(Theme.paperRaised)
                 .frame(width: size * 0.82, height: size * 0.82)
                 .overlay(
@@ -90,7 +96,7 @@ struct StampPin: View {
                         .foregroundStyle(Theme.wishlistInk)
                 )
                 .overlay(
-                    StampShape().strokeBorder(
+                    shape.strokeBorder(
                         Theme.wishlistInk,
                         style: StrokeStyle(lineWidth: 2, dash: [4, 3])
                     )

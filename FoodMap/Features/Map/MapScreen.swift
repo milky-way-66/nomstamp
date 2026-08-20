@@ -5,8 +5,6 @@ import FoodMapDomain
 /// The app is the map. Lists and detail arrive in a bottom sheet rather than behind a tab bar,
 /// so the map is never more than a swipe away (ADR-003).
 struct MapScreen: View {
-    /// What the sky is doing where the reader is, set at the root (ADR-006).
-    @Environment(\.skyEffect) private var skyEffect
     /// Day or night: the map is re-inked differently in each, see `map`.
     @Environment(\.colorScheme) private var scheme
 
@@ -92,13 +90,6 @@ struct MapScreen: View {
         // any blend, at any strength — bought atmosphere by spending legibility, and this is the
         // one screen the whole app is. The direction is carried by what is printed *on* the map:
         // the stamps, the sheet, the drawn chrome.
-        // The weather, in the sky, where a sky is: a band along the top of the map that fades out
-        // long before the streets do (ADR-006).
-        .overlay(alignment: .top) {
-            SkyEffectLayer(effect: skyEffect)
-                .allowsHitTesting(false)
-                .ignoresSafeArea(edges: .top)
-        }
         .mapControls { MapCompass() }
         .onMapCameraChange(frequency: .onEnd) { context in
             model.boundsChanged(to: MapBounds(context.region))

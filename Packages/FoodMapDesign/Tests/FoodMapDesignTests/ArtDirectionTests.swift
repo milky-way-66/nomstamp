@@ -22,6 +22,30 @@ struct ArtDirectionTests {
         #expect(Set(angles.map { Int($0.rounded()) }).count >= 5)
     }
 
+    /// TC-N-13 — the other half: the frame a place is dealt. Stable, spread across the whole
+    /// family, and uncorrelated with the tilt, so a page is not all one shape leaning one way.
+    @Test("TC-N-13 stamp cuts are deterministic and a page uses every one of them")
+    func TC_N_13_stampCut() {
+        let ids = (0..<200).map { "place-\($0)" }
+        let cuts = ids.map { StampCut.cut(for: $0) }
+
+        for (id, cut) in zip(ids, cuts) {
+            #expect(StampCut.cut(for: id) == cut, "a place must keep the frame it was dealt")
+        }
+
+        // Every issue turns up, and none of them takes over the page.
+        #expect(Set(cuts) == Set(StampCut.allCases))
+        for cut in StampCut.allCases {
+            let share = Double(cuts.filter { $0 == cut }.count) / Double(cuts.count)
+            #expect(share > 0.08 && share < 0.4, "\(cut) is dealt \(share) of the time")
+        }
+
+        // A page of one cut must not also be a page of one angle.
+        let galleryAngles = Set(ids.filter { StampCut.cut(for: $0) == .gallery }
+            .map { Int(StampTilt.degrees(for: $0).rounded()) })
+        #expect(galleryAngles.count >= 5)
+    }
+
     @Test("a tilt is stable across the exact ids the app uses")
     func tiltIsStableForUUIDs() {
         let id = "9E7F2A44-59D1-4B41-9C21-4BD1D0D2A7F0"
@@ -92,6 +116,31 @@ struct ArtDirectionTests {
     func pressQualityIsClamped() {
         #expect(StampPress(quality: -3).quality == 0)
         #expect(StampPress(quality: 42).quality == 1)
+    }
+
+    /// TC-N-23 — the weather is the one thing in the app allowed to move on its own, and the
+    /// condition of that licence is that it is slow enough to ignore.
+    @Test("TC-N-23 the sky drifts rather than animates, and is still when there is nothing to draw")
+    func TC_N_23_skyMotion() {
+        for effect in SkyEffectKind.allCases where effect != .none {
+            let period = SkyMotion.period(for: effect)
+            #expect(period >= SkyMotion.fastest, "\(effect) at \(period)s would twitch")
+            #expect(period <= SkyMotion.slowest, "\(effect) at \(period)s would look stuck")
+            #expect(SkyMotion.amplitude(for: effect) > 0, "\(effect) is drawn, so it has to move")
+        }
+
+        // Nothing known about the sky, nothing drawn, and so nothing moving.
+        #expect(SkyMotion.period(for: .none) == 0)
+        #expect(SkyMotion.amplitude(for: .none) == 0)
+
+        // Rain falls, fog leans: the busiest sky must not be the slowest one.
+        #expect(SkyMotion.period(for: .rain) < SkyMotion.period(for: .haze))
+
+        // Only rain redraws its whole window each cycle; everything else stays where it was
+        // printed and merely changes its light.
+        for effect in SkyEffectKind.allCases where effect != .none && effect != .rain {
+            #expect(SkyMotion.amplitude(for: effect) <= 0.2, "\(effect) would visibly wander")
+        }
     }
 
     /// TC-N-12 — the third ink is held to the same standard as the first two.

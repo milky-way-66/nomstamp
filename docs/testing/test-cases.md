@@ -193,7 +193,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-10 | E | NFR-6.1 | Given the largest accessibility text size, when the map opens, then the primary actions are still present and hittable | **auto** |
 | TC-N-11 | E | NFR-6.2 | Given the map screen, then every control carries a VoiceOver label, not a bare image name | **auto** |
 | TC-N-12 | U | ADR-005 | Given the printing ink (indigo), then every pairing it renders in meets its contrast level in both appearances | **auto** |
-| TC-N-13 | U | ADR-005 | Given a place id, when its stamp tilt is computed, then it is stable across calls, within ±4°, and differs across places | **auto** |
+| TC-N-13 | U | ADR-005 | Given a place id, when its stamp tilt and cut are computed, then both are stable across calls, the tilt is within ±9°, and a page of places uses every cut | **auto** |
 | TC-N-14 | U | ADR-005 | Given the paper grain tile, then it is deterministic for a seed, non-uniform, and its mean ink stays inside the documented bounds | **auto** |
 | TC-N-16 | U | ADR-005 | Given a deckle edge of n points, then the amplitudes are deterministic for a seed, within bounds, and not all equal | **auto** |
 | TC-N-17 | U | ADR-005 | Given a score, then its mood is defined only for 1...5, each step has its own ink, and every ink is a contrast-checked pairing | **auto** |
@@ -202,6 +202,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-19 | U | ADR-006 | Given a weather condition and whether it is daylight, then the documented sky effect is chosen | **auto** |
 | TC-N-20 | U | ADR-006 | Given any weather reading or none at all, then the printing is unchanged — one set of inks — and only the sky effect and night follow the weather | **auto** |
 | TC-N-21 | U | ADR-006 | Given daylight or its absence, then the appearance is light or dark accordingly | **auto** |
+| TC-N-23 | U | ADR-006 | Given a sky effect, then the motion of the page border is defined, slow enough to read as a drift, and still for the effect that draws nothing | **auto** |
 | TC-N-15 | E | ADR-005 | Given the drawn filter tabs, when one is chosen, then it reports itself selected to assistive technology and the list shows only that kind | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can

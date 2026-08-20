@@ -60,8 +60,39 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `StampPress` | The *quality* ramp a score prints at, from a bad impression at one star to a perfect one at five |
 | `DeckleEdge` | A deterministic torn-paper edge, used where a photograph meets the page |
 | `InkTabs` | Drawn filter tabs — small caps over a brushed underline — in place of the stock segmented control |
-| `StampShape` family | Perforated stamp (visited), torn ticket (wishlist), deterministic tilt per place |
+| `StampCut` family | Five frames — classic, gallery, modern, country, city — dealt out per place, with a deterministic tilt |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |
+
+## No two stamps are the same stamp
+
+A page of identical frames reads as a table with pictures in it. A real album has stamps of every
+cut on it, collected from everywhere, stuck down by whoever was holding it at the time — and that
+is the thing this app is trying to be.
+
+So a place is dealt one of five frames from its own id, and keeps it for good, the way a place keeps
+its tilt. The five are not five variations on a rounded rectangle; each is issued by a different
+imaginary post office, and the difference has to be readable at pin size, in silhouette, with the
+photograph filling it:
+
+- **Classic** — the old-fashioned issue. Perforated teeth the whole way round, the shape everyone
+  draws when asked to draw a stamp. This is the one the app started with.
+- **Gallery** — the art issue. An arched top, like a canvas or a museum doorway, on square
+  shoulders. The only cut with a curve for a top edge.
+- **Modern** — the future issue. Two opposite corners cut clean off at an angle, every line
+  straight, no perforation and no wobble. Machined rather than torn.
+- **Country** — the rural issue. Hand-cut: four torn deckle edges, none of them straight, the paper
+  itself irregular. The only cut with no repeating rhythm in it at all.
+- **City** — the metropolitan issue. Hard square corners and a stepped skyline along the top edge,
+  a block of buildings seen end-on.
+
+The cut carries no meaning: it is not the kind, it is not the score, and nothing may ever be read
+off it. It exists so that six pins on a map look like six stamps rather than six copies of one, and
+so that the same place is recognisably itself in the list and on the map.
+
+The tilt widens with it. Four degrees was chosen when every stamp was the same shape, and at that
+range it read as a rendering tolerance rather than as a hand; ±9° is the point at which a row of
+them looks stuck down rather than laid out. The score still narrows it — a five-star stamp is placed
+squarely, whatever cut it was dealt (TC-N-13, TC-N-22).
 
 ## A score is printed, not annotated
 
