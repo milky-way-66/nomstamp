@@ -1,6 +1,8 @@
 # Research — how two phones share stamps
 
-**Status:** research, complete. **Decision taken in ADR-008: iroh** — Family C, direct peer to peer.
+**Status:** research, complete. **Decision first taken in ADR-008: iroh** — Family C, direct peer to
+peer. **Revisited in ADR-009, which chose Family D — CloudKit**, on the strength of the axis this
+document identified as the deciding one: *does it work when your friend's phone is asleep?*
 **Date:** 2026-08-20
 
 Two problems, independent of each other, usually conflated:

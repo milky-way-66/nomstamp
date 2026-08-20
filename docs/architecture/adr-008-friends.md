@@ -1,6 +1,11 @@
 # ADR-008 — Friends: stamps that other people can see
 
-**Status:** accepted
+**Status:** **superseded by `adr-009-friends-shared-zone.md`.** The transport decided here — a
+peer-to-peer mesh over iroh — was replaced once the both-awake constraint below was followed
+through to the feature's actual behaviour. This document is kept because the reasoning that led
+here is still the reasoning that justifies the product rules ADR-009 carries over unchanged: the
+in-person connection, the cap of eight, and the stamp being a place rather than a meal. Where the
+two disagree, ADR-009 wins.
 **Research:** `research-friend-sync.md` — five transport families surveyed before this was chosen.
 **Amends CON-3 and NFR-1** in the SRS. **CON-1 and CON-2 survive intact**, which is the point.
 **Context:** the app has always been one person's stamp book. The ask is to let a reader connect

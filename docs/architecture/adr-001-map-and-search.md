@@ -79,7 +79,7 @@ So the search hierarchy is:
 ## Consequences and open risks
 - **Map tiles and place search need the internet.** "Local-only" refers to *our data*: there is
   still no server, and meals and photographs stay on the device except where the reader
-  deliberately shares a place with a connected friend, device to device (ADR-008). Viewing the map
+  deliberately shares a place with a connected friend, sealed, through CloudKit (ADR-009). Viewing the map
   in a new city still requires connectivity. Logging a meal offline works fully (GPS + manual name); only the
   nearby-suggestions list degrades.
 - **POI coordinate precision must be verified on-device.** In the command-line test nearly all

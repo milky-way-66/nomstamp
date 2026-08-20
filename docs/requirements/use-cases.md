@@ -199,32 +199,41 @@ Supporting actors: **Device** (camera, GPS), **Place Provider** (map/geocoding s
 ## UC-8 — Connect a friend
 
 **Actor:** a reader who wants to see a friend's stamps
-**Precondition:** both are **in the same room**, both have the app, and identity keypairs already
-exist from first launch
+**Precondition:** both are **in the same room**, both have the app, both have an Apple ID signed into
+iCloud, and identity keypairs already exist from first launch
 
 **Main flow**
-1. User A opens *Add friend* and shows a QR code.
-2. User B scans it, and the exchange completes over local radio.
-3. A confirms B.
-4. The connection is live, and the first sync runs immediately — A's shared stamps appear on B's map
-   while they are still at the table.
+1. Both readers open *Add friend*. Each phone advertises its presence over Bluetooth and lists the
+   readers nearby. Neither has a role: there is no one who shows and no one who scans.
+2. One taps the other. Both phones show **the same four-letter word**, derived from the two public
+   keys, and both readers confirm it matches.
+3. Each names the other, starting from the name that reader asserted. The name a reader types is the
+   one they will see from then on.
+4. Keys and the share are exchanged over the local link, and the first sync runs immediately — over
+   radio, with no network needed — so shared stamps appear on both maps while they are still at the
+   table.
 
-**Alternate flow**
+**Alternate flows**
 - **2a. Removing a friend** — user removes a friend; their stamps are deleted and the connection
   revoked, freeing a slot.
+- **1a. Too many candidates, or Bluetooth unavailable** — the flow falls back to a QR code, which
+  names one specific phone unambiguously. The radio leg still carries the exchange.
+- **1b. No iCloud account** — the reader is told the friends feature needs one, and how to sign in.
+  This is an explanation, not an error, and the rest of the app is unaffected.
 
 **Exceptions**
-- **E1. Not in the same room** — there is no remote path. A screenshotted QR code sent to someone
-  elsewhere cannot complete the handshake, because the radio leg cannot be faked at a distance.
-- **E2. Circle full** — a reader with eight friends is told the circle is full and offered a removal.
-  This is an explanation, not an error, and there is nothing to buy.
+- **E1. Not in the same room** — there is no remote path, because no part of the connect flow uses
+  the local network, CloudKit or the internet. Distance is enforced by radio range, not by a check.
+- **E2. Circle full** — a reader with eight friends is told so **before the ceremony begins**, and
+  offered a removal. This is an explanation, not an error, and there is nothing to buy.
 
 **Acceptance criteria**
-- Given two phones at one table, when B scans A's code and A confirms, then A's shared stamps are on
-  B's map before they leave.
+- Given two phones at one table, when both confirm the same word and name each other, then shared
+  stamps are on both maps before they leave.
+- Given two devices on one Wi-Fi network but out of radio range, then neither discovers the other.
 - Given a QR code forwarded to a distant device, then no connection is formed.
-- Given eight existing friends, when the reader tries to add a ninth, then they are offered a removal
-  rather than shown a failure.
+- Given a reader already holding eight friends, then fullness is surfaced before a code or a nearby
+  list is ever shown.
 
 ---
 
@@ -237,11 +246,13 @@ exist from first launch
 1. User opens a place and turns on *Share*.
 2. The place's stamp — name, coordinate, average rating, visit count, latest dish, the month last
    visited and one EXIF-stripped thumbnail — becomes available to connected friends.
-3. It reaches each friend the next time both phones are awake together.
+3. The stamp is sealed on the device, written to the reader's shared zone, and reaches each friend
+   without both phones needing to be awake together.
 
 **Alternate flows**
 - **1a. Sharing the note too** — user opts in per place; the note travels with that stamp only.
-- **2a. Unsharing** — user turns *Share* off; a retraction propagates on the next connection.
+- **2a. Unsharing** — user turns *Share* off; a retraction propagates on the next exchange, and is
+  never described to the reader as immediate deletion.
 - **1b. Sharing everything** — from settings, user shares all visited places at once, after being
   shown the count.
 
@@ -252,7 +263,8 @@ exist from first launch
 - Given a shared place, then the stamp carries no price, no per-meal rating, no exact date and no
   full-size photograph.
 - Given a photograph with GPS metadata, when its thumbnail is shared, then the metadata is absent.
-- Given a place is unshared, then friends lose it on their next connection.
+- Given a place is unshared, then friends lose it on their next exchange.
+- Given a stamp written to the shared zone, then its contents are unreadable without a friend's key.
 
 ---
 
@@ -269,8 +281,10 @@ exist from first launch
 
 **Alternate flows**
 - **1a. Layer off** — the default; the map is exactly as it was.
-- **2a. No overlap yet** — a friend's stamps show the date they were last received, so a stale
-  layer reads as stale rather than as current.
+- **2a. Not reached recently** — the date a friend was last reached is shown against that friend,
+  so a stale layer reads as stale rather than as current. The date never sits on individual pins.
+- **2b. Newly arrived** — stamps received since the reader last looked are pressed more heavily, and
+  decay to ordinary over a few days. Nothing notifies the reader.
 
 **Exception**
 - **E1. Friend unreachable** — sync fails; nothing is reported as an error, the layer simply keeps
@@ -278,6 +292,9 @@ exist from first launch
 
 **Acceptance criteria**
 - Given a friend has stamped a place I have also stamped, then one pin shows both stamps.
+- Given several friends have stamped one place, then the pin shows one countersign and a numeral.
+- Given the interface reports what a friend shares, then it is qualified by when they were last
+  reached, never stated as current.
 - Given the friends layer is off, then the map renders exactly as it did before the feature.
 - Given no network, then the map still opens and a meal can still be logged.
 
@@ -294,11 +311,11 @@ User 1───* Place 1───* Meal 1───* Photo
   `kind` is derived: a place with ≥1 meal is *visited*, otherwise *wishlist*.
 - **Meal** — `id`, `place_id`, `eaten_at`, `dish_name?`, `rating?`, `note?`, `price?`, `created_at`.
 - **Photo** — `id`, `meal_id`, `storage_path`, `width`, `height`, `taken_at?`, `exif_lat?`, `exif_lng?`.
-- **Friend** — `public_key` (the identity), `display_name` (self-asserted), `connected_at`,
-  `last_reached_at`.
+- **Friend** — `public_key` (the identity), `assigned_name` (written by *this* reader, never by the
+  friend), `ink_slot`, `connected_at`, `last_reached_at`.
 - **FriendStamp** — `friend_key`, `place_name`, `lat`, `lng`, `provider_place_id?`, `rating_avg?`,
   `visit_count`, `latest_dish?`, `last_visited_month`, `note?`, `thumbnail_hash?`, `version`.
-  Read-only and single-author, so no merge machinery is needed — see ADR-008.
+  Read-only and single-author, so no merge machinery is needed — see ADR-009.
 
 Splitting **Meal** from **Place** is what makes UC-2's "one pin per restaurant, many photos"
 work; if photos hung directly off places, repeat visits could not be told apart.
@@ -308,11 +325,11 @@ work; if photos hung directly off places, repeat visits could not be told apart.
 ## Open questions (my assumptions in **bold** — correct me and I will adjust)
 
 1. ~~**Private by default.** No sharing, following, or public feed in v1.~~ **Superseded** — friends
-   are in, see UC-8 … UC-10 and ADR-008. Still true in spirit: nothing is shared unless the reader
+   are in, see UC-8 … UC-10 and ADR-009. Still true in spirit: nothing is shared unless the reader
    shares that place, there is no feed, and there are no followers — a connection is mutual or it
    does not exist.
 2. ~~**Mobile-first.**~~ **Superseded** — native SwiftUI, iPhone only (CON-4).
 3. **One user, one map.** No shared or group maps: friends' stamps are a layer over your own map,
-   never a map you jointly edit (ADR-008).
+   never a map you jointly edit (ADR-009).
 4. **Ratings are 1–5 stars**, optional.
 5. **Wishlist entries are places, not dishes.** "Try the ramen at X" is a note on the place, not its own entity.

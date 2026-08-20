@@ -46,11 +46,12 @@ accounts, cross-device sync, Android, iPad, offline map tiles, and restaurant bo
 ## 2. Overall description
 
 ### 2.1 Product perspective
-A standalone iPhone app with **no backend of any kind**. All user data — meals, notes and
-photographs — is stored in the device's own container. The only external services contacted are
-Apple Maps, for map tiles and place lookup, and, once a reader connects a friend, that friend's
-device directly (ADR-008). There is no account, no login and no server to run: identity is an
-ed25519 keypair the device generates for itself.
+A standalone iPhone app with **no backend we run**. All user data — meals, notes and photographs —
+is stored in the device's own container. The external services contacted are Apple Maps, for map
+tiles and place lookup, and, once a reader connects a friend, Apple's CloudKit, which carries sealed
+stamps between the two of them (ADR-009). There is no server to deploy and nothing to pay for:
+records live in each reader's own iCloud quota. Identity is an ed25519 keypair the device generates
+for itself; connecting a friend additionally requires an Apple ID signed into iCloud.
 
 ### 2.2 User characteristics
 A single private user. Assumed to be an ordinary smartphone owner, not a technical user.
@@ -65,10 +66,10 @@ unlisted street food are first-order design concerns, not localisation afterthou
 ### 2.4 Design and implementation constraints
 | ID | Constraint | Source |
 |---|---|---|
-| CON-1 | No backend, no server, no user accounts | Product decision |
+| CON-1 | No backend we run, no server to deploy, no account we hold. An Apple ID is required for the friends feature and for nothing else | Product decision, amended by ADR-009 |
 | CON-2 | No paid APIs and no API keys shipped in the app | ADR-001 |
-| CON-3 | Nothing leaves the device except by an explicit per-place share, and never more than a shared stamp defines | Privacy decision, ADR-008 |
-| CON-4 | iPhone only; no iPad or Android | Product decision |
+| CON-3 | Nothing leaves the device except by an explicit per-place share, and never more than a shared stamp defines | Privacy decision, ADR-008, carried by ADR-009 |
+| CON-4 | iPhone only; no iPad or Android. Since ADR-009 this is permanent rather than a current choice — CloudKit closes the door | Product decision, ADR-009 |
 | CON-5 | Clean architecture with domain logic free of Apple frameworks | ADR-002 |
 | CON-6 | Every use-case flow covered by an automated test | ADR-002 |
 
@@ -80,8 +81,9 @@ unlisted street food are first-order design concerns, not localisation afterthou
 - **A-3** The device has enough free storage for the user's photo library growth.
 - **A-4** One user per device; no multi-user or profile switching.
 - **A-5** Friends are peers, not followers: a connection is mutual and both sides hold each
-  other's key. *Unverified: how often two friends' phones are awake together, which bounds how
-  fresh a friend's stamps can be — see ADR-008.*
+  other's key.
+- **A-6** A reader who wants friends has an Apple ID signed into iCloud. Without one the friends
+  feature is unavailable and the rest of the app is unaffected (ADR-009).
 
 ---
 
@@ -194,14 +196,16 @@ Each requirement names the use case it comes from and the test cases that prove 
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
 | FR-10.1 | The device shall generate an ed25519 keypair on first launch and hold the private key in the Keychain | UC-8 | — |
-| FR-10.2 | Friends shall be connectable **only in person**: a QR code carrying the ticket, and a handshake completed over local radio | UC-8 | — |
+| FR-10.2 | Friends shall be connectable **only in person**, over local radio: Bluetooth presence, a proximity gate, and a matching word confirmed on both devices | UC-8 | — |
 | FR-10.3 | A connection shall not be establishable remotely by any means, including a forwarded QR code | UC-8/E1 | — |
-| FR-10.4 | Connecting shall require confirmation on the inviter's device before any data flows | UC-8 | — |
+| FR-10.4 | Connecting shall require both readers to confirm the same matching word, and each shall name the other before any data flows | UC-8 | — |
 | FR-10.5 | A connection shall be mutual; one-way following shall not exist | UC-8 | — |
-| FR-10.6 | The interface shall show a friend's key fingerprint wherever their self-asserted name is trusted | UC-8 | — |
+| FR-10.6 | A friend's name shall be the one the reader assigned, never the one the friend asserted; the key fingerprint shall be available on the friend's own screen | UC-8 | — | <!-- OPEN-8 -->
 | FR-10.7 | Removing a friend shall delete their stamps and revoke the connection | UC-8/2a | — |
 | FR-10.8 | The friend list shall be capped at **eight**; a full circle shall be explained and offer removal, never presented as an error | UC-8/E2 | — |
-| FR-10.9 | The first sync shall run immediately on connecting, while both devices are still together | UC-8 | — |
+| FR-10.9 | The first sync shall run immediately on connecting, over the local radio link and without a network | UC-8 | — |
+| FR-10.10 | No part of the connect path shall use infrastructure networking — not the local network, not CloudKit, not the internet — so that proximity is enforced by radio range rather than by a check | UC-8/E1 | — |
+| FR-10.11 | The device shall be discoverable only while the *Add friend* screen is open, and shall advertise an ephemeral identifier rather than its public key | UC-8 | — |
 
 ### FR-11 Sharing a place
 | ID | Requirement | UC | Tests |
@@ -217,18 +221,23 @@ Each requirement names the use case it comes from and the test cases that prove 
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
 | FR-12.1 | Friends' stamps shall appear as their own map layer, off by default | UC-10 | — |
-| FR-12.2 | A friend's stamp matching a place the user has also stamped shall render as a countersignature on one pin | UC-10 | — |
+| FR-12.2 | A friend's stamp matching a place the user has also stamped shall render as a countersignature on one pin: the reader's stamp, at most one countersign, and a numeral for any others | UC-10 | — |
 | FR-12.3 | Matching shall use `providerPlaceID` first, then name-and-distance, then stand alone | UC-10 | — |
-| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from the palette's curated set | UC-10 | — |
+| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from a fixed plate of eight that the skin does not re-ink | UC-10 | — |
 | FR-12.5 | Friend stamps shall be distinguishable without colour (NFR-6.3) | UC-10 | — |
-| FR-12.6 | A friend's stamps shall be shown with the date they were last received, never implied to be current | UC-10 | — |
+| FR-12.6 | A friend's stamps shall be shown with the date that friend was last reached, never implied to be current. The date shall belong to the friend, not to individual stamps | UC-10 | — |
+| FR-12.7 | The interface shall never state what a friend shares now, only what was held as of the last exchange | UC-10 | — |
 
 ### FR-13 Synchronising
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-13.1 | The app shall reconcile with each connected friend opportunistically, on foreground, network change and background refresh | UC-10 | — |
+| FR-13.1 | Changes shall reach a friend without both devices being awake together: the sharing device writes to its shared zone, and a subscription wakes the receiving device | UC-10 | — |
+| FR-13.1a | Arriving stamps shall wake the application only, never the reader. No notification shall be raised | UC-10 | — |
 | FR-13.2 | Reconciliation shall exchange a manifest and transfer only what changed | UC-10 | — |
 | FR-13.3 | Thumbnails shall be addressed by content hash and never fetched twice | UC-10 | — |
+| FR-13.3a | A shared stamp's version shall follow a content hash of the projection, so that an edit changing nothing shareable causes no traffic | UC-9 | — |
+| FR-13.3b | The projection shall be recomputed whenever the underlying place or its meals change, not only when sharing is toggled | UC-9 | — |
+| FR-13.3c | Stamps and thumbnails shall be sealed with a per-stamp content key, wrapped once per friend, before leaving the device | UC-9 | — |
 | FR-13.4 | Friend data shall be a disposable cache, reconstructible by re-syncing | UC-10 | — |
 | FR-13.5 | Failure to reach a friend shall never surface as an error, only as staleness | UC-10/E1 | — |
 | FR-13.6 | The whole friends feature shall be optional; with no friends or no network the app shall behave exactly as before | UC-10 | — |
@@ -241,17 +250,21 @@ Each requirement names the use case it comes from and the test cases that prove 
 - **NFR-1.1** Nothing shall be transmitted off the device automatically. A place leaves only when
   the user shares that place, and then only the fields FR-11.2 permits.
 - **NFR-1.2** No analytics, telemetry, advertising identifier or crash reporter shall be included.
-- **NFR-1.3** Outbound traffic shall be limited to Apple Maps requests and peer connections to
-  connected friends, relayed only where a direct connection fails.
-- **NFR-1.4** No account, login or personally identifying data shall be collected. Identity is a
-  keypair the device generates; nothing is registered anywhere.
-- **NFR-1.5** Shared data shall travel encrypted end to end. No third party — including any relay —
-  shall be able to read it or retain a copy.
+- **NFR-1.3** Outbound traffic shall be limited to Apple Maps requests and, once a friend is
+  connected, Apple's CloudKit. There shall be no traffic at all before a friend is connected.
+- **NFR-1.4** No account, login or personally identifying data shall be collected **by us**. Identity
+  is a keypair the device generates. An Apple ID is required to reach a friend, and Apple therefore
+  learns which accounts share a zone; that metadata is the cost, and it is stated rather than hidden.
+- **NFR-1.5** Shared data shall be sealed on the device before it is written anywhere. No third
+  party, Apple included, shall be able to **read** it — independently of whether the reader has
+  Advanced Data Protection enabled.
 - **NFR-1.6** Photographs that leave shall be 240 px thumbnails with EXIF stripped, never originals.
 - **NFR-1.7** Retraction is best-effort by design: unsharing propagates on the next connection and
   shall never be described to the user as immediate deletion.
-- *Verification:* a network-traffic inspection during an e2e run shows no host other than Apple's
-  and the configured relays, and no traffic at all before a friend is connected.
+- **NFR-1.8** The connect ceremony shall reveal a reader's chosen name to nearby devices only while
+  the *Add friend* screen is open, and shall never broadcast a stable identifier.
+- *Verification:* a network-traffic inspection during an e2e run shows no host other than Apple's,
+  and no traffic at all before a friend is connected.
 
 ### NFR-2 Performance
 - **NFR-2.1** Cold launch to an interactive map: **≤ 2 s** on an iPhone 12 or newer.
@@ -302,8 +315,14 @@ Each requirement names the use case it comes from and the test cases that prove 
 |---|---|---|
 | ~~OPEN-1~~ | ~~Visual design language and colour palette~~ | **Resolved** — travel-journal/editorial, see ADR-003 |
 | OPEN-2 | Whether photo backup/export is offered, given there is no server | Post-v1 |
-| OPEN-5 | How often two friends' phones are awake together — bounds stamp freshness, and decides whether friend-of-friend carriage is needed (ADR-008) | **Spike before build** |
-| OPEN-6 | Direct-connection rate over Vietnamese mobile carriers, which lean on CGNAT | **Spike before build** |
+| ~~OPEN-5~~ | ~~How often two friends' phones are awake together~~ | **No longer applicable** — ADR-009 removed the both-awake constraint |
+| ~~OPEN-6~~ | ~~Direct-connection rate over Vietnamese mobile carriers, which lean on CGNAT~~ | **No longer applicable** — ADR-009 drops hole-punching |
 | OPEN-7 | Whether eight friends proves too tight in use. Raising the cap is invisible and safe; lowering it orphans existing connections | Post-v1 |
 | OPEN-3 | Whether ratings are stars, a simple like, or absent | FR-1.5 |
 | ~~OPEN-4~~ | ~~Vietnamese or English as the default language on first launch~~ | **Resolved** — follows the device language, see ADR-003 |
+| OPEN-8 | Whether locally-assigned names fully retire the fingerprint-wherever-trusted rule, or whether a fingerprint stays in the everyday interface (ADR-009) | FR-10.6 |
+| OPEN-9 | Whether the bulk share joins the connect ceremony, so a first connection does not land an empty layer at the table (ADR-009) | UC-8, FR-11.1 |
+| OPEN-10 | Whether the fresh-ink decay is worth a per-stamp *first seen* date — the first friend data not reconstructible by re-syncing (ADR-009) | FR-13.4 |
+| OPEN-11 | How reliably a silent push wakes the app for a shared-zone change after days unopened | **Spike before build** |
+| OPEN-12 | `quotaExceeded` for readers who are non-primary members of a Family iCloud plan | **Spike before build** |
+| OPEN-13 | The RSSI threshold that means *across this table* rather than *across this restaurant* | **Spike before build** |
