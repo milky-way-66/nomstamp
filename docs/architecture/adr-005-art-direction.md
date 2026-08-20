@@ -59,7 +59,7 @@ The direction ships as design-system pieces, so no screen invents its own versio
 | `RatingMood` | The ink ramp a score paints, from slate at one star to leaf green at five |
 | `StampPress` | The *quality* ramp a score prints at, from a bad impression at one star to a perfect one at five |
 | `DeckleEdge` | A deterministic torn-paper edge, used where a photograph meets the page |
-| `InkTabs` | Drawn filter tabs — small caps over a brushed underline — in place of the stock segmented control |
+| `InkTabs` | Drawn filter tabs — small caps over a plain bottom rule — in place of the stock segmented control |
 | `StampCut` family | Eight frames — classic, gallery, modern, country, city, ticket, seaside, pennant — dealt out per place, with a deterministic tilt |
 | Paper motion | Springs tuned to feel like card and pressure, a stamp "press" on tap |
 
@@ -112,8 +112,19 @@ never fall back on system materials: a blurred iOS panel next to a contoured tok
 apps. Where a thing has weight it earns it from its contour and its offset shadow, not from a
 diffuse drop shadow.
 
-The one exception is the page itself — paper, grain and the weather's border are still soft, because
-paper is the ground everything is drawn *on*, not an object drawn on it.
+**No two controls share a silhouette.** Three round buttons in a column are three of one button.
+The map's actions are a wobbly hand-drawn circle, a luggage tag and a fat blob; each sits at its own
+small angle; and a reader tells them apart at the edge of vision, before the glyph on them is read.
+The same goes for the thirteen stamp cuts and for anything else the app repeats.
+
+**Nothing stock survives contact with this.** `.borderedProminent`, `.bordered` and the stock
+segmented control were all removed: a system control in a drawn interface is the one object on the
+screen nobody drew, and it is always the first thing the eye finds. `CartoonButtonStyle` replaces
+them, and it carries the press — the button drops onto its own shadow and the gap closes, which is
+feedback a drawn interface can afford where a tint change is not.
+
+The one exception is the page itself — paper and grain are still soft, because paper is the ground
+everything is drawn *on*, not an object drawn on it.
 
 ## A score is printed, not annotated
 

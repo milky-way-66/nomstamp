@@ -191,12 +191,10 @@ struct PlaceDetailView: View {
                 isLoggingMeal = true
             } label: {
                 Label("I ate here", systemImage: "camera.fill")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Theme.Space.snug)
             }
-            .buttonStyle(.borderedProminent)
-            .tint(Theme.visitedInk)
-            .foregroundStyle(Theme.onAccent)
+            // Drawn, not stock: a bordered iOS button here was the one thing on the page nobody
+            // had drawn (ADR-005, the cartoon rule).
+            .buttonStyle(CartoonButtonStyle(kind: .primary))
             .accessibilityIdentifier("iAteHereButton")
         }
     }
@@ -227,11 +225,8 @@ struct PlaceDetailView: View {
                 isLoggingMeal = true
             } label: {
                 Label("Add another meal", systemImage: "plus")
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
             }
-            .buttonStyle(.bordered)
-            .tint(Theme.visitedInk)
+            .buttonStyle(CartoonButtonStyle(kind: .secondary, tilt: 0.6))
         }
     }
 

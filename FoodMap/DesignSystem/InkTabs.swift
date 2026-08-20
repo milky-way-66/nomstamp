@@ -1,12 +1,15 @@
 import SwiftUI
 
-/// Filter tabs, printed (ADR-005).
+/// Filter tabs (ADR-005).
 ///
 /// The stock segmented control is the single most recognisable piece of iOS furniture, and it sat
 /// at the top of the sheet where the eye lands first — a grey plastic strip on a paper page. These
-/// are the same three choices, set as small caps with a stroke drawn under the chosen one — the
-/// mark a reader makes in a book. A filled chip was tried first and read as a button pretending to
-/// be a tab: too big, too loud, and the only solid shape on a page made of type and paper.
+/// are the same three choices, set as small caps over a plain rule.
+///
+/// Two louder versions were tried and dropped: a filled chip, which read as a button pretending to
+/// be a tab, and a brushed ink stroke, which was the most decorated thing on a page whose job is to
+/// list places. The rule under the chosen tab is a border and nothing else — no second impression,
+/// no ink. What it has to do is say which of three words is on, and a straight line does that.
 ///
 /// Behaviour is deliberately identical to a picker's: one choice at a time, each tab a button that
 /// reports itself selected to assistive technology (TC-N-15), full touch target, labels translated
@@ -39,16 +42,14 @@ struct InkTabs<Value: Hashable>: View {
                         .foregroundStyle(isSelected ? Theme.ink : Theme.inkSecondary.opacity(0.7))
                         .lineLimit(1)
                         .minimumScaleFactor(0.85)
-                        // The mark is an annotation on the word — a stroke someone drew under it —
-                        // not a container the word sits inside.
+                        // A border under the word, not a container around it.
                         .overlay(alignment: .bottom) {
                             if isSelected {
-                                BrushRule()
-                                    .fill(Theme.visitedInk)
-                                    .misregistered(BrushRule(), ink: Theme.printingInk, opacity: 0.45)
-                                    .frame(height: 4)
+                                Rectangle()
+                                    .fill(Theme.ink)
+                                    .frame(height: 2.5)
                                     .offset(y: 8)
-                                    .matchedGeometryEffect(id: "stroke", in: chip)
+                                    .matchedGeometryEffect(id: "rule", in: chip)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -61,24 +62,5 @@ struct InkTabs<Value: Hashable>: View {
         }
         // Choosing a filter is a small physical act; the tick confirms it landed.
         .sensoryFeedback(.selection, trigger: selection)
-    }
-}
-
-/// A rule with a loaded middle and dry ends — a brush, not a border.
-struct BrushRule: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        let inset = rect.width * 0.06
-        path.move(to: CGPoint(x: rect.minX + inset, y: rect.midY))
-        path.addQuadCurve(
-            to: CGPoint(x: rect.maxX - inset, y: rect.midY - rect.height * 0.1),
-            control: CGPoint(x: rect.midX, y: rect.maxY)
-        )
-        path.addQuadCurve(
-            to: CGPoint(x: rect.minX + inset, y: rect.midY),
-            control: CGPoint(x: rect.midX, y: rect.minY)
-        )
-        path.closeSubpath()
-        return path
     }
 }

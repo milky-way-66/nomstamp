@@ -79,13 +79,16 @@ struct StarRatingView: View {
 
     private func star(_ score: Int) -> some View {
         let filled = score <= (shown ?? 0)
+        // Contoured like everything else the app draws: an empty star is a bold outline waiting to
+        // be filled, not a faint one (ADR-005, the cartoon rule). The line stays on when the star
+        // fills, so scoring a meal colours a shape in rather than swapping one shape for another.
         return FoodMark(glyph: .star)
-            .fill(filled ? ink : .clear)
+            .fill(filled ? ink : Theme.paperRaised)
             .overlay(
                 FoodMark(glyph: .star)
                     .stroke(
-                        filled ? Color.clear : Theme.inkSecondary.opacity(0.55),
-                        style: StrokeStyle(lineWidth: max(1, size / 12), lineJoin: .round)
+                        Theme.ink.opacity(filled ? 0.9 : 0.5),
+                        style: StrokeStyle(lineWidth: max(1.6, size / 7), lineJoin: .round)
                     )
             )
             .frame(width: size, height: size)

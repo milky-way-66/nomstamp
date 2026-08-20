@@ -38,7 +38,9 @@ private struct StampPrinting<S: InsettableShape>: ViewModifier {
             // The house misregistration, the same on every stamp: it is what makes the frame look
             // printed rather than drawn, and it says nothing about the score.
             .misregistered(shape, ink: Theme.printingInk, opacity: 0.45)
-            .shadow(color: .black.opacity(0.16), radius: 2, y: 1)
+            // The cartoon shadow: the shape again, in ink, moved a couple of points. A blurred
+            // shadow would be the one soft edge on an object made entirely of hard ones (ADR-005).
+            .background(shape.fill(Theme.ink.opacity(0.5)).offset(x: 1.5, y: 2.5))
     }
 
     /// The rule around the stamp, and — at five stars — the hairline inside it.
@@ -47,12 +49,16 @@ private struct StampPrinting<S: InsettableShape>: ViewModifier {
         let ruleInk = (showsInk ? ink : Theme.printingInk).opacity(press.ruleOpacity)
 
         ZStack {
-            shape.strokeBorder(ruleInk, lineWidth: press.ruleWidth)
+            // The contour first — the dark line every drawn object in the app is bounded by — and
+            // the rating's own rule inside it, so the score is a colour held by a line rather than
+            // a line of its own colour floating on the map.
+            shape.strokeBorder(Theme.ink.opacity(0.85), lineWidth: 1.2)
+            shape.inset(by: 1.2).strokeBorder(ruleInk, lineWidth: press.ruleWidth)
 
             if press.hasInnerRule {
                 shape
-                    .inset(by: press.ruleWidth + 2)
-                    .strokeBorder(ruleInk.opacity(0.55), lineWidth: 0.6)
+                    .inset(by: press.ruleWidth + 3)
+                    .strokeBorder(ruleInk.opacity(0.55), lineWidth: 0.8)
             }
         }
     }

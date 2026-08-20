@@ -35,9 +35,12 @@ struct ArtDirectionTests {
 
         // Every issue turns up, and none of them takes over the page.
         #expect(Set(cuts) == Set(StampCut.allCases))
+        let even = 1 / Double(StampCut.allCases.count)
         for cut in StampCut.allCases {
             let share = Double(cuts.filter { $0 == cut }.count) / Double(cuts.count)
-            #expect(share > 0.08 && share < 0.4, "\(cut) is dealt \(share) of the time")
+            // Roughly even: no issue is rare enough to be a surprise, none common enough to be the
+            // house frame the other twelve are exceptions to.
+            #expect(share > even / 2 && share < even * 2.5, "\(cut) is dealt \(share) of the time")
         }
 
         // A page of one cut must not also be a page of one angle.
