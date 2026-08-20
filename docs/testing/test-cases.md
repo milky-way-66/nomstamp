@@ -8,7 +8,13 @@ ImageIO) · `E` end-to-end (XCUITest, stubbed search + GPS + camera).
 
 Status: `spec` = specified, not yet automated · `auto` = an automated test exists and passes.
 
-**As of 2026-08-19:** every case at all three levels is automated and green — 39 unit and 7
+**As of 2026-08-20:** the friend cases (ADR-009) are specified, and the 43 of them that are
+domain or design rules are automated and green — 125 domain tests, 21 design tests. The five that
+remain `spec` need something a unit test cannot supply: two devices in a room (TC-8-12), a live
+iCloud account (TC-8-13), a real image pipeline (TC-9-16), a real sealing implementation (TC-9-17)
+and a running app (TC-10-15). They are the data and interface layers, which are not built yet.
+
+**As of 2026-08-19:** every earlier case at all three levels is automated and green — 39 unit and 7
 integration cases implemented by 77 test functions (the extras are edge cases found while
 writing them), and the 5 e2e cases implemented by 7 XCUITest journeys in `FoodMapUITests`.
 The e2e journeys run against stubbed search, location, photo and storage adapters selected by
@@ -160,6 +166,82 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 
 ---
 
+## UC-8 — Connect a friend
+
+Everything here is domain logic. The radio itself is not simulated: what is tested is that a
+connection **cannot be formed without proof of proximity**, that the cap holds, and that the name a
+reader sees is the one the reader wrote.
+
+| ID | Lvl | Traces | Given → When → Then | Status |
+|---|---|---|---|---|
+| TC-8-01 | U | E2 | Given a circle of eight, when a ninth is connected, then it is refused as *full* and the eight are untouched | **auto** |
+| TC-8-02 | U | E2 | Given a circle of eight, when the reader opens *Add friend*, then fullness is reported **before** any ceremony begins, as a state rather than a thrown error | **auto** |
+| TC-8-03 | U | main | Given a public key, when a friend is connected, then their ink slot is derived from that key and is the same on every device | **auto** |
+| TC-8-04 | U | main | Given two friends whose keys derive the same slot, when both are connected, then the second takes the next free slot — no two friends share an ink | **auto** |
+| TC-8-05 | U | main | Given a friend who asserts the name "Lan" and a reader who types "Lan from work", then only the reader's name is stored, and the asserted one is never persisted | **auto** |
+| TC-8-06 | U | main | Given two public keys, when the verification word is derived on each device, then both get the same word whichever order the keys are supplied in | **auto** |
+| TC-8-07 | U | main | Given two different pairs of keys, then their verification words differ | **auto** |
+| TC-8-08 | U | E1 | Given a connection request carrying no proximity proof, when it is executed, then it is refused — there is no code path that connects without one | **auto** |
+| TC-8-09 | U | E1 | Given a proximity proof whose signal is weaker than the floor, when it is executed, then it is refused | **auto** |
+| TC-8-10 | U | 2a | Given a friend with stamps on the map, when they are removed, then their stamps are gone, the connection is revoked and their ink slot is free for the next friend | **auto** |
+| TC-8-11 | U | main | Given a first connection, when it completes, then the friend's `lastReachedAt` is the clock's now, not nil | **auto** |
+| TC-8-12 | E | main | Given two stubbed devices in range, when both confirm the word and name each other, then each map shows the other's shared stamps before the screen closes | spec |
+| TC-8-13 | I | 1b | Given no iCloud account, when the friends screen opens, then it explains and offers a way forward, and every other screen behaves exactly as before | spec |
+
+---
+
+## UC-9 — Share a place with my friends
+
+The centre of gravity of the whole feature. **What may leave the device is decided here**, in the
+domain, where it can be proved in milliseconds — not in a transport adapter where nobody can see it.
+
+| ID | Lvl | Traces | Given → When → Then | Status |
+|---|---|---|---|---|
+| TC-9-01 | U | E1 | Given a map of places and nothing shared, then the outgoing manifest is empty — sharing is never a side effect of any other action | **auto** |
+| TC-9-02 | U | main | Given a shared place, then its stamp carries exactly place name, coordinate, provider id, average, visit count, latest dish, month and thumbnail hash — and the type has nowhere to put anything else | **auto** |
+| TC-9-03 | U | main | Given meals carrying prices and per-meal ratings, when the stamp is built, then neither appears anywhere in it | **auto** |
+| TC-9-04 | U | main | Given a place last visited on 2026-08-19, then the stamp says `2026-08` and no day can be recovered from it | **auto** |
+| TC-9-05 | U | main | Given meals rated 5 and 4 and one unrated, then the stamp's average is 4.5 and the unrated meal is ignored rather than counted as zero | **auto** |
+| TC-9-06 | U | main | Given three meals, then the stamp's visit count is 3 | **auto** |
+| TC-9-07 | U | main | Given meals with different dishes, then the stamp's dish is the most recent one | **auto** |
+| TC-9-08 | U | main | Given a place with several photographs, then the stamp's thumbnail is the pin photo and nothing else | **auto** |
+| TC-9-09 | U | main | Given a photograph carrying EXIF time and coordinate, when the stamp is built, then neither reaches the stamp — the photo's own coordinate is never the stamp's coordinate | **auto** |
+| TC-9-10 | U | 1a | Given a place with a note, then the note travels only where the reader opted in for that place, and a shared place with no opt-in carries none | **auto** |
+| TC-9-11 | U | main | Given a shared place, when a shareable field changes — another visit, a new rating — then the stamp's version changes | **auto** |
+| TC-9-12 | U | main | Given a shared place, when only unshareable things change — the price, an unshared note, a photograph that is not the pin photo — then the version is unchanged and nothing needs to travel | **auto** |
+| TC-9-13 | U | main | Given a place whose meals changed, when the projection is rebuilt, then it is rebuilt from the place as it now is, not from whatever was cached when sharing was switched on | **auto** |
+| TC-9-14 | U | 2a | Given a shared place, when it is unshared, then the manifest carries a retraction for it rather than simply omitting it | **auto** |
+| TC-9-15 | U | 1b | Given 62 visited places, when the bulk share is prepared, then it reports the count of what it would share **before** it acts | **auto** |
+| TC-9-16 | I | main | Given a JPEG carrying GPS metadata, when its thumbnail is prepared for sharing, then the stored bytes contain no EXIF block at all | spec |
+| TC-9-17 | I | main | Given a stamp sealed for two friends, then each can open it with their own key, and a third party holding the record cannot read any field of it | spec |
+
+> TC-9-12 is the one to write first. It is the difference between a map that re-uploads itself
+> every time a note is corrected and one that stays quiet, and it is invisible until it is wrong.
+
+---
+
+## UC-10 — See where my friends have eaten
+
+| ID | Lvl | Traces | Given → When → Then | Status |
+|---|---|---|---|---|
+| TC-10-01 | U | 1a | Given the friends layer is off, then the pins are byte-for-byte what they were before the feature existed | **auto** |
+| TC-10-02 | U | main | Given a friend stamp sharing a `providerPlaceID` with one of my places, then they resolve to one pin | **auto** |
+| TC-10-03 | U | main | Given a friend stamp with no provider id, 30 m away and named without diacritics, then it still matches my place | **auto** |
+| TC-10-04 | U | main | Given a friend stamp matching nothing of mine, then it stands as its own pin in that friend's ink | **auto** |
+| TC-10-05 | U | main | Given a place both of us have stamped, then one pin carries my stamp and one countersign | **auto** |
+| TC-10-06 | U | main | Given a place five friends have all stamped, then the pin shows one countersign and a remainder of four — never five overlapping stamps | **auto** |
+| TC-10-07 | U | main | Given several friends on one place, then the countersign drawn is the lowest occupied ink slot, so it does not change between syncs | **auto** |
+| TC-10-08 | U | 2a | Given Lan was last reached on 12 August, then every stamp of hers reads as of 12 August — the date belongs to the friend and appears on no individual pin | **auto** |
+| TC-10-09 | U | 2b | Given stamps received since the reader last looked, then those and only those are marked fresh, and the mark decays with age | **auto** |
+| TC-10-10 | U | E1 | Given a friend who cannot be reached, then their stamps are kept, no error is produced, and only the date goes stale | **auto** |
+| TC-10-11 | U | main | Given a remote manifest and a local one, when they are reconciled, then only entries whose version differs are requested | **auto** |
+| TC-10-12 | U | main | Given a manifest entry absent from the remote side, when reconciled, then it is dropped locally — a retraction takes effect | **auto** |
+| TC-10-13 | U | main | Given a thumbnail hash already held, when reconciling, then it is not requested again, even for a different place or a different friend | **auto** |
+| TC-10-14 | U | main | Given a friend's stamps and no network, then the map opens and a meal can still be logged | **auto** |
+| TC-10-15 | E | main | Given a friend with shared stamps, when the layer is turned on, then their pins appear in their own ink and a shared place shows a countersign | spec |
+
+---
+
 ## Cross-cutting
 
 | ID | Lvl | Concern | Given → When → Then | Status |
@@ -204,6 +286,9 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-20 | U | ADR-006 | Given any weather reading or none at all, then the printing is unchanged — one set of inks — and night is the only thing the weather decides | **auto** |
 | TC-N-21 | U | ADR-006 | Given daylight or its absence, then the appearance is light or dark accordingly | **auto** |
 | TC-N-15 | E | ADR-005 | Given the drawn filter tabs, when one is chosen, then it reports itself selected to assistive technology and the list shows only that kind | **auto** |
+| TC-N-25 | U | ADR-009, NFR-6.4 | Given the plate of eight friend inks, then each clears the contrast floor over paper in both appearances, and no two are the same ink | **auto** |
+| TC-N-26 | U | ADR-009 | Given the plate of eight, then it is identical under every skin — a friend's ink is not re-inked by the weather | **auto** |
+| TC-N-27 | U | ADR-009, NFR-6.3 | Given a reader's stamp and a friend's, then they differ by cut as well as by colour, so the map answers *mine or theirs* without colour | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
 bound the work per frame, as TC-N-03 does, but only a device measurement can prove 55 fps), and
@@ -223,9 +308,18 @@ the omission is visible rather than forgotten.
 | UC-4 | main, 2a, 3a | all |
 | UC-5 | main, 2a | all |
 | UC-6 | main | all, plus the undocumented delete-last-meal case (TC-6-04) |
+| UC-8 | main, 1a, 1b, 2a, E1, E2 | all |
+| UC-9 | main, 1a, 1b, 2a, E1 | all |
+| UC-10 | main, 1a, 2a, 2b, E1 | all |
 
-**Total: 97 test cases** — 70 unit, 13 integration, 14 e2e. The shape is deliberate: the pyramid
+**Total: 147 test cases** — 115 unit, 16 integration, 16 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
+
+The 48 friend cases added on 2026-08-20 (ADR-009) keep that shape on purpose. Sync is the part of
+this app most likely to be got wrong and least pleasant to debug on two devices, so all but five of
+them are unit cases: what may leave the device, how a manifest is diffed and how a countersign is
+resolved are decided in the domain and proved on macOS in milliseconds. The transport is left with
+nothing to decide, which is why so little of it needs an integration test.
 
 | | Specified | Automated | Passing | Implemented by |
 |---|---|---|---|---|

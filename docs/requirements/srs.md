@@ -195,52 +195,52 @@ Each requirement names the use case it comes from and the test cases that prove 
 ### FR-10 Identity and connecting a friend
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-10.1 | The device shall generate an ed25519 keypair on first launch and hold the private key in the Keychain | UC-8 | — |
-| FR-10.2 | Friends shall be connectable **only in person**, over local radio: Bluetooth presence, a proximity gate, and a matching word confirmed on both devices | UC-8 | — |
-| FR-10.3 | A connection shall not be establishable remotely by any means, including a forwarded QR code | UC-8/E1 | — |
-| FR-10.4 | Connecting shall require both readers to confirm the same matching word, and each shall name the other before any data flows | UC-8 | — |
-| FR-10.5 | A connection shall be mutual; one-way following shall not exist | UC-8 | — |
-| FR-10.6 | A friend's name shall be the one the reader assigned, never the one the friend asserted; the key fingerprint shall be available on the friend's own screen | UC-8 | — | <!-- OPEN-8 -->
-| FR-10.7 | Removing a friend shall delete their stamps and revoke the connection | UC-8/2a | — |
-| FR-10.8 | The friend list shall be capped at **eight**; a full circle shall be explained and offer removal, never presented as an error | UC-8/E2 | — |
-| FR-10.9 | The first sync shall run immediately on connecting, over the local radio link and without a network | UC-8 | — |
-| FR-10.10 | No part of the connect path shall use infrastructure networking — not the local network, not CloudKit, not the internet — so that proximity is enforced by radio range rather than by a check | UC-8/E1 | — |
-| FR-10.11 | The device shall be discoverable only while the *Add friend* screen is open, and shall advertise an ephemeral identifier rather than its public key | UC-8 | — |
+| FR-10.1 | The device shall generate an ed25519 keypair on first launch and hold the private key in the Keychain | UC-8 | TC-8-03 |
+| FR-10.2 | Friends shall be connectable **only in person**, over local radio: Bluetooth presence, a proximity gate, and a matching word confirmed on both devices | UC-8 | TC-8-08, TC-8-09 |
+| FR-10.3 | A connection shall not be establishable remotely by any means, including a forwarded QR code | UC-8/E1 | TC-8-08 |
+| FR-10.4 | Connecting shall require both readers to confirm the same matching word, and each shall name the other before any data flows | UC-8 | TC-8-06, TC-8-07 |
+| FR-10.5 | A connection shall be mutual; one-way following shall not exist | UC-8 | TC-8-05 |
+| FR-10.6 | A friend's name shall be the one the reader assigned, never the one the friend asserted; the key fingerprint shall be available on the friend's own screen | UC-8 | TC-8-05 | *(where the fingerprint belongs is OPEN-8)*
+| FR-10.7 | Removing a friend shall delete their stamps and revoke the connection | UC-8/2a | TC-8-10 |
+| FR-10.8 | The friend list shall be capped at **eight**; a full circle shall be explained and offer removal, never presented as an error | UC-8/E2 | TC-8-01, TC-8-02 |
+| FR-10.9 | The first sync shall run immediately on connecting, over the local radio link and without a network | UC-8 | TC-8-11 |
+| FR-10.10 | No part of the connect path shall use infrastructure networking — not the local network, not CloudKit, not the internet — so that proximity is enforced by radio range rather than by a check | UC-8/E1 | TC-8-08 |
+| FR-10.11 | The device shall be discoverable only while the *Add friend* screen is open, and shall advertise an ephemeral identifier rather than its public key | UC-8 | TC-8-12 |
 
 ### FR-11 Sharing a place
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-11.1 | No place shall be shared unless the user explicitly shares it | UC-9 | — |
-| FR-11.2 | A shared stamp shall carry only place, average rating, visit count, latest dish, month last visited and one thumbnail | UC-9 | — |
-| FR-11.3 | A shared stamp shall never carry price, per-meal ratings, exact dates or full-size photographs | UC-9 | — |
-| FR-11.4 | A note shall be shared only where the user opted in for that place | UC-9/1a | — |
-| FR-11.5 | Every thumbnail shall be stripped of EXIF before it leaves the device | UC-9 | — |
-| FR-11.6 | Unsharing a place shall propagate a retraction on the next connection | UC-9/2a | — |
+| FR-11.1 | No place shall be shared unless the user explicitly shares it | UC-9 | TC-9-01 |
+| FR-11.2 | A shared stamp shall carry only place, average rating, visit count, latest dish, month last visited and one thumbnail | UC-9 | TC-9-02 |
+| FR-11.3 | A shared stamp shall never carry price, per-meal ratings, exact dates or full-size photographs | UC-9 | TC-9-03, TC-9-04 |
+| FR-11.4 | A note shall be shared only where the user opted in for that place | UC-9/1a | TC-9-10 |
+| FR-11.5 | Every thumbnail shall be stripped of EXIF before it leaves the device | UC-9 | TC-9-09, TC-9-16 |
+| FR-11.6 | Unsharing a place shall propagate a retraction on the next connection | UC-9/2a | TC-9-14 |
 
 ### FR-12 Friends' stamps on the map
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-12.1 | Friends' stamps shall appear as their own map layer, off by default | UC-10 | — |
-| FR-12.2 | A friend's stamp matching a place the user has also stamped shall render as a countersignature on one pin: the reader's stamp, at most one countersign, and a numeral for any others | UC-10 | — |
-| FR-12.3 | Matching shall use `providerPlaceID` first, then name-and-distance, then stand alone | UC-10 | — |
-| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from a fixed plate of eight that the skin does not re-ink | UC-10 | — |
-| FR-12.5 | Friend stamps shall be distinguishable without colour (NFR-6.3) | UC-10 | — |
-| FR-12.6 | A friend's stamps shall be shown with the date that friend was last reached, never implied to be current. The date shall belong to the friend, not to individual stamps | UC-10 | — |
-| FR-12.7 | The interface shall never state what a friend shares now, only what was held as of the last exchange | UC-10 | — |
+| FR-12.1 | Friends' stamps shall appear as their own map layer, off by default | UC-10 | TC-10-01 |
+| FR-12.2 | A friend's stamp matching a place the user has also stamped shall render as a countersignature on one pin: the reader's stamp, at most one countersign, and a numeral for any others | UC-10 | TC-10-05, TC-10-06 |
+| FR-12.3 | Matching shall use `providerPlaceID` first, then name-and-distance, then stand alone | UC-10 | TC-10-02, TC-10-03 |
+| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from a fixed plate of eight that the skin does not re-ink | UC-10 | TC-8-03, TC-N-25 |
+| FR-12.5 | Friend stamps shall be distinguishable without colour (NFR-6.3) | UC-10 | TC-N-27 |
+| FR-12.6 | A friend's stamps shall be shown with the date that friend was last reached, never implied to be current. The date shall belong to the friend, not to individual stamps | UC-10 | TC-10-08 |
+| FR-12.7 | The interface shall never state what a friend shares now, only what was held as of the last exchange | UC-10 | TC-10-08 |
 
 ### FR-13 Synchronising
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-13.1 | Changes shall reach a friend without both devices being awake together: the sharing device writes to its shared zone, and a subscription wakes the receiving device | UC-10 | — |
-| FR-13.1a | Arriving stamps shall wake the application only, never the reader. No notification shall be raised | UC-10 | — |
-| FR-13.2 | Reconciliation shall exchange a manifest and transfer only what changed | UC-10 | — |
-| FR-13.3 | Thumbnails shall be addressed by content hash and never fetched twice | UC-10 | — |
-| FR-13.3a | A shared stamp's version shall follow a content hash of the projection, so that an edit changing nothing shareable causes no traffic | UC-9 | — |
-| FR-13.3b | The projection shall be recomputed whenever the underlying place or its meals change, not only when sharing is toggled | UC-9 | — |
-| FR-13.3c | Stamps and thumbnails shall be sealed with a per-stamp content key, wrapped once per friend, before leaving the device | UC-9 | — |
-| FR-13.4 | Friend data shall be a disposable cache, reconstructible by re-syncing | UC-10 | — |
-| FR-13.5 | Failure to reach a friend shall never surface as an error, only as staleness | UC-10/E1 | — |
-| FR-13.6 | The whole friends feature shall be optional; with no friends or no network the app shall behave exactly as before | UC-10 | — |
+| FR-13.1 | Changes shall reach a friend without both devices being awake together: the sharing device writes to its shared zone, and a subscription wakes the receiving device | UC-10 | TC-8-13 |
+| FR-13.1a | Arriving stamps shall wake the application only, never the reader. No notification shall be raised | UC-10 | TC-10-09 |
+| FR-13.2 | Reconciliation shall exchange a manifest and transfer only what changed | UC-10 | TC-10-11 |
+| FR-13.3 | Thumbnails shall be addressed by content hash and never fetched twice | UC-10 | TC-10-13 |
+| FR-13.3a | A shared stamp's version shall follow a content hash of the projection, so that an edit changing nothing shareable causes no traffic | UC-9 | TC-9-11, TC-9-12 |
+| FR-13.3b | The projection shall be recomputed whenever the underlying place or its meals change, not only when sharing is toggled | UC-9 | TC-9-13 |
+| FR-13.3c | Stamps and thumbnails shall be sealed with a per-stamp content key, wrapped once per friend, before leaving the device | UC-9 | TC-9-17 |
+| FR-13.4 | Friend data shall be a disposable cache, reconstructible by re-syncing | UC-10 | TC-10-12 |
+| FR-13.5 | Failure to reach a friend shall never surface as an error, only as staleness | UC-10/E1 | TC-10-10 |
+| FR-13.6 | The whole friends feature shall be optional; with no friends or no network the app shall behave exactly as before | UC-10 | TC-10-14 |
 
 ---
 

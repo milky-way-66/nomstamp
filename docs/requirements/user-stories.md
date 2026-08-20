@@ -15,6 +15,14 @@ Source: stated by the product owner, verbatim intent preserved.
 > so that later — for example when I travel — I can look at the map and find places
 > I might want to visit.
 
+## US-4 — See where my friends have eaten
+> As a user, I want to connect with friends I have met in person and see their stamps on my own
+> map, so that the places we have both been show up together and I learn about places I would
+> not have found.
+
+*Added 2026-08-20. It is the one story that needs another person's device, and everything
+awkward about the feature follows from that — see ADR-009.*
+
 ---
 
 ## What these stories imply

@@ -166,3 +166,113 @@ enum Fixture {
 
     static let imageData = Data([0xFF, 0xD8, 0xFF, 0xE0])
 }
+
+// MARK: - Friends (ADR-009)
+
+/// A real hash, small enough to read in a failure message.
+///
+/// FNV-1a rather than SHA-256 because the domain rule under test is *when* a version changes,
+/// not which algorithm computed it. The shipped adapter uses a cryptographic digest; swapping
+/// this one for that one must not change a single assertion.
+struct FNVDigest: DigestPort {
+    func digest(_ data: Data) -> String {
+        var hash: UInt64 = 0xcbf2_9ce4_8422_2325
+        for byte in data {
+            hash ^= UInt64(byte)
+            hash = hash &* 0x100_0000_01b3
+        }
+        return String(format: "%016llx", hash)
+    }
+}
+
+extension Fixture {
+    /// Keys whose first byte decides the preferred ink slot, so a test can ask for a collision
+    /// on purpose (TC-8-04).
+    static func key(_ firstByte: UInt8, fill: UInt8 = 0) -> FriendKey {
+        FriendKey(bytes: [firstByte] + Array(repeating: fill, count: FriendKey.byteCount - 1))!
+    }
+
+    static let lanKey = key(3, fill: 0x11)
+    static let minhKey = key(5, fill: 0x22)
+    static let thuKey = key(11, fill: 0x33)
+
+    static func friend(
+        _ key: FriendKey,
+        name: String = "Lan",
+        inkSlot: Int = 0,
+        connectedAt: Date = epoch,
+        lastReachedAt: Date? = epoch
+    ) -> Friend {
+        Friend(
+            key: key,
+            assignedName: name,
+            inkSlot: inkSlot,
+            connectedAt: connectedAt,
+            lastReachedAt: lastReachedAt
+        )
+    }
+
+    /// A circle of `count` friends occupying ink slots 0 upwards.
+    static func circle(of count: Int) -> FriendCircle {
+        FriendCircle((0..<count).map { index in
+            friend(key(UInt8(index), fill: UInt8(200 + index)), name: "Friend \(index)", inkSlot: index)
+        })
+    }
+
+    static func sharedStamp(
+        placeID: UUID = UUID(),
+        name: String = "Phở Thìn",
+        at coordinate: Coordinate = phoThin,
+        providerPlaceID: String? = nil,
+        averageRating: Double? = 4.5,
+        visitCount: Int = 1,
+        latestDish: String? = nil,
+        month: YearMonth = YearMonth(year: 2026, month: 8),
+        note: String? = nil,
+        thumbnailHash: String? = nil,
+        version: String = "v1"
+    ) -> SharedStamp {
+        SharedStamp(
+            placeID: placeID,
+            placeName: name,
+            coordinate: coordinate,
+            providerPlaceID: providerPlaceID,
+            averageRating: averageRating,
+            visitCount: visitCount,
+            latestDish: latestDish,
+            lastVisitedMonth: month,
+            note: note,
+            thumbnailHash: thumbnailHash,
+            version: version
+        )
+    }
+
+    static func friendStamp(
+        _ key: FriendKey = lanKey,
+        stamp: SharedStamp? = nil,
+        receivedAt: Date = epoch
+    ) -> FriendStamp {
+        FriendStamp(friend: key, stamp: stamp ?? sharedStamp(), receivedAt: receivedAt)
+    }
+
+    /// A meal carrying every field that must *not* travel, so a redaction test has something to
+    /// fail against.
+    static func privateMeal(
+        eatenAt: Date = epoch,
+        dishName: String? = "Phở bò",
+        rating: Int? = 5,
+        note: String? = "the broth was extraordinary",
+        price: Decimal? = 65_000,
+        photos: [Photo] = [photo()]
+    ) -> Meal {
+        Meal(
+            id: UUID(),
+            eatenAt: eatenAt,
+            dishName: dishName,
+            rating: rating,
+            note: note,
+            price: price,
+            photos: photos
+        )
+    }
+}

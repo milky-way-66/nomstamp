@@ -40,14 +40,14 @@ the specification was wrong, the document is corrected first — never left to d
 
 | Area | State |
 |---|---|
-| User stories | 3 captured |
+| User stories | 4 captured |
 | Use cases | UC-1 … UC-6 written |
 | SRS | draft v0.1, 2 open questions (OPEN-2, OPEN-3) |
-| Test cases | 97 specified (70 unit, 13 integration, 14 e2e) — all automated |
-| Domain code | **complete and green** — 71 tests, sub-second warm loop, no simulator |
-| Test totals | 138 automated, all passing — 74 domain, 10 design, 38 data, 17 e2e journeys |
+| Test cases | 147 specified (115 unit, 16 integration, 16 e2e) — 142 automated; 5 friend cases await the data and interface layers |
+| Domain code | **complete and green** — 125 tests, sub-second warm loop, no simulator. Includes the whole friends domain: redaction, manifest diff, matching, the cap and the ink |
+| Test totals | 205 automated, all passing — 125 domain, 21 design, 42 data, 17 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
-| Friends | **decided, nothing built** — ADR-009 supersedes ADR-008: connect in person over radio, sync through a sealed CloudKit shared zone, eight friends. OPEN-5 and OPEN-6 closed as no longer applicable; three cheap spikes outstanding (OPEN-11 … OPEN-13). Test cases for UC-8 … UC-10 are the next step |
+| Friends | **domain complete and green** — ADR-009 supersedes ADR-008: connect in person over radio, sync through a sealed CloudKit shared zone, eight friends. 43 of 48 cases automated. `FoodMapData/Sharing`, `FoodMapData/Proximity` and the six screens are **not built**; OPEN-11 … OPEN-13 should land alongside them |
 | Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | **built and running** — 6 screens, verified in the simulator, light and dark |

@@ -261,3 +261,98 @@ struct ArtDirectionTests {
         }
     }
 }
+
+/// ADR-009 — a friend's ink.
+@Suite("Friend inks")
+struct FriendInkTests {
+
+    @Test("TC-N-25 every friend ink clears the floor over paper, in both appearances")
+    func TC_N_25_friendInksAreLegible() {
+        for appearance in Palette.Appearance.allCases {
+            let paper = Palette.value(Palette.paper, in: appearance)
+            let raised = Palette.value(Palette.paperRaised, in: appearance)
+
+            for (index, ink) in FriendInk.plate.enumerated() {
+                let value = Palette.value(ink, in: appearance)
+                let onPaper = Contrast.ratio(value, paper)
+                let onRaised = Contrast.ratio(value, raised)
+
+                #expect(
+                    onPaper >= Contrast.enhancedTextMinimum,
+                    "\(FriendInk.name(forSlot: index)) on \(appearance) paper is \(onPaper)"
+                )
+                #expect(
+                    onRaised >= Contrast.enhancedTextMinimum,
+                    "\(FriendInk.name(forSlot: index)) on \(appearance) raised paper is \(onRaised)"
+                )
+            }
+        }
+    }
+
+    @Test("TC-N-25 no two friends are printed in the same ink")
+    func TC_N_25_theEightAreDistinct() {
+        #expect(FriendInk.plate.count == FriendCircleCapacity)
+        #expect(FriendInk.names.count == FriendInk.plate.count)
+
+        for appearance in Palette.Appearance.allCases {
+            let values = FriendInk.plate.map { Palette.value($0, in: appearance) }
+            #expect(Set(values).count == values.count)
+
+            // Distinct as colours, not merely as numbers: two inks 5° apart would be two
+            // different friends the reader could not tell apart.
+            for i in values.indices {
+                for j in values.indices where j > i {
+                    let separation = Contrast.hueSeparation(values[i], values[j])
+                    #expect(
+                        separation >= 20,
+                        "\(FriendInk.names[i]) and \(FriendInk.names[j]) are \(separation)° apart in \(appearance)"
+                    )
+                }
+            }
+        }
+    }
+
+    @Test("TC-N-25 the eight are of one weight — no friend shouts louder than another")
+    func TC_N_25_evenWeight() {
+        for appearance in Palette.Appearance.allCases {
+            let paper = Palette.value(Palette.paper, in: appearance)
+            let ratios = FriendInk.plate.map { Contrast.ratio(Palette.value($0, in: appearance), paper) }
+            let spread = (ratios.max() ?? 0) - (ratios.min() ?? 0)
+
+            #expect(spread < 1.0, "contrast spread in \(appearance) is \(spread)")
+        }
+    }
+
+    @Test("TC-N-26 the plate is the same under every skin — weather does not re-ink a friend")
+    func TC_N_26_plateIsSkinExempt() {
+        let underDefault = FriendInk.plate
+
+        for skin in Skin.allCases {
+            // The skin changes the press; the plate is not part of the press. Reading it after
+            // every skin is the only way to catch a future edit that wires the two together.
+            _ = skin.visitedInk
+            #expect(FriendInk.plate == underDefault)
+        }
+
+        // And it is genuinely a different set from any skin's own accents, so a friend is never
+        // mistaken for the reader's own pin by colour alone.
+        for skin in Skin.allCases {
+            #expect(!FriendInk.plate.contains(skin.visitedInk))
+            #expect(!FriendInk.plate.contains(skin.wishlistInk))
+        }
+    }
+
+    @Test("TC-N-27 mine and theirs differ by cut, not only by colour")
+    func TC_N_27_colourIsNeverTheOnlySignal() {
+        let mine = StampEdge.forOwner(isMine: true)
+        let theirs = StampEdge.forOwner(isMine: false)
+
+        #expect(mine != theirs)
+        #expect(mine.perforations == 0)
+        #expect(theirs.perforations > 0)
+    }
+
+    /// Kept here rather than imported: the design package does not depend on the domain, and
+    /// the cap being eight in both is a fact worth asserting from both sides.
+    private var FriendCircleCapacity: Int { 8 }
+}
