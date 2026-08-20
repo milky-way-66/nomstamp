@@ -37,11 +37,13 @@ struct PlaceDetailView: View {
                 cover
                 VStack(alignment: .leading, spacing: Theme.Space.regular) {
                     heading
+                    alsoStampedBy
                     if current.kind == .wishlist {
                         wishlistBody
                     } else {
                         mealsBody
                     }
+                    sharing
                 }
                 .padding()
             }
@@ -167,6 +169,70 @@ struct PlaceDetailView: View {
                 }
             }
             .padding(.top, Theme.Space.tight)
+        }
+    }
+
+    /// *We have both been here* — the reason the feature exists, said on the page for the place
+    /// it happened at (FR-12.8).
+    ///
+    /// Shown whether or not the map layer is on. The switch governs the drawing; a page the
+    /// reader opened deliberately is a different question, and hiding a countersign here would
+    /// mean the one moment the feature is for stayed invisible to anyone who prefers a quiet map.
+    @ViewBuilder
+    private var alsoStampedBy: some View {
+        let stamps = dependencies.friends.alsoStamped(current)
+        if !stamps.isEmpty {
+            VStack(alignment: .leading, spacing: Theme.Space.tight) {
+                Text("Also stamped by")
+                    .font(Theme.smallCaps())
+                    .foregroundStyle(Theme.inkSecondary)
+                FlowingChips(stamps: stamps, store: dependencies.friends)
+            }
+            .accessibilityIdentifier("alsoStampedBy")
+        }
+    }
+
+    /// Sharing is per place, off, and never a side effect of anything else (FR-11.1).
+    ///
+    /// It sits at the foot of the page rather than in the toolbar on purpose: it is a decision
+    /// about this place made after reading it, not a verb to reach for.
+    @ViewBuilder
+    private var sharing: some View {
+        if !dependencies.friends.circle.friends.isEmpty, current.kind == .visited {
+            let store = dependencies.friends
+            VStack(alignment: .leading, spacing: Theme.Space.tight) {
+                Toggle(isOn: Binding(
+                    get: { store.isShared(current) },
+                    set: { store.setShared($0, for: current) }
+                )) {
+                    Text("Share this place with friends")
+                }
+                .accessibilityIdentifier("sharePlaceToggle")
+
+                if store.isShared(current) {
+                    // Stated in full, because a reader deciding what to share deserves the list
+                    // rather than a promise (FR-11.3).
+                    Text("They see the name, roughly where it is, your rating to the half star, how many times you have been, the last dish and the month. Never your photos, your prices or the dates.")
+                        .font(Theme.label(.footnote))
+                        .foregroundStyle(Theme.inkSecondary)
+
+                    if let note = current.note, !note.isEmpty {
+                        // A note is a second, separate opt-in: it is the one field that is
+                        // writing rather than data (FR-11.4).
+                        Toggle(isOn: Binding(
+                            get: { store.sharesNote(for: current) },
+                            set: { store.setSharesNote($0, for: current) }
+                        )) {
+                            Text("Include my note")
+                        }
+                        .accessibilityIdentifier("shareNoteToggle")
+                        Text(note)
+                            .font(Theme.displayItalic(.footnote))
+                            .foregroundStyle(Theme.inkSecondary)
+                    }
+                }
+            }
+            .padding(.top, Theme.Space.loose)
         }
     }
 

@@ -151,6 +151,23 @@ struct FriendsLayerTests {
         #expect(newestFirst[0].friendStamps.map(\.friend) == oldestFirst[0].friendStamps.map(\.friend))
     }
 
+    @Test("TC-10-16 a place's own page names every friend who stamped it, layer or no layer")
+    func TC_10_16_alsoStampedIsIndependentOfTheLayer() {
+        let base = Fixture.sharedStamp(name: "Phở Thìn", at: Fixture.phoThin, providerPlaceID: "apple:1234")
+        let thu = Fixture.friendStamp(Fixture.thuKey, stamp: base)   // ink 7
+        let lan = Fixture.friendStamp(Fixture.lanKey, stamp: base)   // ink 2
+        let elsewhere = Fixture.friendStamp(Fixture.minhKey, stamp: Fixture.sharedStamp(
+            name: "Bún Chả Hương Liên", at: Fixture.bunChaHuongLien, providerPlaceID: "apple:9999"
+        ))
+
+        let named = merge.alsoStamped(
+            myPhoThin, friendStamps: [thu, lan, elsewhere], circle: circleOfThree
+        )
+
+        // Ink order, not arrival order — and Minh, who ate somewhere else, is not on this page.
+        #expect(named.map(\.friend) == [Fixture.lanKey, Fixture.thuKey])
+    }
+
     @Test("TC-10-08 staleness belongs to the friend, and is the same for every stamp of theirs")
     func TC_10_08_stalenessIsPerFriend() throws {
         let twelfthOfAugust = Date(timeIntervalSince1970: 1_786_492_800)

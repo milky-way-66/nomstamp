@@ -4,7 +4,7 @@ import Foundation
 ///
 /// A place both parties have stamped is the moment the feature is *for*: not "a list of what my
 /// friends ate" but **"we have both been here"**.
-public struct MapStampGroup: Equatable, Sendable {
+public struct MapStampGroup: Equatable, Sendable, Identifiable {
     /// The reader's own place, where they have one. Nil for a pin that exists only because a
     /// friend put it there.
     public let ownPlace: Place?
@@ -19,6 +19,12 @@ public struct MapStampGroup: Equatable, Sendable {
         self.friendStamps = friendStamps
         self.coordinate = coordinate
         self.name = name
+    }
+
+    /// Stable across a re-merge, so presenting a sheet for one pin does not follow the pin when
+    /// a sync lands and the array is rebuilt.
+    public var id: String {
+        ownPlace?.id.uuidString ?? friendStamps.first?.stamp.placeID.uuidString ?? name
     }
 
     public var isCountersigned: Bool { ownPlace != nil && !friendStamps.isEmpty }
@@ -91,6 +97,24 @@ public struct MergeFriendStampsUseCase: Sendable {
         }
 
         return own + friendOnly
+    }
+
+    /// Everyone who has also stamped this place, in ink order — the *also stamped by* row on a
+    /// place's own page (FR-13.3).
+    ///
+    /// Deliberately independent of the layer switch. The switch governs the **map**, which is the
+    /// drawing the reader asked to keep unchanged; a page the reader opened on purpose is a
+    /// different question, and hiding a countersign there would mean the one place the feature
+    /// exists for stayed invisible to anyone who prefers a quiet map (ADR-009).
+    public func alsoStamped(
+        _ place: Place,
+        friendStamps: [FriendStamp],
+        circle: FriendCircle
+    ) -> [FriendStamp] {
+        Self.orderedByInk(
+            friendStamps.filter { Self.isSamePlace(place, as: $0.stamp) },
+            in: circle
+        )
     }
 
     /// Lowest occupied ink slot first, rather than most recently received. Recency would mean the

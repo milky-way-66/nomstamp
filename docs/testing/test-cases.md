@@ -8,11 +8,12 @@ ImageIO) · `E` end-to-end (XCUITest, stubbed search + GPS + camera).
 
 Status: `spec` = specified, not yet automated · `auto` = an automated test exists and passes.
 
-**As of 2026-08-20:** the friend cases (ADR-009) are specified, and the 43 of them that are
-domain or design rules are automated and green — 125 domain tests, 21 design tests. The five that
-remain `spec` need something a unit test cannot supply: two devices in a room (TC-8-12), a live
-iCloud account (TC-8-13), a real image pipeline (TC-9-16), a real sealing implementation (TC-9-17)
-and a running app (TC-10-15). They are the data and interface layers, which are not built yet.
+**As of 2026-08-20:** the friend cases (ADR-009) are specified, and all but three are automated and
+green across the domain, design and data suites. The image-pipeline and sealing cases (TC-9-16,
+TC-9-17) turned out to be testable on macOS after all — CryptoKit and ImageIO both run there — so
+only two need something a test process cannot supply: two devices in a room (TC-8-12) and a live
+iCloud account (TC-8-13). The running-app case (TC-10-15) is a journey now that the friends layer
+is built and the demo seed can put a friend in the cache.
 
 **As of 2026-08-19:** every earlier case at all three levels is automated and green — 39 unit and 7
 integration cases implemented by 77 test functions (the extras are edge cases found while
@@ -212,8 +213,8 @@ domain, where it can be proved in milliseconds — not in a transport adapter wh
 | TC-9-13 | U | main | Given a place whose meals changed, when the projection is rebuilt, then it is rebuilt from the place as it now is, not from whatever was cached when sharing was switched on | **auto** |
 | TC-9-14 | U | 2a | Given a shared place, when it is unshared, then the manifest carries a retraction for it rather than simply omitting it | **auto** |
 | TC-9-15 | U | 1b | Given 62 visited places, when the bulk share is prepared, then it reports the count of what it would share **before** it acts | **auto** |
-| TC-9-16 | I | main | Given a JPEG carrying GPS metadata, when its thumbnail is prepared for sharing, then the stored bytes contain no EXIF block at all | spec |
-| TC-9-17 | I | main | Given a stamp sealed for two friends, then each can open it with their own key, and a third party holding the record cannot read any field of it | spec |
+| TC-9-16 | I | main | Given a JPEG carrying GPS and capture time, when its thumbnail is prepared for sharing, then no GPS, TIFF, IPTC or maker-note block survives and the EXIF that remains holds nothing but colour space and pixel dimensions | **auto** |
+| TC-9-17 | I | main | Given a stamp sealed for two friends, then each can open it with their own key, and a third party holding the record cannot read any field of it | **auto** |
 
 > TC-9-12 is the one to write first. It is the difference between a map that re-uploads itself
 > every time a note is corrected and one that stays quiet, and it is invisible until it is wrong.
@@ -238,7 +239,8 @@ domain, where it can be proved in milliseconds — not in a transport adapter wh
 | TC-10-12 | U | main | Given a manifest entry absent from the remote side, when reconciled, then it is dropped locally — a retraction takes effect | **auto** |
 | TC-10-13 | U | main | Given a thumbnail hash already held, when reconciling, then it is not requested again, even for a different place or a different friend | **auto** |
 | TC-10-14 | U | main | Given a friend's stamps and no network, then the map opens and a meal can still be logged | **auto** |
-| TC-10-15 | E | main | Given a friend with shared stamps, when the layer is turned on, then their pins appear in their own ink and a shared place shows a countersign | spec |
+| TC-10-16 | U | main | Given a place two friends have stamped, then its own page names both in ink order, and does so with the map layer switched off | **auto** |
+| TC-10-15 | E | main | Given a friend with shared stamps, when the layer is turned on, then their pins appear in their own ink and a shared place shows a countersign | **auto** |
 
 ---
 
@@ -312,7 +314,7 @@ the omission is visible rather than forgotten.
 | UC-9 | main, 1a, 1b, 2a, E1 | all |
 | UC-10 | main, 1a, 2a, 2b, E1 | all |
 
-**Total: 147 test cases** — 115 unit, 16 integration, 16 e2e. The shape is deliberate: the pyramid
+**Total: 148 test cases** — 116 unit, 16 integration, 16 e2e. The shape is deliberate: the pyramid
 is widest where it is cheapest and fastest to run.
 
 The 48 friend cases added on 2026-08-20 (ADR-009) keep that shape on purpose. Sync is the part of

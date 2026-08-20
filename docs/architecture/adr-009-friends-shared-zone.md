@@ -97,10 +97,24 @@ provided we never open a path around it.
    of the four Minhs in this room*, it defends against a machine in the middle, and — the reason it
    is preferred to a scan — it is **symmetric**. Neither reader has to work out whether they are the
    one showing or the one scanning, which is where flows of this kind usually fail in practice.
-4. **The exchange.** Public keys, chosen names and the `CKShare` URL travel over the local link
-   (`NWConnection` with `includePeerToPeer`). The share is accepted programmatically with
-   `CKAcceptSharesOperation` — no link to send, no share sheet, and the "fiddly `CKShare` acceptance"
-   the research document warned about does not arise.
+4. **The exchange.** Public keys, chosen names and the `CKShare` URL travel over the local link.
+   The share is accepted programmatically with `CKAcceptSharesOperation` — no link to send, no
+   share sheet, and the "fiddly `CKShare` acceptance" the research document warned about does not
+   arise.
+
+**Amended, 20 August, on building it.** This ADR named `NWConnection` with `includePeerToPeer` for
+step 4, and that was wrong — not slower or fiddlier, *wrong*, and in the one way this decision
+cannot afford to be. A second transport has to be matched back to the Bluetooth advertisement by
+some identifier, and the moment two transports are correlated by an identifier, it is the
+identifier and not the radio that proves co-presence. Identifiers travel; radio range does not.
+The whole argument below rests on there being no infrastructure networking anywhere in the connect
+path, and step 4 would have quietly put some there.
+
+So the exchange rides the **same** CoreBluetooth link the proximity reading came from: the key is a
+GATT characteristic, read — never advertised — only by a device that has already connected, at the
+reader's tap. The RSSI is re-measured on that open link rather than reused from the scan, because a
+row can sit on screen for a minute while its owner walks out of the restaurant. Sixty-four bytes
+over GATT is unremarkable; the guarantee is worth more than the throughput.
 
 The first sync then runs **over that same local link**, not through CloudKit. Both readers are in the
 room, so there is no round trip to make and no signal required — which matters, because the
@@ -173,8 +187,20 @@ either document says.** One record per place, never per visit. Place name, coord
 — `2026-08`, never a day — and one 240 px thumbnail. Never price, never per-meal ratings, never exact
 timestamps, never full-size photographs, and notes only where the reader opted in for that place.
 
-**Every thumbnail is stripped of EXIF before it leaves**, and that remains a domain rule with its own
-test rather than a line in an adapter.
+**Every thumbnail is re-encoded from pixels before it leaves**, and that remains a rule with its own
+test rather than a line nobody reads.
+
+Re-encoding rather than deleting the EXIF keys is deliberate: deleting named keys leaves behind
+whatever the caller forgot to name — a maker note, an XMP packet, a second GPS block in an
+app-specific segment. Starting from a bare `CGImage` means the only thing in the output is what the
+encoder put there.
+
+What the encoder puts there is worth stating precisely, because the first version of this rule was
+wrong. ImageIO writes an EXIF dictionary on every JPEG it encodes, holding the colour space and the
+image's own pixel dimensions; no setting suppresses them, and they are facts about the file rather
+than about the reader. So the rule names what is **forbidden** — GPS, TIFF, IPTC, ExifAux and
+maker-note blocks, and any EXIF key beyond the geometry — instead of claiming an absence the encoder
+cannot deliver. A rule that cannot be honoured is one that gets quietly weakened later.
 
 Two refinements the sync behaviour makes necessary:
 
@@ -274,7 +300,7 @@ replacing the transport has not touched the domain.
 | | `MergeFriendStampsUseCase` — matching, countersign resolution |
 | `FoodMapDomain/Ports` | `PeerIdentityPort`, `StampSyncPort`, `BlobStorePort`, `ProximityPort` |
 | `FoodMapData/Sharing` | CloudKit zone and share, subscriptions, sealing, EXIF stripping, Keychain |
-| `FoodMapData/Proximity` | CoreBluetooth presence, RSSI gate, `NearbyInteraction`, `NWConnection` |
+| `FoodMapData/Proximity` | CoreBluetooth presence, RSSI gate, the GATT key exchange, `NearbyInteraction` |
 
 The rule about **what may leave the device** still lives in the domain, unit-tested on macOS in under
 five seconds with no simulator and no network. A redaction rule buried in a transport adapter is a

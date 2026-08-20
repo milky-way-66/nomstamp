@@ -43,6 +43,11 @@ enum Theme {
     /// white on them is 3.03:1, below AA (TC-N-07).
     static var onAccent: Color { dynamic(skin.onAccent) }
 
+    /// A friend's ink (ADR-009). Read from the fixed plate rather than the skin: this one token
+    /// deliberately does *not* move when the press is re-inked, because an identity that changed
+    /// colour with the weather would stop being an identity.
+    static func friendInk(_ slot: Int) -> Color { dynamic(FriendInk.ink(forSlot: slot)) }
+
     /// The paper a stamp was dealt (ADR-005). Decoration, never information.
     static func stampPaper(_ paper: StampPaper) -> Color { dynamic(paper.ink) }
 

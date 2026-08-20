@@ -59,3 +59,31 @@ public struct NearbyReader: Equatable, Sendable {
         self.proof = proof
     }
 }
+
+/// The exchange that happens over the local link once both readers have tapped each other's row.
+///
+/// Separate from `ProximityPort` because they are different claims. Proximity says *someone is in
+/// the room*; the handshake says *this key belongs to the person sitting there*, and only the
+/// second one may create a friend. The transport carries no infrastructure networking — same
+/// subnet is not the same room — which is what makes a distant connection impossible rather than
+/// merely refused (ADR-009, FR-10.10).
+public protocol PeerHandshakePort: Sendable {
+    /// Exchanges public keys with the chosen nearby reader and returns theirs, alongside the
+    /// proof gathered while the link was open. The name they assert travels too, as a suggestion
+    /// for the reader to overwrite — it is never stored as given (FR-10.6).
+    func exchange(with reader: NearbyReader) async throws -> HandshakeResult
+}
+
+public struct HandshakeResult: Equatable, Sendable {
+    public let key: FriendKey
+    public let assertedName: String
+    /// Re-measured at the moment of the exchange, not carried over from the scan. A row can sit
+    /// on screen while its owner walks away.
+    public let proof: ProximityProof
+
+    public init(key: FriendKey, assertedName: String, proof: ProximityProof) {
+        self.key = key
+        self.assertedName = assertedName
+        self.proof = proof
+    }
+}

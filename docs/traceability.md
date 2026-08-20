@@ -17,16 +17,15 @@ tests, 14 e2e journeys** — 125 domain, 42 data, 21 design.
 | **US-1** remember which meals were good | UC-7 Rate a meal | FR-9.1 … FR-9.5 | TC-7-01 … TC-7-06 | `RateMealUseCase`, `Place.averageRating`, `StarRatingView` |
 | **US-4** see where my friends have eaten | UC-8 Connect a friend | FR-10.1 … FR-10.11 | TC-8-01 … TC-8-11 | `ConnectFriendUseCase`, `FriendCircle`, `FriendKey`, `VerificationWord`, `ProximityProof` |
 | | UC-9 Share a place | FR-11.1 … FR-11.6, FR-13.3a … FR-13.3c | TC-9-01 … TC-9-15 | `BuildSharedStampUseCase`, `SharedStamp`, `YearMonth`, `SharingSettings` |
-| | UC-10 Friends on the map | FR-12.1 … FR-12.7, FR-13.1 … FR-13.6 | TC-10-01 … TC-10-14, TC-N-25 … TC-N-27 | `MergeFriendStampsUseCase`, `ReconcileManifestUseCase`, `FriendsLayer`, `FriendInk`, `StampEdge` |
+| | UC-10 Friends on the map | FR-12.1 … FR-12.8, FR-13.1 … FR-13.6 | TC-10-01 … TC-10-16, TC-N-25 … TC-N-27 | `MergeFriendStampsUseCase`, `ReconcileManifestUseCase`, `FriendsLayer`, `FriendInk`, `StampEdge` |
 
 ## Current gaps
 
-**The friends feature is domain-complete and has no data or interface layer yet.** Five cases stay
-specified rather than automated because a unit test cannot supply what they need: two devices in a
-room (TC-8-12), a live iCloud account (TC-8-13), a real image pipeline (TC-9-16), a real sealing
-implementation (TC-9-17) and a running app (TC-10-15). `FoodMapData/Sharing`,
-`FoodMapData/Proximity` and the six screens ADR-009 describes are the next step, and three cheap
-spikes (OPEN-11 … OPEN-13) should land before or alongside them.
+**The friends feature is built at every layer — domain, design, data and interface.** Two cases stay
+specified rather than automated because no test process can supply what they need: two devices in a
+room (TC-8-12) and a live iCloud account (TC-8-13). Three cheap spikes (OPEN-11 … OPEN-13) remain,
+and the sync loop is not yet driven on a schedule — the adapters exist and the store receives, but
+nothing calls them periodically.
 
 Everything else: none open. The e2e layer covers every use case: TC-1-14, TC-1-19, TC-2-10, TC-4-09, TC-5-06,
 TC-6-05 and TC-7-06, plus the non-functional journeys TC-N-01, TC-N-06, TC-N-10 and TC-N-11.

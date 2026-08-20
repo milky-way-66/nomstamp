@@ -214,7 +214,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-11.2 | A shared stamp shall carry only place, average rating, visit count, latest dish, month last visited and one thumbnail | UC-9 | TC-9-02 |
 | FR-11.3 | A shared stamp shall never carry price, per-meal ratings, exact dates or full-size photographs | UC-9 | TC-9-03, TC-9-04 |
 | FR-11.4 | A note shall be shared only where the user opted in for that place | UC-9/1a | TC-9-10 |
-| FR-11.5 | Every thumbnail shall be stripped of EXIF before it leaves the device | UC-9 | TC-9-09, TC-9-16 |
+| FR-11.5 | Every thumbnail shall be re-encoded from pixels before it leaves, carrying nothing about where, when or with what it was taken. The geometry an encoder must write — colour space and pixel dimensions — is permitted; a GPS, TIFF, IPTC, ExifAux or maker-note block is not | UC-9 | TC-9-09, TC-9-16 |
 | FR-11.6 | Unsharing a place shall propagate a retraction on the next connection | UC-9/2a | TC-9-14 |
 
 ### FR-12 Friends' stamps on the map
@@ -227,6 +227,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-12.5 | Friend stamps shall be distinguishable without colour (NFR-6.3) | UC-10 | TC-N-27 |
 | FR-12.6 | A friend's stamps shall be shown with the date that friend was last reached, never implied to be current. The date shall belong to the friend, not to individual stamps | UC-10 | TC-10-08 |
 | FR-12.7 | The interface shall never state what a friend shares now, only what was held as of the last exchange | UC-10 | TC-10-08 |
+| FR-12.8 | A place's own page shall name every friend who has also stamped it, in ink order. Unlike the map layer, this list shall not depend on the layer switch — the switch governs the drawing, and a page the user opened deliberately is a different question | UC-10 | TC-10-16 |
 
 ### FR-13 Synchronising
 | ID | Requirement | UC | Tests |

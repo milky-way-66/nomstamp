@@ -20,6 +20,8 @@ struct MapScreen: View {
     )
     @State private var selectedPinID: PlaceCluster.ID?
     @State private var detent: PresentationDetent = .height(MapScreen.peekHeight)
+    @State private var friendPlace: MapStampGroup?
+    @State private var isShowingFriends = false
 
     init(dependencies: AppDependencies) {
         self.dependencies = dependencies
@@ -30,6 +32,14 @@ struct MapScreen: View {
         ZStack(alignment: .top) {
             map
             floatingActions
+            FriendsLayerControl(store: dependencies.friends) { isShowingFriends = true }
+                .padding(.top, Theme.Space.tight)
+        }
+        .sheet(isPresented: $isShowingFriends) {
+            FriendsScreen(dependencies: dependencies)
+        }
+        .sheet(item: $friendPlace) { group in
+            FriendPlaceSheet(group: group, store: dependencies.friends)
         }
         .sheet(isPresented: .constant(true)) {
             PlaceSheet(
@@ -64,12 +74,38 @@ struct MapScreen: View {
         }
     }
 
+    /// The friends layer, resolved against the reader's own places.
+    ///
+    /// Recomputed rather than cached: matching is pure and cheap, and a cache here would be one
+    /// more thing to invalidate when a sync lands mid-session.
+    private var friendGroups: [MapStampGroup] {
+        dependencies.friends.groups(for: model.allPlaces)
+    }
+
+    /// Places only a friend has stamped — pins that would not exist without the layer.
+    private var friendOnlyGroups: [MapStampGroup] {
+        friendGroups.filter { $0.ownPlace == nil }
+    }
+
+    private func countersign(for cluster: PlaceCluster) -> MapStampGroup? {
+        // A cluster of several places has no single countersign to draw; the sheet lists them.
+        guard cluster.isSingle, let place = cluster.representative else { return nil }
+        return friendGroups.first { $0.ownPlace?.id == place.id && !$0.friendStamps.isEmpty }
+    }
+
     private var map: some View {
         Map(position: $camera, selection: $selectedPinID) {
             UserAnnotation()
             ForEach(model.clusters) { cluster in
                 Annotation("", coordinate: cluster.coordinate.clCoordinate, anchor: .center) {
                     StampPin(cluster: cluster, isSelected: selectedPinID == cluster.id)
+                        // *We have both been here* — the moment the whole feature is for, printed
+                        // on the reader's own stamp rather than beside it (FR-12.2).
+                        .overlay(alignment: .bottomLeading) {
+                            if let group = countersign(for: cluster) {
+                                CountersignBadge(group: group, store: dependencies.friends)
+                            }
+                        }
                         .accessibilityLabel(StampPin(cluster: cluster).accessibilityDescription)
                         .accessibilityIdentifier("mapPin")
                 }
@@ -77,6 +113,13 @@ struct MapScreen: View {
                 // bottom sheet presented, touches never reach content hosted inside the map, so
                 // only the map's native hit testing can open a pin (FR-3.10).
                 .tag(cluster.id)
+            }
+
+            ForEach(friendOnlyGroups) { group in
+                Annotation("", coordinate: group.coordinate.clCoordinate, anchor: .center) {
+                    FriendOnlyPin(group: group, store: dependencies.friends)
+                        .onTapGesture { friendPlace = group }
+                }
             }
         }
         // The only food on this map is the user's. Apple's own restaurant pins read louder than

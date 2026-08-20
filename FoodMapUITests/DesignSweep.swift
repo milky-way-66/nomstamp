@@ -93,6 +93,39 @@ final class DesignSweep: XCTestCase {
         shoot(app, "10-confirm")
     }
 
+    /// The friends surfaces (ADR-009), in both appearances. They are the newest thing in the app
+    /// and the one place a fixed plate of inks meets a skin that moves, so they need looking at
+    /// more than most.
+    func test_friendsSweep() {
+        for (appearance, prefix) in [(XCUIDevice.Appearance.light, "14"), (.dark, "15")] {
+            XCUIDevice.shared.appearance = appearance
+            let app = AppLauncher.launch(
+                seeded: true,
+                extraArguments: ["-SeedFriends"] + (appearance == .dark ? ["-ForceNight"] : [])
+            )
+
+            collapseSheet(app)
+            shoot(app, "\(prefix)a-map-layer-off")
+
+            app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 10)
+            shoot(app, "\(prefix)b-map-layer-on")
+
+            // A place the reader and a friend have both stamped: the countersign, and the row.
+            open("Phở Thìn", "pho thin", in: app)
+            raiseSheet(app, from: 0.46)
+            shoot(app, "\(prefix)c-place-countersigned")
+            app.swipeUp()
+            shoot(app, "\(prefix)d-place-sharing")
+            app.navigationBars.buttons.firstMatch.tap()
+
+            // The circle itself.
+            collapseSheet(app)
+            app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 10)
+            if app.buttons["Friends"].exists { app.buttons["Friends"].tap() }
+            shoot(app, "\(prefix)e-friends-list")
+        }
+    }
+
     func test_darkAndEmpty() {
         // The app's light and dark follow the sun where the reader is, not the system setting
         // (ADR-006), so the simulator's own appearance no longer reaches it.

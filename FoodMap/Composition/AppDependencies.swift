@@ -2,6 +2,7 @@ import Foundation
 import SwiftData
 import FoodMapDomain
 import FoodMapData
+import UIKit
 
 /// The composition root — the only place that knows every concrete type.
 ///
@@ -19,6 +20,18 @@ final class AppDependencies {
     let weather: WeatherPort
     /// Which printing the app is in today (ADR-006).
     let appearanceStore: AppearanceStore
+
+    // Friends (ADR-009). Every one of these is inert until a reader adds someone: no radio runs,
+    // no CloudKit call is made, and the map is what it always was (FR-13.6).
+    let friends: FriendsStore
+    /// Nil when this device could not open its own keyring — a keychain that will not answer.
+    /// The friends feature is then simply unavailable, and nothing else in the app notices
+    /// (FR-13.6). Better than a `fatalError`: a reader who has never added a friend should not
+    /// lose their food diary to a subsystem they never used.
+    let peerIdentity: (any PeerIdentityPort)?
+    let proximity: (any ProximityPort)?
+    let handshake: (any PeerHandshakePort)?
+    let digest: any DigestPort
 
     /// Nil under UI testing, where location is stubbed and there is nothing to ask for.
     private let coreLocation: CoreLocationAdapter?
@@ -78,6 +91,39 @@ final class AppDependencies {
             weather = WeatherKitAdapter()
         }
         clock = SystemClock()
+
+        let digest = StampDigest()
+        self.digest = digest
+        // One seed, in the keychain, from which both keypairs are derived. Under UI testing it
+        // lives in memory: a journey must not write to the device keychain, and must not read a
+        // key an earlier journey left behind.
+        let identity = try? PeerIdentityStore(
+            seedStore: Self.isUITesting ? InMemorySeedStore() : KeychainSeedStore(),
+            directory: InMemoryAgreementKeyDirectory()
+        )
+        peerIdentity = identity
+        if let identity, !Self.isUITesting {
+            let bluetooth = BluetoothPresence(
+                assertedName: UIDeviceName.current,
+                publicKey: identity.publicKey
+            )
+            proximity = bluetooth
+            handshake = bluetooth
+        } else if identity != nil {
+            // No radio in the simulator, and a journey that waited for one would hang.
+            let stub = StubProximity()
+            proximity = stub
+            handshake = stub
+        } else {
+            proximity = nil
+            handshake = nil
+        }
+        friends = FriendsStore(
+            clock: clock,
+            digest: digest,
+            directory: Self.friendsDirectory()
+        )
+
         appearanceStore = AppearanceStore(weather: weather, location: location, clock: clock)
 
         logMeal = LogMealUseCase(places: places, photos: photos, clock: clock)
@@ -95,6 +141,9 @@ final class AppDependencies {
         if DemoSeed.isRequested {
             DemoSeed.apply(to: self)
         }
+        if DemoSeed.friendsRequested {
+            DemoSeed.applyFriends(to: self)
+        }
     }
 
     func requestLocationPermission() {
@@ -105,6 +154,18 @@ final class AppDependencies {
     /// Only reachable under `-UITestMode` (ADR-002 §5.3).
     func testPhotoData() -> Data {
         DemoSeed.placeholderJPEG(hue: 0.09)
+    }
+
+    /// Friend data is a disposable cache, so it lives beside the photos rather than in the
+    /// database, and a UI-test run gets a throwaway one (FR-13.4).
+    private static func friendsDirectory() -> URL {
+        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let directory = base.appendingPathComponent(
+            isUITesting ? "friends-uitest-\(UUID().uuidString)" : "friends",
+            isDirectory: true
+        )
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory
     }
 
     private static func photosDirectory() -> URL {
@@ -174,6 +235,23 @@ struct StubPlaceSearch: PlaceSearchPort {
         return Self.fixtures.filter {
             PlaceMatcher.normalized($0.name).contains(PlaceMatcher.normalized(trimmed))
         }
+    }
+}
+
+/// The name this phone offers to the room. The device name, because it is the one string a
+/// reader has already chosen for their phone and will recognise across a table — and because it
+/// is a suggestion the other reader overwrites, never a stored identity (FR-10.6).
+enum UIDeviceName {
+    static var current: String { UIDevice.current.name }
+}
+
+/// No radio, and nobody in the room. UI journeys exercise the friends surfaces against a circle
+/// seeded directly, not against a ceremony that cannot happen in a simulator (TC-8-12 stays an
+/// on-device case for exactly this reason).
+struct StubProximity: ProximityPort, PeerHandshakePort {
+    func nearbyReaders() async throws -> [NearbyReader] { [] }
+    func exchange(with reader: NearbyReader) async throws -> HandshakeResult {
+        throw HandshakeFailure.unsupported
     }
 }
 

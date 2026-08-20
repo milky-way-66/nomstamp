@@ -14,6 +14,68 @@ enum DemoSeed {
         ProcessInfo.processInfo.arguments.contains("-SeedDemoData")
     }
 
+    /// `-SeedFriends` additionally puts two friends and their stamps in the cache, so the
+    /// friends layer can be exercised end to end without two phones (TC-10-15).
+    ///
+    /// The seed constructs a `ProximityProof` that passes the gate. It is not a back door: the
+    /// domain still refuses anything that does not clear the floor, and there is no path from a
+    /// normal launch to this code — `isRequested` is false without the flag. The genuinely
+    /// two-device part of the ceremony (TC-8-12) stays an on-device case for that reason.
+    static var friendsRequested: Bool {
+        ProcessInfo.processInfo.arguments.contains("-SeedFriends")
+    }
+
+    /// One friend who has been where the reader has — the countersign — and one who has been
+    /// somewhere the reader has not, which is the other half of what the layer is for.
+    @MainActor
+    static func applyFriends(to dependencies: AppDependencies) {
+        let store = dependencies.friends
+        guard store.circle.friends.isEmpty else { return }
+        let proof = ProximityProof(signalStrength: -40)
+
+        guard let lan = FriendKey(bytes: [3] + Array(repeating: 0x11, count: FriendKey.byteCount - 1)),
+              let minh = FriendKey(bytes: [5] + Array(repeating: 0x22, count: FriendKey.byteCount - 1))
+        else { return }
+
+        try? store.connectFriend(key: lan, named: "Lan", proof: proof)
+        try? store.connectFriend(key: minh, named: "Minh", proof: proof)
+
+        // Lan has been to Phở Thìn, which the reader has stamped too.
+        store.receive([
+            SharedStamp(
+                placeID: UUID(),
+                placeName: "Phở Thìn",
+                coordinate: Coordinate(latitude: 21.0181, longitude: 105.8554),
+                providerPlaceID: nil,
+                averageRating: 4.5,
+                visitCount: 3,
+                latestDish: "Phở bò",
+                lastVisitedMonth: YearMonth(year: 2026, month: 7),
+                note: nil,
+                thumbnailHash: nil,
+                version: "seed-1"
+            )
+        ], from: lan)
+
+        // Minh has been somewhere the reader has not, so it is a pin that exists only because
+        // of the layer.
+        store.receive([
+            SharedStamp(
+                placeID: UUID(),
+                placeName: "Chả cá Thăng Long",
+                coordinate: Coordinate(latitude: 21.0295, longitude: 105.8465),
+                providerPlaceID: nil,
+                averageRating: 4.0,
+                visitCount: 1,
+                latestDish: "Chả cá",
+                lastVisitedMonth: YearMonth(year: 2026, month: 8),
+                note: "Worth the queue",
+                thumbnailHash: nil,
+                version: "seed-2"
+            )
+        ], from: minh)
+    }
+
     static func apply(to dependencies: AppDependencies) {
         guard (try? dependencies.places.allPlaces())?.isEmpty ?? false else { return }
 

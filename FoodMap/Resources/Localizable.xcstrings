@@ -1,6 +1,40 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    " of 5": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " of 5"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " trên 5"
+          }
+        }
+      }
+    },
+    "%lld of 8. You can only add someone you are sitting with.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld of 8. You can only add someone you are sitting with."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld trên 8. Bạn chỉ có thể thêm người đang ngồi cùng."
+          }
+        }
+      }
+    },
     "%lld places here": {
       "extractionState": "manual",
       "localizations": {
@@ -14,6 +48,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld địa điểm ở đây"
+          }
+        }
+      }
+    },
+    "%lld stamps, as of %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld stamps, as of %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tem, tính đến %@"
+          }
+        }
+      }
+    },
+    "%lld stamps, not yet exchanged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld stamps, not yet exchanged"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld tem, chưa trao đổi lần nào"
           }
         }
       }
@@ -87,6 +155,23 @@
         }
       }
     },
+    "Add friend": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add friend"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm bạn"
+          }
+        }
+      }
+    },
     "Add meal": {
       "extractionState": "manual",
       "localizations": {
@@ -100,6 +185,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thêm bữa"
+          }
+        }
+      }
+    },
+    "Add someone here": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add someone here"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm người ở đây"
+          }
+        }
+      }
+    },
+    "Add to my map": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add to my map"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm vào bản đồ của tôi"
           }
         }
       }
@@ -172,6 +291,23 @@
         }
       }
     },
+    "Also stamped by": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Also stamped by"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cũng được đóng tem bởi"
+          }
+        }
+      }
+    },
     "Another photo": {
       "extractionState": "manual",
       "localizations": {
@@ -179,6 +315,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ảnh nữa"
+          }
+        }
+      }
+    },
+    "As of %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "As of %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tính đến %@"
           }
         }
       }
@@ -256,6 +409,23 @@
         }
       }
     },
+    "Both phones should show these four letters. If they don't, stop — someone else is answering.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both phones should show these four letters. If they don't, stop — someone else is answering."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cả hai máy phải hiện bốn chữ cái này. Nếu không, hãy dừng lại — có người khác đang trả lời."
+          }
+        }
+      }
+    },
     "Camera access is off": {
       "extractionState": "manual",
       "localizations": {
@@ -263,6 +433,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Máy ảnh đang bị tắt quyền"
+          }
+        }
+      }
+    },
+    "Can't add them": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Can't add them"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Không thêm được"
           }
         }
       }
@@ -589,6 +776,40 @@
         }
       }
     },
+    "Eight friends is the most. Remove someone first.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eight friends is the most. Remove someone first."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tối đa tám người bạn. Hãy xoá bớt một người trước."
+          }
+        }
+      }
+    },
+    "Eight is the most. Remove someone to make room — the cap is what keeps this a circle rather than a following.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eight is the most. Remove someone to make room — the cap is what keeps this a circle rather than a following."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tối đa là tám. Xoá bớt một người để có chỗ — giới hạn này giữ đây là một nhóm nhỏ chứ không phải một danh sách theo dõi."
+          }
+        }
+      }
+    },
     "Finding where you are…": {
       "extractionState": "manual",
       "localizations": {
@@ -617,6 +838,40 @@
         }
       }
     },
+    "Friends": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Friends"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn bè"
+          }
+        }
+      }
+    },
+    "Friends layer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Friends layer"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lớp bạn bè"
+          }
+        }
+      }
+    },
     "Good": {
       "extractionState": "manual",
       "localizations": {
@@ -630,6 +885,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ngon"
+          }
+        }
+      }
+    },
+    "Hidden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang ẩn"
           }
         }
       }
@@ -662,6 +934,23 @@
         }
       }
     },
+    "Include my note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Include my note"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kèm theo ghi chú của tôi"
+          }
+        }
+      }
+    },
     "It was fine": {
       "extractionState": "manual",
       "localizations": {
@@ -675,6 +964,91 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cũng được"
+          }
+        }
+      }
+    },
+    "Last dish": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last dish"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Món gần nhất"
+          }
+        }
+      }
+    },
+    "Last visit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last visit"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lần đến gần nhất"
+          }
+        }
+      }
+    },
+    "Looking for phones in the room…": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Looking for phones in the room…"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang tìm các máy trong phòng…"
+          }
+        }
+      }
+    },
+    "Matching word": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Matching word"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Từ đối chiếu"
+          }
+        }
+      }
+    },
+    "Name": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tên"
           }
         }
       }
@@ -720,6 +1094,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Máy này không có máy ảnh"
+          }
+        }
+      }
+    },
+    "No friends yet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No friends yet"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa có bạn nào"
           }
         }
       }
@@ -860,6 +1251,40 @@
         }
       }
     },
+    "Off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tắt"
+          }
+        }
+      }
+    },
+    "On": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "On"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bật"
+          }
+        }
+      }
+    },
     "Overcast": {
       "extractionState": "manual",
       "localizations": {
@@ -963,6 +1388,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rất ngon"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá"
+          }
+        }
+      }
+    },
+    "Remove and delete their stamps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove and delete their stamps"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá bạn và xoá luôn tem của họ"
+          }
+        }
+      }
+    },
+    "Remove this friend?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove this friend?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Xoá người bạn này?"
           }
         }
       }
@@ -1080,6 +1556,23 @@
         }
       }
     },
+    "Share this place with friends": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share this place with friends"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chia sẻ địa điểm này với bạn bè"
+          }
+        }
+      }
+    },
     "Show": {
       "extractionState": "manual",
       "localizations": {
@@ -1093,6 +1586,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hiển thị"
+          }
+        }
+      }
+    },
+    "Showing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đang hiện"
           }
         }
       }
@@ -1121,6 +1631,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bỏ qua chấm điểm"
+          }
+        }
+      }
+    },
+    "Stamped by": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stamped by"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Được đóng tem bởi"
           }
         }
       }
@@ -1170,6 +1697,142 @@
         }
       }
     },
+    "Their note": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Their note"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ghi chú của họ"
+          }
+        }
+      }
+    },
+    "Their rating": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Their rating"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điểm của họ"
+          }
+        }
+      }
+    },
+    "Their stamps leave your map and yours stop reaching them. Anything they already have stays on their phone.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Their stamps leave your map and yours stop reaching them. Anything they already have stays on their phone."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tem của họ rời khỏi bản đồ của bạn, và tem của bạn ngừng đến với họ. Những gì họ đã nhận vẫn nằm trên máy họ."
+          }
+        }
+      }
+    },
+    "They are already on your map.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They are already on your map."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ đã có trên bản đồ của bạn rồi."
+          }
+        }
+      }
+    },
+    "They match": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They match"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trùng khớp"
+          }
+        }
+      }
+    },
+    "They moved out of range. Sit closer and try again.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They moved out of range. Sit closer and try again."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ đã ra ngoài tầm sóng. Hãy ngồi gần hơn rồi thử lại."
+          }
+        }
+      }
+    },
+    "They need this screen open too.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They need this screen open too."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ cũng phải đang mở màn hình này."
+          }
+        }
+      }
+    },
+    "They see the name, roughly where it is, your rating to the half star, how many times you have been, the last dish and the month. Never your photos, your prices or the dates.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They see the name, roughly where it is, your rating to the half star, how many times you have been, the last dish and the month. Never your photos, your prices or the dates."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ thấy tên quán, vị trí gần đúng, điểm của bạn làm tròn nửa sao, số lần bạn đã đến, món gần nhất và tháng. Không bao giờ thấy ảnh, giá tiền hay ngày cụ thể."
+          }
+        }
+      }
+    },
     "This also deletes the photos you took there. It can't be undone.": {
       "extractionState": "manual",
       "localizations": {
@@ -1183,6 +1846,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Việc này cũng xoá những ảnh bạn đã chụp ở đó. Không thể hoàn tác."
+          }
+        }
+      }
+    },
+    "This is your name for them and stays on your phone. They never see it, and they can't change it.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This is your name for them and stays on your phone. They never see it, and they can't change it."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đây là tên bạn đặt cho họ và chỉ nằm trên máy bạn. Họ không bao giờ thấy, và không thể đổi."
+          }
+        }
+      }
+    },
+    "Times they went": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Times they went"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Số lần họ đến"
           }
         }
       }
@@ -1317,6 +2014,23 @@
         }
       }
     },
+    "What do you call them?": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What do you call them?"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn gọi họ là gì?"
+          }
+        }
+      }
+    },
     "Which place?": {
       "extractionState": "manual",
       "localizations": {
@@ -1364,6 +2078,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trong vòng"
+          }
+        }
+      }
+    },
+    "You can only add someone you are sitting with. Both phones have to be in the same room.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can only add someone you are sitting with. Both phones have to be in the same room."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn chỉ có thể thêm người đang ngồi cùng. Hai máy phải ở trong cùng một phòng."
           }
         }
       }
