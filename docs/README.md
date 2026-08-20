@@ -1,7 +1,8 @@
 # Nomstamp — documentation
 
 A private iPhone app for remembering the food you have eaten and the places you still want to
-try, both on a map. No account, no server; photos stay on the device.
+try, both on a map. No account, no server. Photos stay on the device, except the thumbnails of
+places you deliberately share with a friend you met in person.
 
 ## Reading order
 
@@ -16,6 +17,8 @@ try, both on a map. No account, no server; photos stay on the device.
 | 7 | [architecture/adr-004-location.md](architecture/adr-004-location.md) | Which position do we trust, and when? |
 | 8 | [architecture/adr-005-art-direction.md](architecture/adr-005-art-direction.md) | How does it stop looking like stock SwiftUI? |
 | 9 | [architecture/adr-006-skins-and-weather.md](architecture/adr-006-skins-and-weather.md) | Why does it change colour, and what decides? |
+| 9c | [architecture/adr-008-friends.md](architecture/adr-008-friends.md) | How do a friend's stamps reach my map with no server? |
+| 9d | [architecture/research-friend-sync.md](architecture/research-friend-sync.md) | Which transports were considered, and why this one? |
 | 10 | [architecture/project-structure.md](architecture/project-structure.md) | Where does each file go? |
 | 11 | [testing/test-cases.md](testing/test-cases.md) | What exactly is verified? |
 | 12 | [workflow.md](workflow.md) | In what order is anything allowed to be built? |
@@ -42,6 +45,7 @@ the specification was wrong, the document is corrected first — never left to d
 | Domain code | **complete and green** — 71 tests, sub-second warm loop, no simulator |
 | Test totals | 138 automated, all passing — 74 domain, 10 design, 38 data, 17 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
+| Friends | **decided, nothing built** — ADR-008: iroh peer to peer, in-person connect only, eight friends. Two spikes outstanding (OPEN-5, OPEN-6) before test cases |
 | Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | **built and running** — 6 screens, verified in the simulator, light and dark |

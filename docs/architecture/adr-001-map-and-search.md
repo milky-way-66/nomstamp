@@ -77,9 +77,10 @@ So the search hierarchy is:
 - **MapLibre + OSM tiles** — needs a tile host; same backend objection.
 
 ## Consequences and open risks
-- **Map tiles and place search need the internet.** "Local-only" refers to *our data*: photos
-  and meals never leave the device and there is no server. Viewing the map in a new city still
-  requires connectivity. Logging a meal offline works fully (GPS + manual name); only the
+- **Map tiles and place search need the internet.** "Local-only" refers to *our data*: there is
+  still no server, and meals and photographs stay on the device except where the reader
+  deliberately shares a place with a connected friend, device to device (ADR-008). Viewing the map
+  in a new city still requires connectivity. Logging a meal offline works fully (GPS + manual name); only the
   nearby-suggestions list degrades.
 - **POI coordinate precision must be verified on-device.** In the command-line test nearly all
   POI results reported 3–5 m distance, which is implausible and suggests degraded precision
