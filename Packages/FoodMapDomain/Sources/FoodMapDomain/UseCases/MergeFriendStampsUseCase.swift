@@ -28,14 +28,9 @@ public struct MapStampGroup: Equatable, Sendable, Identifiable {
     }
 
     public var isCountersigned: Bool { ownPlace != nil && !friendStamps.isEmpty }
-
-    /// At pin size, five overlapping stamps are the box of crayons the cap exists to prevent. So:
-    /// the reader's own stamp, **one** countersign, and a numeral for the rest (TC-10-06).
-    public var countersign: FriendStamp? { friendStamps.first }
-    public var additionalSignatureCount: Int { max(0, friendStamps.count - 1) }
 }
 
-/// UC-10 — matching, and countersign resolution.
+/// UC-10 — matching, and what the map is handed.
 public struct MergeFriendStampsUseCase: Sendable {
     public init() {}
 
@@ -97,6 +92,34 @@ public struct MergeFriendStampsUseCase: Sendable {
         }
 
         return own + friendOnly
+    }
+
+    /// What the map draws (ADR-010).
+    ///
+    /// Every pin is a `MapPlace` and they are indistinguishable by construction: a place a friend
+    /// stamped and one the reader stamped arrive here as the same type, are clustered by the same
+    /// code and are drawn by the same view. Provenance is carried, but only so a tap knows which
+    /// sheet to open.
+    ///
+    /// With the layer off this is the reader's own places, in their own order — the map as it was
+    /// before the feature existed (FR-12.1, TC-10-01).
+    public func mapPlaces(
+        places: [Place],
+        friendStamps: [FriendStamp],
+        circle: FriendCircle,
+        layerEnabled: Bool
+    ) -> [MapPlace] {
+        execute(
+            places: places,
+            friendStamps: friendStamps,
+            circle: circle,
+            layerEnabled: layerEnabled
+        ).map { group in
+            if let own = group.ownPlace {
+                return MapPlace(own)
+            }
+            return MapPlace(origin: .friends(group.friendStamps))
+        }
     }
 
     /// Everyone who has also stamped this place, in ink order — the *also stamped by* row on a

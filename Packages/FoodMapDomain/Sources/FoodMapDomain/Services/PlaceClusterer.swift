@@ -3,9 +3,9 @@ import Foundation
 public struct PlaceCluster: Identifiable, Equatable, Sendable {
     public let id: String
     public let coordinate: Coordinate
-    public let places: [Place]
+    public let places: [MapPlace]
 
-    public init(id: String, coordinate: Coordinate, places: [Place]) {
+    public init(id: String, coordinate: Coordinate, places: [MapPlace]) {
         self.id = id
         self.coordinate = coordinate
         self.places = places
@@ -16,7 +16,7 @@ public struct PlaceCluster: Identifiable, Equatable, Sendable {
     public var containsVisited: Bool { places.contains { $0.kind == .visited } }
 
     /// Prefer a place that has a photo, so a collapsed pin still shows food.
-    public var representative: Place? {
+    public var representative: MapPlace? {
         places.first(where: { $0.pinPhoto != nil }) ?? places.first
     }
 }
@@ -33,7 +33,13 @@ public enum PlaceClusterer {
     /// Below this cell size, pins cannot visually overlap, so grouping stops.
     private static let minimumCellSize: Double = 0.00005
 
+    /// Convenience for the reader's own places alone — the map before the friends layer, and
+    /// what most of the suite exercises.
     public static func cluster(places: [Place], in bounds: MapBounds) -> [PlaceCluster] {
+        cluster(places: places.map { MapPlace($0) }, in: bounds)
+    }
+
+    public static func cluster(places: [MapPlace], in bounds: MapBounds) -> [PlaceCluster] {
         guard !places.isEmpty else { return [] }
 
         let latCell = bounds.latitudeDelta / cellsAcrossViewport
@@ -43,7 +49,7 @@ public enum PlaceClusterer {
             return places.map(single)
         }
 
-        var buckets: [String: [Place]] = [:]
+        var buckets: [String: [MapPlace]] = [:]
         var order: [String] = []
         for place in places {
             let row = (place.coordinate.latitude / latCell).rounded(.down)
@@ -67,7 +73,7 @@ public enum PlaceClusterer {
         }
     }
 
-    private static func single(_ place: Place) -> PlaceCluster {
-        PlaceCluster(id: place.id.uuidString, coordinate: place.coordinate, places: [place])
+    private static func single(_ place: MapPlace) -> PlaceCluster {
+        PlaceCluster(id: place.id, coordinate: place.coordinate, places: [place])
     }
 }

@@ -70,6 +70,6 @@ struct PlaceClustererTests {
 
     @Test("an empty map produces no clusters")
     func emptyProducesNothing() {
-        #expect(PlaceClusterer.cluster(places: [], in: bounds(delta: 0.05)).isEmpty)
+        #expect(PlaceClusterer.cluster(places: [Place](), in: bounds(delta: 0.05)).isEmpty)
     }
 }

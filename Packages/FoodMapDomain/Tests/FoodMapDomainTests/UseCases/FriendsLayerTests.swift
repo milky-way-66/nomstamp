@@ -96,24 +96,32 @@ struct FriendsLayerTests {
         #expect(!friendOnly[0].isCountersigned)
     }
 
-    @Test("TC-10-05 a place we have both stamped is one pin, countersigned")
+    @Test("TC-10-05 a place we have both stamped is one pin, drawn as mine")
     func TC_10_05_countersign() throws {
         let stamp = Fixture.friendStamp(stamp: Fixture.sharedStamp(
             name: "Phở Thìn", at: Fixture.phoThin, providerPlaceID: "apple:1234"
         ))
 
+        let mine = myPhoThin
         let groups = merge.execute(
-            places: [myPhoThin], friendStamps: [stamp], circle: circleOfThree, layerEnabled: true
+            places: [mine], friendStamps: [stamp], circle: circleOfThree, layerEnabled: true
         )
 
         #expect(groups.count == 1)
         #expect(groups[0].isCountersigned)
-        #expect(try #require(groups[0].countersign).friend == Fixture.lanKey)
-        #expect(groups[0].additionalSignatureCount == 0)
+        #expect(groups[0].friendStamps.map(\.friend) == [Fixture.lanKey])
+
+        // ADR-010: the pin itself says nothing about Lan. It is my place, drawn as my place.
+        let pins = merge.mapPlaces(
+            places: [mine], friendStamps: [stamp], circle: circleOfThree, layerEnabled: true
+        )
+        #expect(pins.count == 1)
+        #expect(pins[0].isMine)
+        #expect(pins[0].mine == mine)
     }
 
-    @Test("TC-10-06 five friends on one place is one countersign and a numeral, never five stamps")
-    func TC_10_06_oneCountersignPlusANumeral() {
+    @Test("TC-10-06 five friends on one place is still one pin, and all five reach the detail")
+    func TC_10_06_fiveFriendsAreOnePin() {
         let keys = (0..<5).map { Fixture.key(UInt8($0 * 8), fill: UInt8(100 + $0)) }
         let circle = FriendCircle(keys.enumerated().map { index, key in
             Fixture.friend(key, name: "Friend \(index)", inkSlot: index)
@@ -129,13 +137,18 @@ struct FriendsLayerTests {
         )
 
         #expect(groups.count == 1)
+        // ADR-010 dropped the numeral: nothing is summarised away, because nothing is drawn on
+        // the pin at all. The detail gets the whole list.
         #expect(groups[0].friendStamps.count == 5)
-        #expect(groups[0].countersign != nil)
-        #expect(groups[0].additionalSignatureCount == 4)
+
+        let pins = merge.mapPlaces(
+            places: [myPhoThin], friendStamps: stamps, circle: circle, layerEnabled: true
+        )
+        #expect(pins.count == 1)
     }
 
-    @Test("TC-10-07 the countersign drawn is the lowest ink slot, not the newest arrival")
-    func TC_10_07_countersignIsStable() throws {
+    @Test("TC-10-07 friends are ordered by lowest ink slot, not by newest arrival")
+    func TC_10_07_orderIsStable() throws {
         let base = Fixture.sharedStamp(name: "Phở Thìn", at: Fixture.phoThin, providerPlaceID: "apple:1234")
         let lan = Fixture.friendStamp(Fixture.lanKey, stamp: base, receivedAt: Fixture.epoch)          // ink 2
         let thu = Fixture.friendStamp(Fixture.thuKey, stamp: base, receivedAt: Fixture.epoch.addingTimeInterval(9_999)) // ink 7
@@ -147,8 +160,86 @@ struct FriendsLayerTests {
             places: [myPhoThin], friendStamps: [lan, thu], circle: circleOfThree, layerEnabled: true
         )
 
-        #expect(try #require(newestFirst[0].countersign).friend == Fixture.lanKey)
+        #expect(newestFirst[0].friendStamps.first?.friend == Fixture.lanKey)
         #expect(newestFirst[0].friendStamps.map(\.friend) == oldestFirst[0].friendStamps.map(\.friend))
+    }
+
+    @Test("TC-10-25 a friend's wishlist place arrives as a wishlist place")
+    func TC_10_25_friendWishlistTravels() throws {
+        let stamp = Fixture.friendStamp(stamp: Fixture.wishlistStamp())
+
+        let pins = merge.mapPlaces(
+            places: [], friendStamps: [stamp], circle: circleOfThree, layerEnabled: true
+        )
+
+        let pin = try #require(pins.first)
+        #expect(pins.count == 1)
+        #expect(pin.kind == .wishlist)
+        #expect(pin.name == "Chả Cá Thăng Long")
+        #expect(!pin.isMine)
+        // Nothing is invented to fill the gap where a visit would be.
+        #expect(pin.averageRating == nil)
+        #expect(pin.pinPhoto == nil)
+    }
+
+    @Test("TC-10-25 one friend who has been outranks one who only means to go")
+    func TC_10_25_visitedWinsOverWishlist() throws {
+        let coordinate = Fixture.hanoiOldQuarter
+        let wants = Fixture.friendStamp(Fixture.lanKey, stamp: Fixture.wishlistStamp(
+            name: "Chả Cá Thăng Long", at: coordinate, providerPlaceID: "apple:777"
+        ))
+        let went = Fixture.friendStamp(Fixture.minhKey, stamp: Fixture.sharedStamp(
+            name: "Chả Cá Thăng Long", at: coordinate, providerPlaceID: "apple:777"
+        ))
+
+        let pins = merge.mapPlaces(
+            places: [], friendStamps: [wants, went], circle: circleOfThree, layerEnabled: true
+        )
+
+        #expect(pins.count == 1)
+        #expect(try #require(pins.first).kind == .visited)
+    }
+
+    @Test("TC-10-24 a friend's pin and my own are the same kind of thing")
+    func TC_10_24_pinsAreIndistinguishable() throws {
+        let elsewhere = Fixture.friendStamp(stamp: Fixture.sharedStamp(
+            name: "Bún Chả Hương Liên", at: Fixture.bunChaHuongLien, providerPlaceID: "apple:9999"
+        ))
+
+        let pins = merge.mapPlaces(
+            places: [myPhoThin], friendStamps: [elsewhere], circle: circleOfThree, layerEnabled: true
+        )
+
+        #expect(pins.count == 2)
+        // The drawing takes name, coordinate, kind, rating and photo — and takes them through the
+        // same properties for both. There is no branch a renderer could take on provenance
+        // without reaching for `origin`, which nothing but the tap handler does.
+        #expect(pins.allSatisfy { !$0.name.isEmpty })
+        #expect(Set(pins.map(\.kind)) == [.visited])
+    }
+
+    @Test("TC-10-26 the kind filter cuts friends' places and the reader's own alike")
+    func TC_10_26_kindFilterAppliesToBoth() {
+        var myWishlist = Fixture.place(name: "Bánh Mì 25", at: Fixture.hcmcDistrict1)
+        myWishlist.meals = []
+        let friendWants = Fixture.friendStamp(Fixture.minhKey, stamp: Fixture.wishlistStamp())
+        let friendWent = Fixture.friendStamp(Fixture.lanKey, stamp: Fixture.sharedStamp(
+            name: "Bún Chả Hương Liên", at: Fixture.bunChaHuongLien, providerPlaceID: "apple:9999"
+        ))
+
+        let pins = merge.mapPlaces(
+            places: [myPhoThin, myWishlist],
+            friendStamps: [friendWants, friendWent],
+            circle: circleOfThree,
+            layerEnabled: true
+        )
+
+        #expect(pins.count == 4)
+        #expect(pins.filter(MapFilter.all.matches).count == 4)
+        #expect(Set(pins.filter(MapFilter.visited.matches).map(\.name))
+            == ["Phở Thìn", "Bún Chả Hương Liên"])
+        #expect(Set(pins.filter(MapFilter.wishlist.matches).map(\.name))
+            == ["Bánh Mì 25", "Chả Cá Thăng Long"])
     }
 
     @Test("TC-10-16 a place's own page names every friend who stamped it, layer or no layer")
@@ -306,7 +397,6 @@ struct FriendsLayerTests {
 
         #expect(groups.count == 1)
         #expect(groups[0].friendStamps.count == 2)
-        #expect(groups[0].additionalSignatureCount == 1)
     }
 
     @Test("an identical manifest asks for nothing")

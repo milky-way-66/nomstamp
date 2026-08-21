@@ -1,6 +1,6 @@
 import Foundation
 
-/// The whole of what may leave the device about one place (ADR-009).
+/// The whole of what may leave the device about one place (ADR-009, amended by ADR-010).
 ///
 /// **One record per place, never per visit.** A per-meal feed would export a movement history —
 /// where this person is, on which evenings, for years. A per-place stamp says *Lan has eaten here
@@ -11,17 +11,26 @@ import Foundation
 /// for a price, for a per-meal rating, for an exact date or for a full-size photograph, so no
 /// call site can add one without changing this file — and changing this file means changing
 /// ADR-009 first.
+///
+/// ADR-010 added `kind`. A wishlist place now travels, because *where are you thinking of going*
+/// is the half of a friend's map that was missing, and it costs strictly less to share than a
+/// visit does: there is no rating, no count and no month, so the three fields that carry the
+/// history are optional and are nil for every wishlist stamp by construction.
 public struct SharedStamp: Equatable, Sendable {
     public let placeID: UUID
     public let placeName: String
     public let coordinate: Coordinate
     public let providerPlaceID: String?
+    /// Somewhere they have eaten, or somewhere they mean to.
+    public let kind: PlaceKind
     /// Rounded to the half star, because the exact mean of a reader's private scores is more
-    /// than a friend needs to know.
+    /// than a friend needs to know. Always nil for a wishlist stamp.
     public let averageRating: Double?
-    public let visitCount: Int
+    /// Nil for a wishlist stamp — nobody has been yet, and "0 visits" is a different claim from
+    /// "not that kind of place".
+    public let visitCount: Int?
     public let latestDish: String?
-    public let lastVisitedMonth: YearMonth
+    public let lastVisitedMonth: YearMonth?
     /// Travels only where the reader opted in for this place (FR-11.4). A note is the most
     /// personal field in the model and is frequently about a third party who agreed to nothing.
     public let note: String?
@@ -35,10 +44,11 @@ public struct SharedStamp: Equatable, Sendable {
         placeName: String,
         coordinate: Coordinate,
         providerPlaceID: String? = nil,
+        kind: PlaceKind = .visited,
         averageRating: Double? = nil,
-        visitCount: Int,
+        visitCount: Int? = nil,
         latestDish: String? = nil,
-        lastVisitedMonth: YearMonth,
+        lastVisitedMonth: YearMonth? = nil,
         note: String? = nil,
         thumbnailHash: String? = nil,
         version: String
@@ -47,6 +57,7 @@ public struct SharedStamp: Equatable, Sendable {
         self.placeName = placeName
         self.coordinate = coordinate
         self.providerPlaceID = providerPlaceID
+        self.kind = kind
         self.averageRating = averageRating
         self.visitCount = visitCount
         self.latestDish = latestDish
@@ -62,15 +73,20 @@ public struct SharedStamp: Equatable, Sendable {
     ///
     /// The unit separator is a control character so that a name ending in one field's text and a
     /// neighbouring field beginning with it cannot produce the same joined string.
+    ///
+    /// `kind` is in here, and it is not decoration: the same place moving from a friend's wishlist
+    /// to their visited list must produce a new version even in the impossible case where nothing
+    /// else about it changed, or the move would never sync (FR-13.3a).
     public static func canonicalPayload(
         placeID: UUID,
         placeName: String,
         coordinate: Coordinate,
         providerPlaceID: String?,
+        kind: PlaceKind,
         averageRating: Double?,
-        visitCount: Int,
+        visitCount: Int?,
         latestDish: String?,
-        lastVisitedMonth: YearMonth,
+        lastVisitedMonth: YearMonth?,
         note: String?,
         thumbnailHash: String?
     ) -> Data {
@@ -79,10 +95,11 @@ public struct SharedStamp: Equatable, Sendable {
             placeName,
             String(format: "%.6f,%.6f", coordinate.latitude, coordinate.longitude),
             providerPlaceID ?? "",
+            kind.rawValue,
             averageRating.map { String(format: "%.1f", $0) } ?? "",
-            String(visitCount),
+            visitCount.map(String.init) ?? "",
             latestDish ?? "",
-            lastVisitedMonth.description,
+            lastVisitedMonth?.description ?? "",
             note ?? "",
             thumbnailHash ?? ""
         ]
@@ -95,6 +112,7 @@ public struct SharedStamp: Equatable, Sendable {
             placeName: placeName,
             coordinate: coordinate,
             providerPlaceID: providerPlaceID,
+            kind: kind,
             averageRating: averageRating,
             visitCount: visitCount,
             latestDish: latestDish,

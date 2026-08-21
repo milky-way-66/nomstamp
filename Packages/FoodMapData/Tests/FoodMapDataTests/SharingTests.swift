@@ -225,9 +225,45 @@ struct WireStampTests {
     /// present that is not on this list is the failure this test exists to catch.
     private let permittedKeys: Set<String> = [
         "placeID", "placeName", "latitude", "longitude", "providerPlaceID",
-        "averageRating", "visitCount", "latestDish", "lastVisitedMonth", "note",
+        "kind", "averageRating", "visitCount", "latestDish", "lastVisitedMonth", "note",
         "thumbnailHash", "version"
     ]
+
+    @Test("a wishlist stamp survives the wire with its emptiness intact")
+    func wishlistRoundTrips() throws {
+        let wishlist = SharedStamp(
+            placeID: UUID(),
+            placeName: "Chả Cá Thăng Long",
+            coordinate: Coordinate(latitude: 21.0333, longitude: 105.8500),
+            kind: .wishlist,
+            version: "v1"
+        )
+
+        let encoded = try JSONEncoder().encode(WireStamp(wishlist))
+        let decoded = try #require(try JSONDecoder().decode(WireStamp.self, from: encoded).domain)
+
+        #expect(decoded == wishlist)
+        #expect(decoded.kind == .wishlist)
+        // Not zero, not "0000-00": the fields a visit would fill stay empty across the wire.
+        #expect(decoded.visitCount == nil)
+        #expect(decoded.lastVisitedMonth == nil)
+    }
+
+    @Test("a stamp from a build that never heard of kinds decodes as a visit")
+    func legacyStampDecodesAsVisited() throws {
+        // Exactly what a pre-ADR-010 build emits: no `kind` key at all.
+        let json = """
+        {"placeID":"\(UUID().uuidString)","placeName":"Phở Thìn","latitude":21.0181,
+         "longitude":105.8554,"averageRating":4.5,"visitCount":3,
+         "lastVisitedMonth":"2026-08","version":"v1"}
+        """
+        let decoded = try #require(
+            try JSONDecoder().decode(WireStamp.self, from: Data(json.utf8)).domain
+        )
+
+        #expect(decoded.kind == .visited)
+        #expect(decoded.visitCount == 3)
+    }
 
     @Test("nothing travels that the stamp table does not permit")
     func wireFormatMatchesTheTable() throws {

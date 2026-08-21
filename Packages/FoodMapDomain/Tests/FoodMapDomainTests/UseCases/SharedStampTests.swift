@@ -61,7 +61,7 @@ struct SharedStampTests {
         let fields = Set(Mirror(reflecting: stamp).children.compactMap(\.label))
 
         #expect(fields == [
-            "placeID", "placeName", "coordinate", "providerPlaceID", "averageRating",
+            "placeID", "placeName", "coordinate", "providerPlaceID", "kind", "averageRating",
             "visitCount", "latestDish", "lastVisitedMonth", "note", "thumbnailHash", "version"
         ])
     }
@@ -85,11 +85,42 @@ struct SharedStampTests {
         let place = richPlace()
         let stamp = try #require(sut.execute(place: place, settings: shared(place)))
 
-        #expect(stamp.lastVisitedMonth.description == "2026-08")
+        #expect(stamp.lastVisitedMonth?.description == "2026-08")
         // Structural, not incidental: there is no `Date` anywhere in a stamp, so no future edit
         // can put a day back in.
         let dates = Mirror(reflecting: stamp).children.filter { $0.value is Date }
         #expect(dates.isEmpty)
+    }
+
+    @Test("TC-9-17 a wishlist place travels as a wishlist place, with nothing invented")
+    func TC_9_17_wishlistTravels() throws {
+        // No meals: this is somewhere the reader means to go, not somewhere they have been.
+        let place = Fixture.place(name: "Chả Cá Thăng Long", at: Fixture.hanoiOldQuarter)
+        let stamp = try #require(sut.execute(place: place, settings: shared(place)))
+
+        #expect(stamp.kind == .wishlist)
+        #expect(stamp.placeName == "Chả Cá Thăng Long")
+        // Nil, not zero and not a default. "0 visits" and "not that kind of place" are different
+        // claims, and only one of them is true (ADR-010).
+        #expect(stamp.visitCount == nil)
+        #expect(stamp.lastVisitedMonth == nil)
+        #expect(stamp.averageRating == nil)
+        #expect(stamp.latestDish == nil)
+    }
+
+    @Test("TC-9-17 the kind is in the version, so moving a place from wishlist to visited syncs")
+    func TC_9_17_kindIsVersioned() throws {
+        let id = UUID()
+        let wishlist = Fixture.place(id: id, name: "Chả Cá", at: Fixture.hanoiOldQuarter)
+        var visited = wishlist
+        visited.meals = [Fixture.meal(photos: [])]
+
+        let before = try #require(sut.execute(place: wishlist, settings: shared(wishlist)))
+        let after = try #require(sut.execute(place: visited, settings: shared(visited)))
+
+        #expect(before.kind == .wishlist)
+        #expect(after.kind == .visited)
+        #expect(before.version != after.version)
     }
 
     @Test("TC-9-05 the average is to the half star, and unrated meals are ignored")
@@ -252,14 +283,12 @@ struct SharedStampTests {
         #expect(!plan.placeIDs.contains(alreadyShared.id))
     }
 
-    @Test("a wishlist place has no stamp — there is no meal to describe")
-    func wishlistPlacesAreNotStamps() {
-        let wishlist = Fixture.place(meals: [])
-
-        #expect(sut.execute(
-            place: wishlist,
-            settings: SharingSettings(sharedPlaceIDs: [wishlist.id])
-        ) == nil)
+    @Test("an unshared place has no stamp, whatever kind it is")
+    func unsharedPlacesAreNotStamps() {
+        // ADR-009 refused a wishlist place outright; ADR-010 lets it travel, so consent is now
+        // the only thing standing between a place and the radio. This is that check.
+        #expect(sut.execute(place: Fixture.place(meals: []), settings: SharingSettings()) == nil)
+        #expect(sut.execute(place: richPlace(), settings: SharingSettings()) == nil)
     }
 
     @Test("two places with identical content still have distinct stamps")
@@ -279,12 +308,12 @@ struct SharedStampTests {
         let id = UUID()
         let month = YearMonth(year: 2026, month: 8)
         let a = SharedStamp.canonicalPayload(
-            placeID: id, placeName: "Phở", coordinate: Fixture.phoThin, providerPlaceID: "Thìn",
+            placeID: id, placeName: "Phở", coordinate: Fixture.phoThin, providerPlaceID: "Thìn", kind: .visited,
             averageRating: nil, visitCount: 1, latestDish: nil, lastVisitedMonth: month,
             note: nil, thumbnailHash: nil
         )
         let b = SharedStamp.canonicalPayload(
-            placeID: id, placeName: "PhởThìn", coordinate: Fixture.phoThin, providerPlaceID: "",
+            placeID: id, placeName: "PhởThìn", coordinate: Fixture.phoThin, providerPlaceID: "", kind: .visited,
             averageRating: nil, visitCount: 1, latestDish: nil, lastVisitedMonth: month,
             note: nil, thumbnailHash: nil
         )

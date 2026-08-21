@@ -42,29 +42,36 @@ public struct BuildSharedStampUseCase: Sendable {
         self.digest = digest
     }
 
-    /// Returns nil for a place the reader has not shared, and for one with no visits — a wishlist
-    /// place has nothing to say about a meal nobody has eaten.
+    /// Returns nil only for a place the reader has not shared.
+    ///
+    /// ADR-010: a wishlist place travels too. It carries strictly less than a visited one — no
+    /// rating, no count, no dish, no month, because none of those exist for somewhere nobody has
+    /// been — so the branch here is not a special case bolted on, it is the same projection with
+    /// the visit half absent.
     public func execute(place: Place, settings: SharingSettings) -> SharedStamp? {
         guard settings.shares(place.id) else { return nil }
         let visits = place.mealsNewestFirst
-        guard let latest = visits.first else { return nil }
+        let latest = visits.first
 
         // Note the fields that are *not* read: `meal.price`, `meal.rating` individually,
         // `meal.eatenAt` as a date, `photo.coordinate`, `photo.takenAt`, `photo.filename`.
         // The photo's own coordinate in particular is never the stamp's coordinate — that would
         // ship the precise spot a reader stood to take a picture (TC-9-09).
-        let month = YearMonth(latest.eatenAt)
+        let month = latest.map { YearMonth($0.eatenAt) }
         let note = settings.sharesNote(for: place.id) ? place.note : nil
         let thumbnailHash = place.pinPhoto.map { digest.digest(Data($0.thumbnailFilename.utf8)) }
+        let rating = Self.toHalfStar(place.averageRating)
+        let count = latest == nil ? nil : visits.count
 
         let payload = SharedStamp.canonicalPayload(
             placeID: place.id,
             placeName: place.name,
             coordinate: place.coordinate,
             providerPlaceID: place.providerPlaceID,
-            averageRating: Self.toHalfStar(place.averageRating),
-            visitCount: visits.count,
-            latestDish: latest.dishName,
+            kind: place.kind,
+            averageRating: rating,
+            visitCount: count,
+            latestDish: latest?.dishName,
             lastVisitedMonth: month,
             note: note,
             thumbnailHash: thumbnailHash
@@ -75,9 +82,10 @@ public struct BuildSharedStampUseCase: Sendable {
             placeName: place.name,
             coordinate: place.coordinate,
             providerPlaceID: place.providerPlaceID,
-            averageRating: Self.toHalfStar(place.averageRating),
-            visitCount: visits.count,
-            latestDish: latest.dishName,
+            kind: place.kind,
+            averageRating: rating,
+            visitCount: count,
+            latestDish: latest?.dishName,
             lastVisitedMonth: month,
             note: note,
             thumbnailHash: thumbnailHash,

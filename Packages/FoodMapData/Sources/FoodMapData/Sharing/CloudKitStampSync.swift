@@ -213,10 +213,13 @@ struct WireStamp: Codable, Equatable {
     let latitude: Double
     let longitude: Double
     let providerPlaceID: String?
+    /// Optional on the wire, not in the domain: a build predating ADR-010 sends no kind at all,
+    /// and one of its stamps is always a visited one, which `domain` recovers below.
+    let kind: String?
     let averageRating: Double?
-    let visitCount: Int
+    let visitCount: Int?
     let latestDish: String?
-    let lastVisitedMonth: String
+    let lastVisitedMonth: String?
     let note: String?
     let thumbnailHash: String?
     let version: String
@@ -227,27 +230,38 @@ struct WireStamp: Codable, Equatable {
         latitude = stamp.coordinate.latitude
         longitude = stamp.coordinate.longitude
         providerPlaceID = stamp.providerPlaceID
+        kind = stamp.kind.rawValue
         averageRating = stamp.averageRating
         visitCount = stamp.visitCount
         latestDish = stamp.latestDish
-        lastVisitedMonth = stamp.lastVisitedMonth.description
+        lastVisitedMonth = stamp.lastVisitedMonth?.description
         note = stamp.note
         thumbnailHash = stamp.thumbnailHash
         version = stamp.version
     }
 
     var domain: SharedStamp? {
-        let parts = lastVisitedMonth.split(separator: "-")
-        guard parts.count == 2, let year = Int(parts[0]), let month = Int(parts[1]) else { return nil }
+        var month: YearMonth?
+        if let text = lastVisitedMonth {
+            let parts = text.split(separator: "-")
+            guard parts.count == 2, let year = Int(parts[0]), let value = Int(parts[1]) else {
+                return nil
+            }
+            month = YearMonth(year: year, month: value)
+        }
+        // A stamp with a visit count but no kind came from a build that could only send visits.
+        let resolvedKind = kind.flatMap(PlaceKind.init(rawValue:))
+            ?? (visitCount == nil ? .wishlist : .visited)
         return SharedStamp(
             placeID: placeID,
             placeName: placeName,
             coordinate: Coordinate(latitude: latitude, longitude: longitude),
             providerPlaceID: providerPlaceID,
+            kind: resolvedKind,
             averageRating: averageRating,
             visitCount: visitCount,
             latestDish: latestDish,
-            lastVisitedMonth: YearMonth(year: year, month: month),
+            lastVisitedMonth: month,
             note: note,
             thumbnailHash: thumbnailHash,
             version: version

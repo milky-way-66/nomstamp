@@ -42,7 +42,7 @@ struct BuildMapPinsUseCaseTests {
 
         #expect(clusters.count == 1)
         #expect(clusters[0].places.count == 1)
-        #expect(clusters[0].places[0].meals.count == 2)
+        #expect(clusters[0].places[0].mine?.meals.count == 2)
     }
 
     @Test("TC-2-03 visited and wishlist places are distinguishable")

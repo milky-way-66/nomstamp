@@ -224,10 +224,11 @@ extension Fixture {
         name: String = "Phở Thìn",
         at coordinate: Coordinate = phoThin,
         providerPlaceID: String? = nil,
+        kind: PlaceKind = .visited,
         averageRating: Double? = 4.5,
-        visitCount: Int = 1,
+        visitCount: Int? = 1,
         latestDish: String? = nil,
-        month: YearMonth = YearMonth(year: 2026, month: 8),
+        month: YearMonth? = YearMonth(year: 2026, month: 8),
         note: String? = nil,
         thumbnailHash: String? = nil,
         version: String = "v1"
@@ -237,12 +238,28 @@ extension Fixture {
             placeName: name,
             coordinate: coordinate,
             providerPlaceID: providerPlaceID,
+            kind: kind,
             averageRating: averageRating,
             visitCount: visitCount,
             latestDish: latestDish,
             lastVisitedMonth: month,
             note: note,
             thumbnailHash: thumbnailHash,
+            version: version
+        )
+    }
+
+    /// A friend's wishlist stamp: the kind, and nothing the reader could mistake for a visit.
+    static func wishlistStamp(
+        placeID: UUID = UUID(),
+        name: String = "Chả Cá Thăng Long",
+        at coordinate: Coordinate = hanoiOldQuarter,
+        providerPlaceID: String? = nil,
+        version: String = "v1"
+    ) -> SharedStamp {
+        sharedStamp(
+            placeID: placeID, name: name, at: coordinate, providerPlaceID: providerPlaceID,
+            kind: .wishlist, averageRating: nil, visitCount: nil, latestDish: nil, month: nil,
             version: version
         )
     }

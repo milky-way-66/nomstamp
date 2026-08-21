@@ -235,9 +235,9 @@ domain, where it can be proved in milliseconds — not in a transport adapter wh
 | TC-10-02 | U | main | Given a friend stamp sharing a `providerPlaceID` with one of my places, then they resolve to one pin | **auto** |
 | TC-10-03 | U | main | Given a friend stamp with no provider id, 30 m away and named without diacritics, then it still matches my place | **auto** |
 | TC-10-04 | U | main | Given a friend stamp matching nothing of mine, then it stands as its own pin in that friend's ink | **auto** |
-| TC-10-05 | U | main | Given a place both of us have stamped, then one pin carries my stamp and one countersign | **auto** |
-| TC-10-06 | U | main | Given a place five friends have all stamped, then the pin shows one countersign and a remainder of four — never five overlapping stamps | **auto** |
-| TC-10-07 | U | main | Given several friends on one place, then the countersign drawn is the lowest occupied ink slot, so it does not change between syncs | **auto** |
+| TC-10-05 | U | main | Given a place both of us have stamped, then it is one pin, drawn exactly as my own, and the friend who countersigned it is named in the detail | **auto** |
+| TC-10-06 | U | main | Given a place five friends have all stamped, then it is still one pin, and all five are carried to the detail rather than one plus a numeral | **auto** |
+| TC-10-07 | U | main | Given several friends on one place, then they are ordered by lowest occupied ink slot, so the detail does not reshuffle between syncs | **auto** |
 | TC-10-08 | U | 2a | Given Lan was last reached on 12 August, then every stamp of hers reads as of 12 August — the date belongs to the friend and appears on no individual pin | **auto** |
 | TC-10-09 | U | 2b | Given stamps received since the reader last looked, then those and only those are marked fresh, and the mark decays with age | **auto** |
 | TC-10-10 | U | E1 | Given a friend who cannot be reached, then their stamps are kept, no error is produced, and only the date goes stale | **auto** |
