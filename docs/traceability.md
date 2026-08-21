@@ -15,7 +15,7 @@ tests, 14 e2e journeys** — 125 domain, 42 data, 21 design.
 | | UC-5 Near me | FR-6.1 … FR-6.5 | TC-5-01 … TC-5-05 | `FindPlacesNearbyUseCase` |
 | *(bridge between US-3 and US-1)* | UC-6 Wishlist → visited | FR-8.1 … FR-8.4 | TC-6-01 … TC-6-05 | `Place.kind` (derived) |
 | **US-1** remember which meals were good | UC-7 Rate a meal | FR-9.1 … FR-9.5 | TC-7-01 … TC-7-06 | `RateMealUseCase`, `Place.averageRating`, `StarRatingView` |
-| **US-4** see where my friends have eaten | UC-8 Connect a friend | FR-10.1 … FR-10.13 | TC-8-01 … TC-8-11, TC-8-14 … TC-8-17 | `ConnectFriendUseCase`, `FriendCircle`, `FriendKey`, `VerificationWord`, `ProximityProof`, `BluetoothPresence`, `PresenceRegistry` |
+| **US-4** see where my friends have eaten | UC-8 Connect a friend | FR-10.1 … FR-10.13 | TC-8-01 … TC-8-11, TC-8-14 … TC-8-18 | `ConnectFriendUseCase`, `FriendCircle`, `FriendKey`, `VerificationWord`, `ProximityProof`, `BluetoothPresence`, `PresenceRegistry` |
 | | UC-9 Share a place | FR-11.1 … FR-11.6, FR-13.3a … FR-13.3c | TC-9-01 … TC-9-15 | `BuildSharedStampUseCase`, `SharedStamp`, `YearMonth`, `SharingSettings` |
 | | UC-10 Friends on the map | FR-12.1 … FR-12.8, FR-13.1 … FR-13.6 | TC-10-01 … TC-10-16, TC-N-25 … TC-N-27 | `MergeFriendStampsUseCase`, `ReconcileManifestUseCase`, `FriendsLayer`, `FriendInk`, `StampEdge` |
 
@@ -31,6 +31,24 @@ TC-8-12 being unautomatable is what let the connect ceremony ship without anyone
 `BluetoothPresence.begin()`: every layer was green and no phone had ever seen another. TC-8-14 …
 TC-8-17 exist to pull the parts of that failure a single process *can* check — the lifecycle, the
 reason a room looks empty, the name that arrives one packet late — back inside the automated set.
+
+**What is still unverified, stated plainly.** No CoreBluetooth call in this app has ever executed
+against a real radio. The simulator has none, so the journeys run against `StubProximity` and the
+data suite tests the bookkeeping either side of the radio, never the radio itself. Nothing below
+has been observed even once:
+
+| Step | Verified by |
+|---|---|
+| Opening *Add friend* starts discovery at all | TC-8-18, against a stub that reports `.unsupported` until begun — it fails if `begin()` is removed |
+| An advertisement is emitted that another phone can see | nothing — needs TC-8-12 |
+| A scan discovers that advertisement, and within seconds rather than minutes | nothing — needs TC-8-12 |
+| The name survives the 31-byte advert / scan-response split on real hardware | `PresenceRegistry` unit tests cover the *rule*, not that the packets split as expected |
+| `connect` → service → characteristic → key read completes | nothing — needs TC-8-12 |
+| Both phones derive the same four letters | TC-8-06 covers the derivation; that both phones reach it, nothing |
+| -70 dBm is the right floor for a table | nothing — OPEN-13 |
+
+Until someone runs TC-8-12, "the friends feature is built at every layer" means the code exists and
+its parts are tested, **not** that two people have ever connected.
 
 Everything else: none open. The e2e layer covers every use case: TC-1-14, TC-1-19, TC-2-10, TC-4-09, TC-5-06,
 TC-6-05 and TC-7-06, plus the non-functional journeys TC-N-01, TC-N-06, TC-N-10 and TC-N-11.

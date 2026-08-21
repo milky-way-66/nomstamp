@@ -49,6 +49,29 @@ final class FriendsJourneyTests: XCTestCase {
         )
     }
 
+    /// TC-8-18 — the ceremony's first step, which nothing opened until it was found broken.
+    ///
+    /// A simulator has no radio, so this cannot prove that a phone is discovered. What it does
+    /// prove is the part that was actually wrong: that opening the screen *starts* discovery and
+    /// the polling loop runs against it. Under `-UITestMode` the port is `StubProximity`, which
+    /// reports a working radio and an empty room — so the looking copy is what a passing run
+    /// shows, and the radio apologies are the one branch left to TC-8-16 and TC-8-12.
+    func test_TC_8_18_openingAddFriendStartsLookingForPhones() {
+        let app = AppLauncher.launch(seeded: true)
+
+        app.buttons["friendsLayerToggle"].tapWhenReady()
+        app.buttons["Add friend"].tapWhenReady()
+
+        XCTAssertTrue(
+            app.staticTexts["Looking for phones in the room…"].waitForExistence(timeout: 10),
+            "Add friend opened without ever starting to look — the exact shape of the bug where "
+                + "nothing called begin() and both phones searched an empty dictionary forever"
+        )
+        // Nobody is in the room, so the apology for a broken radio must not be what is shown.
+        XCTAssertFalse(app.staticTexts["Bluetooth is off"].exists)
+        XCTAssertFalse(app.staticTexts["Nomstamp can't use Bluetooth"].exists)
+    }
+
     /// FR-10.8 — a full circle, and an empty one, are both explanations rather than errors.
     func test_theFriendsScreenOpensFromAnEmptyMap() {
         let app = AppLauncher.launch(seeded: true)

@@ -27,11 +27,14 @@ public struct ProximityProof: Equatable, Sendable {
     /// Provisional, and openly so: OPEN-13 is an afternoon's measurement at a real table. It is a
     /// named constant rather than a literal precisely so the spike has one place to land.
     ///
-    /// It started at -55, which was wrong in the direction that matters: two iPhones a table's
-    /// width apart read in the -60s as soon as a hand, a menu or a body is between them, so the
-    /// gate refused the exact gesture it was built for and said *they moved out of range* to two
-    /// people sitting together. -70 still sits far above a phone at the other end of a restaurant,
-    /// which reads -85 and worse.
+    /// It started at -55, which is probably wrong in the direction that matters: published BLE
+    /// link budgets put two iPhones a table's width apart in the -60s once a hand, a menu or a
+    /// body is between them, which would have the gate refuse the exact gesture it was built for
+    /// and say *they moved out of range* to two people sitting together. -70 still sits far above
+    /// a phone at the other end of a restaurant, which reads -85 and worse.
+    ///
+    /// Both numbers are guesses. Nobody has yet held two phones at a table and read the meter —
+    /// that is what OPEN-13 is, and it is still owed.
     public static let signalFloor = -70
     public static let rangeCeilingMetres = 1.0
 

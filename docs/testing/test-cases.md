@@ -192,6 +192,7 @@ reader sees is the one the reader wrote.
 | TC-8-15 | U | main | Given a begun presence, when it ends, then the advertisement stops, what was seen is forgotten, and anyone mid-exchange is told they are gone | **auto** |
 | TC-8-16 | U | E3 | Given a radio that is off or unauthorised, when the screen looks for phones, then it reports *unavailable* with the reason, rather than an empty room | **auto** |
 | TC-8-17 | U | main | Given an advertisement whose local name arrived in an earlier packet and not this one, when it is seen again, then the reader keeps the name already known instead of vanishing from the list | **auto** |
+| TC-8-18 | E | main | Given the friends screen, when *Add friend* is opened, then discovery is started and the screen says it is looking — the ceremony's first step runs, rather than being a screen no test has ever opened | **auto** |
 
 ---
 

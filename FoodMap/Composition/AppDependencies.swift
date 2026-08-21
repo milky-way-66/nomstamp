@@ -248,13 +248,20 @@ enum UIDeviceName {
 /// No radio, and nobody in the room. UI journeys exercise the friends surfaces against a circle
 /// seeded directly, not against a ceremony that cannot happen in a simulator (TC-8-12 stays an
 /// on-device case for exactly this reason).
-struct StubProximity: ProximityPort, PeerHandshakePort {
-    func begin() {}
-    func end() {}
+final class StubProximity: ProximityPort, PeerHandshakePort, @unchecked Sendable {
+    private let lock = NSLock()
+    private var running = false
+
+    func begin() { lock.withLock { running = true } }
+    func end() { lock.withLock { running = false } }
     func nearbyReaders() async throws -> [NearbyReader] { [] }
-    /// `.searching`, not `.unsupported`: a journey asserting on the *looking* copy must see the
-    /// screen a reader with a working radio sees, not the apology for a simulator.
-    func availability() async -> ProximityAvailability { .searching }
+
+    /// The one part of the real adapter this stub must keep: a radio nobody started reports
+    /// `.unsupported`, not an empty room. Without that, TC-8-18 would pass against a screen that
+    /// never calls `begin()` — which is precisely the bug it exists to catch.
+    func availability() async -> ProximityAvailability {
+        lock.withLock { running } ? .searching : .unsupported
+    }
     func exchange(with reader: NearbyReader) async throws -> HandshakeResult {
         throw HandshakeFailure.unsupported
     }

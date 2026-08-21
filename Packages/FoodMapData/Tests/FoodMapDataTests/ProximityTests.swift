@@ -112,8 +112,9 @@ struct ProximityTests {
 
     @Test("Two phones on a table pass the gate, and the next table does not")
     func theGateFitsATable() {
-        // OPEN-13's afternoon: phone-to-phone across a table reads in the -60s once a hand or a
-        // body is in the way. A floor tighter than that refuses the very gesture it exists for.
+        // Guards the floor against being tightened back without the measurement. The -62 here is
+        // where published BLE link budgets put two phones a table apart with a hand in the way —
+        // it is not a reading anyone took, and OPEN-13 is still owed an afternoon with a meter.
         #expect(ProximityProof(signalStrength: -62).isCloseEnough)
         #expect(!ProximityProof(signalStrength: -85).isCloseEnough)
     }
