@@ -316,7 +316,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-28 | U | ADR-003, NFR-6.4 | Given the night palette, then the page and a card separate as two surfaces, no ink glares against the page, and every stamp paper clears the component floor on both grounds | **auto** |
 | TC-N-27 | U | ADR-010, NFR-6.3 | Given the eight friend inks, then each has a distinct word, so whose a stamp is can always be said rather than only shown | **auto** |
 | TC-N-30 | U | NFR-4.5, NFR-5.1 | Given the shipped string catalogue, then every key has a Vietnamese unit and no two keys share an English value — one idea has one string | **auto** |
-| TC-N-31 | U | NFR-5.5 | Given every Vietnamese value, then none uses the `được … bởi` passive and none calls Bluetooth `sóng` | **auto** |
+| TC-N-31 | U | NFR-5.5 | Given every Vietnamese value, then none uses the `được … bởi` passive, none states a phone's radio as a bare `sóng`, and every stamp is a `tem` rather than a `dấu` | **auto** |
 | TC-N-32 | U | NFR-4.6 | Given every error and empty-state string, then each names an action the reader can take rather than ending at the failure | **auto** |
 | TC-N-33 | U | NFR-4.5 | Given the lexicon of the voice note, then no shipped string uses a retired synonym | **auto** |
 

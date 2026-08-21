@@ -32,7 +32,7 @@ session is built on — the following are all true:
   preference; it is a bug, and it silently damages stored photographs.
 - **A failed capture is silent.** `guard let data = photo.fileDataRepresentation() else { return }`
   — the delegate returns, no callback fires, and the reader sees a shutter that did nothing
-  (`InAppCamera.swift:96`). NFR-4.4 requires an error to say what happened; this one says nothing.
+  (`InAppCamera.swift:99`). NFR-4.4 requires an error to say what happened; this one says nothing.
 - **The shutter gives no feedback.** No haptic, no flash, no sound. On a device whose shutter is a
   drawn white circle rather than a physical button, nothing confirms the photograph was taken.
 

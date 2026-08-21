@@ -50,7 +50,7 @@ the specification was wrong, the document is corrected first — never left to d
 | Test totals | 273 automated, all passing — 145 domain, 24 design, 72 data, 32 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
 | Friends | **built and green, mid-redesign** — ADR-009 for the transport and ceremony; **ADR-010 amends what the map draws**: a friend's place is drawn exactly as the reader's own, their wishlist travels too, provenance moves to the place page, and the filter gains a kind. Documents are corrected; the domain and interface are **not yet changed**. The radio path still has no field evidence — TC-8-12 and OPEN-13 are owed |
-| Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01. **Voice, lexicon and the Vietnamese rewrite specified** (voice note 21 Aug, NFR-4.5 … NFR-4.7, NFR-5.5); 31 strings await the edit |
+| Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01. **Voice, lexicon and the Vietnamese rewrite specified** (voice note 21 Aug, NFR-4.5 … NFR-4.7, NFR-5.5); 35 strings await the edit |
 | Camera | **specified, not built** — ADR-011: front camera, lens discovery for macro, zoom, tap-to-focus, torch, orientation, shutter feedback, and a capture that stops failing silently (FR-14) |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | **built and running** — 6 screens, verified in the simulator, light and dark |
