@@ -186,7 +186,7 @@ reader sees is the one the reader wrote.
 | TC-8-09 | U | E1 | Given a proximity proof whose signal is weaker than the floor, when it is executed, then it is refused | **auto** |
 | TC-8-10 | U | 2a | Given a friend with stamps on the map, when they are removed, then their stamps are gone, the connection is revoked and their ink slot is free for the next friend | **auto** |
 | TC-8-11 | U | main | Given a first connection, when it completes, then the friend's `lastReachedAt` is the clock's now, not nil | **auto** |
-| TC-8-12 | E | main | Given two stubbed devices in range, when both confirm the word and name each other, then each map shows the other's shared stamps before the screen closes | spec |
+| TC-8-12 | E | main | Given two stubbed devices in range, when both confirm the word and name each other, then each map shows the other's shared stamps before the screen closes | spec — most of it is checkable today with one Mac, see `radio-check.md`; a simulator cannot help, it has no radio at all |
 | TC-8-13 | I | 1b | Given no iCloud account, when the friends screen opens, then it explains and offers a way forward, and every other screen behaves exactly as before | spec |
 | TC-8-14 | U | main | Given a presence that has never been begun, when readers are asked for, then none are returned — and beginning is what makes a scan happen at all | **auto** |
 | TC-8-15 | U | main | Given a begun presence, when it ends, then the advertisement stops, what was seen is forgotten, and anyone mid-exchange is told they are gone | **auto** |

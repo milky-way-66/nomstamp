@@ -50,6 +50,11 @@ has been observed even once:
 Until someone runs TC-8-12, "the friends feature is built at every layer" means the code exists and
 its parts are tested, **not** that two people have ever connected.
 
+Most of that table can be filled in today, with one Mac and one phone rather than two phones —
+`docs/testing/radio-check.md` and `Tools/PeerProbe.swift`. What cannot be: a simulator has no
+Bluetooth radio behind it at all, reporting `unsupported` and `XPC connection invalid`, so no
+arrangement of simulators will ever exercise any of it.
+
 Everything else: none open. The e2e layer covers every use case: TC-1-14, TC-1-19, TC-2-10, TC-4-09, TC-5-06,
 TC-6-05 and TC-7-06, plus the non-functional journeys TC-N-01, TC-N-06, TC-N-10 and TC-N-11.
 
