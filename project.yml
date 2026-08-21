@@ -21,10 +21,14 @@ settings:
     CURRENT_PROJECT_VERSION: "8"
   # Simulator builds and the test suites need no developer account; a Release archive for
   # TestFlight must be signed. See docs/deployment/testflight.md.
+  # Scoped to the simulator, not to Debug as a whole. Unscoped, these two switch signing off for
+  # every Debug build including one aimed at a phone, which is how a Debug build for a device fails
+  # to install — and a device is the only place the connect ceremony can be tested at all
+  # (docs/testing/radio-check.md).
   configs:
     Debug:
-      CODE_SIGNING_REQUIRED: NO
-      CODE_SIGNING_ALLOWED: NO
+      "CODE_SIGNING_REQUIRED[sdk=iphonesimulator*]": NO
+      "CODE_SIGNING_ALLOWED[sdk=iphonesimulator*]": NO
 targets:
   FoodMap:
     type: application
