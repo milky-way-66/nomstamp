@@ -8,11 +8,11 @@ tests, 32 e2e journeys** — 145 domain, 72 data, 24 design.
 
 | Story | Use case | Requirements | Automated tests | Implementation |
 |---|---|---|---|---|
-| **US-1** photograph the food I eat | UC-1 Log a meal | FR-1.1 … FR-1.17, FR-2.1 … FR-2.4, **FR-14.1 … FR-14.11** | TC-1-01 … TC-1-31 | `LogMealUseCase`, `SuggestMealContextUseCase`, `SuggestMealPlaceUseCase`, `LocationFixResolver`, `ImageMetadataReader`, `InAppCameraView` |
-| **US-2** see my food on a map | UC-2 Browse the map | FR-3.1 … FR-3.9 | TC-2-01 … TC-2-09 | `BuildMapPinsUseCase`, `PlaceClusterer` |
+| **US-1** photograph the food I eat | UC-1 Log a meal | FR-1.1 … FR-1.17, FR-2.1 … FR-2.4, **FR-14.1 … FR-14.11** | TC-1-01 … TC-1-31 | `LogMealUseCase`, `SuggestMealContextUseCase`, `SuggestMealPlaceUseCase`, `LocationFixResolver`, `ImageMetadataReader`, `InAppCameraView`, `CameraSession`, `CameraLensPolicy`, `CaptureRotation` |
+| **US-2** see my food on a map | UC-2 Browse the map | FR-3.1 … FR-3.11 | TC-2-01 … TC-2-12 | `BuildMapPinsUseCase`, `PlaceClusterer`, `MapScreen` |
 | | UC-3 Place detail | FR-4.1 … FR-4.5 | TC-3-01 … TC-3-03 | `Place.mealsNewestFirst`, `DeleteMealUseCase` |
 | **US-3** save a place I heard about | UC-4 Save a place | FR-5.1 … FR-5.6, FR-7.1 … FR-7.5 | TC-4-01 … TC-4-08 | `SavePlaceUseCase`, `PlaceMatcher`, `AppleMapsPlaceSearchAdapter` |
-| | UC-5 Near me | FR-6.1 … FR-6.5 | TC-5-01 … TC-5-05 | `FindPlacesNearbyUseCase` |
+| | UC-5 Near me | FR-6.1 … FR-6.6 | TC-5-01 … TC-5-05, TC-1-35 … TC-1-37 | `FindPlacesNearbyUseCase`, `LocationFixResolver`, `CoreLocationAdapter` |
 | *(bridge between US-3 and US-1)* | UC-6 Wishlist → visited | FR-8.1 … FR-8.4 | TC-6-01 … TC-6-05 | `Place.kind` (derived) |
 | **US-1** remember which meals were good | UC-7 Rate a meal | FR-9.1 … FR-9.5 | TC-7-01 … TC-7-06 | `RateMealUseCase`, `Place.averageRating`, `StarRatingView` |
 | **US-4** see where my friends have eaten | UC-8 Connect a friend | FR-10.1 … FR-10.13 | TC-8-01 … TC-8-11, TC-8-14 … TC-8-18 | `ConnectFriendUseCase`, `FriendCircle`, `FriendKey`, `VerificationWord`, `ProximityProof`, `BluetoothPresence`, `PresenceRegistry` |
