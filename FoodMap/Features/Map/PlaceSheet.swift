@@ -79,9 +79,13 @@ struct PlaceSheet: View {
                 case .savePlace:
                     SavePlaceView(dependencies: dependencies) { model.refresh() }
                 case .cluster(let cluster):
-                    ClusterSheet(cluster: cluster, dependencies: dependencies, model: model) { place in
+                    ClusterSheet(cluster: cluster, dependencies: dependencies, model: model) { pin in
                         model.action = nil
-                        model.placeToOpen = place
+                        if let mine = pin.mine {
+                            model.placeToOpen = mine
+                        } else {
+                            model.friendPinToOpen = pin
+                        }
                     }
                 case .nearMe:
                     NearMeView(dependencies: dependencies) { place in

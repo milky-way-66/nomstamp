@@ -309,7 +309,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-25 | U | ADR-009, NFR-6.4 | Given the plate of eight friend inks, then each clears the contrast floor over paper in both appearances, and no two are the same ink | **auto** |
 | TC-N-26 | U | ADR-009 | Given the plate of eight, then it is identical under every skin — a friend's ink is not re-inked by the weather | **auto** |
 | TC-N-28 | U | ADR-003, NFR-6.4 | Given the night palette, then the page and a card separate as two surfaces, no ink glares against the page, and every stamp paper clears the component floor on both grounds | **auto** |
-| TC-N-27 | U | ADR-009, NFR-6.3 | Given a reader's stamp and a friend's, then they differ by cut as well as by colour, so the map answers *mine or theirs* without colour | **auto** |
+| TC-N-27 | U | ADR-010, NFR-6.3 | Given the eight friend inks, then each has a distinct word, so whose a stamp is can always be said rather than only shown | **auto** |
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
 bound the work per frame, as TC-N-03 does, but only a device measurement can prove 55 fps), and

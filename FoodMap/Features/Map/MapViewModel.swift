@@ -35,6 +35,12 @@ final class MapViewModel {
     /// of a cluster. The sheet consumes it and pushes the place (FR-3.10).
     var placeToOpen: Place?
 
+    /// A friend's place chosen out of a cluster. Separate from `placeToOpen` because it has no
+    /// page in the reader's own journal — the pins are identical, and the difference appears
+    /// only once the reader has asked (ADR-010).
+    var friendPinToOpen: MapPlace?
+
+
     /// Which of the map's floating actions is open. It lives here rather than in `MapScreen`
     /// because the map is already presenting the bottom sheet and cannot present a second one;
     /// the sheet itself does the presenting, and observes this.
@@ -63,7 +69,17 @@ final class MapViewModel {
     func refresh() {
         do {
             allPlaces = try dependencies.places.allPlaces()
-            clusters = try dependencies.buildPins.execute(bounds: bounds, filter: filter)
+            // The friends layer is an input to the pin pipeline, not an overlay on top of it
+            // (ADR-010). With the layer off `visibleStamps` is empty and this is the map as it
+            // has always been.
+            let friends = dependencies.friends
+            clusters = try dependencies.buildPins.execute(
+                bounds: bounds,
+                filter: filter,
+                friendStamps: friends.visibleStamps,
+                circle: friends.circle,
+                layerEnabled: friends.layerEnabled
+            )
         } catch {
             errorMessage = "Could not load your map: \(error.localizedDescription)"
         }

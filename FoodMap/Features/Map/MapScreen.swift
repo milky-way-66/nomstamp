@@ -58,6 +58,21 @@ struct MapScreen: View {
             .presentationDragIndicator(.visible)
             .interactiveDismissDisabled()
         }
+        // The legend is a filter on the pins now, not on an overlay drawn above them, so every
+        // one of these has to reach the pipeline that builds the clusters (ADR-010, FR-12.11).
+        .onChange(of: dependencies.friends.layerEnabled) { _, _ in model.refresh() }
+        .onChange(of: dependencies.friends.visibility) { _, _ in model.refresh() }
+        .onChange(of: dependencies.friends.stamps) { _, _ in model.refresh() }
+        .onChange(of: model.friendPinToOpen) { _, pin in
+            guard let pin else { return }
+            friendPlace = MapStampGroup(
+                ownPlace: nil,
+                friendStamps: pin.friendStamps,
+                coordinate: pin.coordinate,
+                name: pin.name
+            )
+            model.friendPinToOpen = nil
+        }
         .onChange(of: selectedPinID) { _, id in
             guard let id, let cluster = model.clusters.first(where: { $0.id == id }) else { return }
             select(cluster)
@@ -82,28 +97,47 @@ struct MapScreen: View {
         dependencies.friends.groups(for: model.allPlaces)
     }
 
-    /// Places only a friend has stamped — pins that would not exist without the layer.
-    private var friendOnlyGroups: [MapStampGroup] {
-        friendGroups.filter { $0.ownPlace == nil }
-    }
-
+    /// Who else has stamped this pin, where the pin is one of the reader's own.
     private func countersign(for cluster: PlaceCluster) -> MapStampGroup? {
-        // A cluster of several places has no single countersign to draw; the sheet lists them.
-        guard cluster.isSingle, let place = cluster.representative else { return nil }
-        return friendGroups.first { $0.ownPlace?.id == place.id && !$0.friendStamps.isEmpty }
+        // A cluster of several places has no single set of friends to name; the sheet lists them.
+        guard cluster.isSingle, let place = cluster.representative, let mine = place.mine
+        else { return nil }
+        return friendGroups.first { $0.ownPlace?.id == mine.id && !$0.friendStamps.isEmpty }
     }
 
-    /// The pin's own sentence, plus the countersign where there is one. *We have both been here*
-    /// is the moment the feature exists for, and until now it was drawn on the pin and said to
-    /// nobody (FR-12.10, TC-10-19).
+    /// The pin's own sentence, plus whose it is.
+    ///
+    /// ADR-010 moved provenance off the drawing and into the detail — which would have taken it
+    /// away from a reader who cannot see the drawing either. So it stays here in full: the map is
+    /// silent about whose a place is, and VoiceOver is not (FR-12.10, NFR-6.3, TC-10-19).
     private func pinDescription(for cluster: PlaceCluster) -> String {
         let base = StampPin(cluster: cluster).accessibilityDescription
-        guard let group = countersign(for: cluster),
+        let group: MapStampGroup?
+        let isOwn: Bool
+        if let friends = friendGroup(for: cluster) {
+            group = friends
+            isOwn = false
+        } else {
+            group = countersign(for: cluster)
+            isOwn = true
+        }
+        guard let group,
               let attribution = FriendAttribution.sentence(
-                  for: group, store: dependencies.friends, isOwnPin: true
+                  for: group, store: dependencies.friends, isOwnPin: isOwn
               )
         else { return base }
         return "\(base), \(attribution)"
+    }
+
+    /// A single pin that exists only because a friend put it there, as the sheet wants it.
+    private func friendGroup(for cluster: PlaceCluster) -> MapStampGroup? {
+        guard cluster.isSingle, let pin = cluster.representative, !pin.isMine else { return nil }
+        return MapStampGroup(
+            ownPlace: nil,
+            friendStamps: pin.friendStamps,
+            coordinate: pin.coordinate,
+            name: pin.name
+        )
     }
 
     private var map: some View {
@@ -111,14 +145,10 @@ struct MapScreen: View {
             UserAnnotation()
             ForEach(model.clusters) { cluster in
                 Annotation("", coordinate: cluster.coordinate.clCoordinate, anchor: .center) {
+                    // One pin, whoever put it there. No perforated cut, no friend's ink, no
+                    // countersign badge — the map answers *where is there food*, and the detail
+                    // answers *whose* (ADR-010, FR-12.2).
                     StampPin(cluster: cluster, isSelected: selectedPinID == cluster.id)
-                        // *We have both been here* — the moment the whole feature is for, printed
-                        // on the reader's own stamp rather than beside it (FR-12.2).
-                        .overlay(alignment: .bottomLeading) {
-                            if let group = countersign(for: cluster) {
-                                CountersignBadge(group: group, store: dependencies.friends)
-                            }
-                        }
                         .accessibilityLabel(pinDescription(for: cluster))
                         .accessibilityIdentifier("mapPin")
                 }
@@ -126,13 +156,6 @@ struct MapScreen: View {
                 // bottom sheet presented, touches never reach content hosted inside the map, so
                 // only the map's native hit testing can open a pin (FR-3.10).
                 .tag(cluster.id)
-            }
-
-            ForEach(friendOnlyGroups) { group in
-                Annotation("", coordinate: group.coordinate.clCoordinate, anchor: .center) {
-                    FriendOnlyPin(group: group, store: dependencies.friends)
-                        .onTapGesture { friendPlace = group }
-                }
             }
         }
         // The only food on this map is the user's. Apple's own restaurant pins read louder than
@@ -199,10 +222,16 @@ struct MapScreen: View {
     /// A pin is a way into its place, not decoration (FR-3.10). A cluster has to be resolved to
     /// one place first, so it lists what is inside it.
     private func select(_ cluster: PlaceCluster) {
-        if cluster.isSingle, let place = cluster.representative {
-            model.placeToOpen = place
-        } else {
+        guard cluster.isSingle, let pin = cluster.representative else {
             model.action = .cluster(cluster)
+            return
+        }
+        // The one place the difference surfaces. Two identical pins, and the tap goes to the
+        // reader's own page or to a friend's, which is what ADR-010 asks a reader to tap to find.
+        if let mine = pin.mine {
+            model.placeToOpen = mine
+        } else {
+            friendPlace = friendGroup(for: cluster)
         }
     }
 
@@ -239,15 +268,19 @@ struct ClusterSheet: View {
     let cluster: PlaceCluster
     let dependencies: AppDependencies
     let model: MapViewModel
-    let onOpen: (Place) -> Void
+    let onOpen: (MapPlace) -> Void
 
     var body: some View {
         NavigationStack {
-            List(cluster.places) { place in
+            List(cluster.places) { pin in
                 Button {
-                    onOpen(place)
+                    onOpen(pin)
                 } label: {
-                    PlaceRowView(place: place, distance: nil)
+                    if let place = pin.mine {
+                        PlaceRowView(place: place, distance: nil)
+                    } else {
+                        FriendPlaceRow(pin: pin, store: dependencies.friends)
+                    }
                 }
                 .buttonStyle(.plain)
                 .listRowBackground(Theme.paperRaised)

@@ -18,10 +18,9 @@ final class FriendsJourneyTests: XCTestCase {
 
         // Off by default: the map is exactly what it was before the feature existed (FR-12.1).
         XCTAssertEqual(toggle.value as? String, "Off", "The friends layer was on before it was asked for")
-        XCTAssertEqual(
-            app.descendants(matching: .any).matching(identifier: "friendPin").count, 0,
-            "A friend's pin was drawn with the layer switched off"
-        )
+        let pins = app.descendants(matching: .any).matching(identifier: "mapPin")
+        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10))
+        let mine = pins.count
 
         toggle.tap()
         XCTAssertEqual(toggle.value as? String, "On")
@@ -32,6 +31,63 @@ final class FriendsJourneyTests: XCTestCase {
             "Lan's ink is missing from the layer control"
         )
         XCTAssertTrue(app.buttons["Minh"].exists, "Minh's ink is missing from the layer control")
+
+        // And the places only Minh has stamped join the map as pins of the same kind as the
+        // reader's own (ADR-010): more pins, under the one identifier.
+        XCTAssertGreaterThan(
+            pins.count, mine,
+            "Turning the layer on added no pins — a friend's places never reached the map"
+        )
+    }
+
+    /// TC-10-24 — a friend's pin and the reader's own are the same kind of thing.
+    ///
+    /// ADR-009 drew a friend's place with a perforated cut, a friend's ink and a countersign
+    /// badge, and the map became a legend to be decoded. This is the case that keeps it gone: no
+    /// element on the map is a friend pin, because there is no such thing any more.
+    func test_TC_10_24_friendPinsAreDrawnAsTheReadersOwn() {
+        let app = AppLauncher.launch(seeded: true, extraArguments: ["-SeedFriends"])
+        app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 20)
+
+        let pins = app.descendants(matching: .any).matching(identifier: "mapPin")
+        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10))
+
+        XCTAssertEqual(
+            app.descendants(matching: .any).matching(identifier: "friendPin").count, 0,
+            "Something on the map is still drawn as a friend's pin rather than as a pin"
+        )
+        XCTAssertTrue(
+            (0..<pins.count).map { pins.element(boundBy: $0).label }.contains { $0.contains("Minh") },
+            "Minh's place is not among the map's pins at all"
+        )
+    }
+
+    /// TC-10-27 — the two filters compose.
+    ///
+    /// Isolating Minh answers *whose*; the kind tabs answer *what*. Neither is much use alone on
+    /// a busy map, and the pair is the whole of what replaced the ink legend (FR-12.11).
+    func test_TC_10_27_personAndKindFiltersCompose() {
+        let app = AppLauncher.launch(seeded: true, extraArguments: ["-SeedFriends"])
+        app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 20)
+
+        let pins = app.descendants(matching: .any).matching(identifier: "mapPin")
+        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10))
+
+        // Minh alone, and only the places nobody has been to yet: his one wishlist stamp.
+        app.buttons["Minh"].press(forDuration: 0.8)
+        app.raiseSheet()
+        app.buttons["Want to try"].tapWhenReady(timeout: 10)
+
+        let labels = (0..<pins.count).map { pins.element(boundBy: $0).label }
+        XCTAssertTrue(
+            labels.contains { $0.contains("Bánh Cuốn Bà Hoành") },
+            "A friend's wishlist place did not survive both filters. Labels were: \(labels)"
+        )
+        XCTAssertFalse(
+            labels.contains { $0.contains("Chả cá Thăng Long") },
+            "Minh's visited place is still drawn with the filter set to want-to-try. "
+                + "Labels were: \(labels)"
+        )
     }
 
     /// FR-12.8 — a place the reader and a friend have both stamped names them on its own page,
@@ -90,17 +146,22 @@ final class FriendsJourneyTests: XCTestCase {
         )
     }
 
-    /// TC-10-18 — a friend-only pin says whose it is, not merely where it is.
+    /// TC-10-18 — a friend's pin says whose it is, not merely where it is.
+    ///
+    /// More load-bearing since ADR-010, not less: the drawing now says nothing about whose a
+    /// place is, so for a VoiceOver reader this sentence is the *only* answer short of opening it.
     func test_TC_10_18_aFriendPinNamesItsFriendToVoiceOver() {
         let app = AppLauncher.launch(seeded: true, extraArguments: ["-SeedFriends"])
         app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 20)
 
-        let pin = app.descendants(matching: .any).matching(identifier: "friendPin").firstMatch
-        XCTAssertTrue(pin.waitForExistence(timeout: 10), "Minh's pin never appeared")
+        let pins = app.descendants(matching: .any).matching(identifier: "mapPin")
+        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10), "Minh's pin never appeared")
+
+        let labels = (0..<pins.count).map { pins.element(boundBy: $0).label }
         XCTAssertTrue(
-            pin.label.contains("Minh"),
-            "A friend's pin told VoiceOver \"\(pin.label)\" — the whole point of the layer is "
-                + "whose stamp it is, and hue says that to nobody using VoiceOver"
+            labels.contains { $0.contains("Minh") },
+            "No pin told VoiceOver whose stamp it was. The map is silent about provenance by "
+                + "design now, so this sentence is all a VoiceOver reader has. Labels were: \(labels)"
         )
     }
 
@@ -137,23 +198,29 @@ final class FriendsJourneyTests: XCTestCase {
         let app = AppLauncher.launch(seeded: true, extraArguments: ["-SeedFriends"])
         app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 20)
 
-        let friendPins = app.descendants(matching: .any).matching(identifier: "friendPin")
-        XCTAssertTrue(friendPins.firstMatch.waitForExistence(timeout: 10))
-        let everyone = friendPins.count
-        XCTAssertGreaterThan(everyone, 0, "Nothing to filter — the seed put no friend pins on the map")
+        let pins = app.descendants(matching: .any).matching(identifier: "mapPin")
+        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10))
+        let everyone = pins.count
 
         let lan = app.buttons["Lan"]
         XCTAssertTrue(lan.waitForExistence(timeout: 10))
         lan.press(forDuration: 0.8)
 
-        XCTAssertEqual(
-            friendPins.count, 0,
+        // Lan countersigns a place the reader has already stamped, so isolating her removes
+        // Minh's two pins and nothing else.
+        let isolated = pins.count
+        XCTAssertLessThan(
+            isolated, everyone,
             "Isolating Lan left someone else's stamps on the map"
+        )
+        XCTAssertFalse(
+            (0..<pins.count).map { pins.element(boundBy: $0).label }.contains { $0.contains("Minh") },
+            "Minh is still on the map with Lan isolated"
         )
 
         lan.press(forDuration: 0.8)
         XCTAssertEqual(
-            friendPins.count, everyone,
+            pins.count, everyone,
             "Isolating a second time did not put everyone back — the one gesture has to be its "
                 + "own undo, or a reader can strand themselves with a map they cannot restore"
         )

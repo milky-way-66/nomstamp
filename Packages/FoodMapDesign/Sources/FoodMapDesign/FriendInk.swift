@@ -42,19 +42,19 @@ public enum FriendInk {
     }
 }
 
-/// Whose stamp this is, said without colour.
+/// The cut of a friend's mark, where one is drawn at all.
 ///
-/// NFR-6.3: colour is never the only signal. The reader's own stamps keep a solid edge and
-/// friends' carry a perforated one, which is also what frees the eight inks from having to stay
-/// distinct from `visitedInk` and `wishlistInk` across five skins — the cut answers *mine or
-/// theirs*, so hue only has to answer *which friend* (ADR-009, TC-N-27).
+/// ADR-009 used this to answer *mine or theirs* on the map: the reader's own stamps kept a solid
+/// edge and friends' a perforated one. ADR-010 removed that question from the map entirely — a
+/// friend's place is drawn exactly as the reader's own — so `forOwner` is gone rather than left
+/// as a rule nothing applies. What remains is the shape of the mark itself, in the legend and in
+/// lists, where a name sits beside it.
+///
+/// NFR-6.3 is now carried by `names` above and by the spoken attribution built on it: every ink
+/// has a word, so nothing on this map is said in hue alone (ADR-010, TC-N-27).
 public enum StampEdge: String, CaseIterable, Sendable {
     case solid
     case perforated
-
-    public static func forOwner(isMine: Bool) -> StampEdge {
-        isMine ? .solid : .perforated
-    }
 
     /// Teeth per edge for a perforated cut; zero for a solid one. A drawn value rather than a
     /// boolean so the renderer has something to lay out.

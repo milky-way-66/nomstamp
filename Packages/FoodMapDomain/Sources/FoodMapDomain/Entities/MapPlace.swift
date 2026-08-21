@@ -86,6 +86,15 @@ public struct MapPlace: Identifiable, Equatable, Sendable {
     /// drawn as the reader's own photoless pins are — which is the point.
     public var pinPhoto: Photo? { mine?.pinPhoto }
 
+    /// How many visits the pin should own up to, so the repeat-visit numeral is drawn on a
+    /// friend's place exactly as it is on the reader's. Nil where there is nothing to count.
+    public var visitCount: Int? {
+        switch origin {
+        case .mine(let place): return place.meals.isEmpty ? nil : place.meals.count
+        case .friends(let stamps): return stamps.compactMap(\.stamp.visitCount).max()
+        }
+    }
+
     public var averageRating: Double? {
         switch origin {
         case .mine(let place): return place.averageRating

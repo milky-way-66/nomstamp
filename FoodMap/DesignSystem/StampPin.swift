@@ -13,7 +13,7 @@ struct StampPin: View {
     /// between the tap and the place opening, so the tap has somewhere to land.
     var isSelected: Bool = false
 
-    private var place: Place? { cluster.representative }
+    private var place: MapPlace? { cluster.representative }
     private var isVisited: Bool { cluster.containsVisited }
     /// How the place scored, rounded to the nearest star: the pin is printed in that ink, so the
     /// map shows at a glance which places were worth it (ADR-005).
@@ -25,7 +25,7 @@ struct StampPin: View {
     /// What this pin is a stamp *of*. A single pin is its place, so the same meal is the same
     /// stamp — same frame, same lean — in the list and on the map; a cluster falls back to its own
     /// grid key, because a cluster is not a place.
-    private var stampID: String { place?.id.uuidString ?? cluster.id }
+    private var stampID: String { place?.id ?? cluster.id }
     /// Which of the five frames this place was dealt, once and for good (ADR-005, TC-N-13).
     private var shape: StampCutShape { StampCutShape(cut: StampCut.cut(for: stampID)) }
     /// The colour of the paper this one was printed on — dealt with the cut, and meaning as little
@@ -46,7 +46,7 @@ struct StampPin: View {
                     .accessibilityHidden(true)
             } else if cluster.count > 1 {
                 badge("\(cluster.count)")
-            } else if let count = place?.meals.count, count > 1 {
+            } else if let count = place?.visitCount, count > 1 {
                 // Repeat visits collapse into one pin, so the count says there is more behind it.
                 badge("\(count)")
             }
@@ -122,7 +122,7 @@ struct StampPin: View {
             return "\(cluster.count) places here"
         }
         let kind = place.kind == .visited ? "been here" : "want to try"
-        let meals = place.meals.count
+        let meals = place.visitCount ?? 0
         return meals > 0
             ? "\(place.name), \(kind), \(meals) meal\(meals == 1 ? "" : "s")"
             : "\(place.name), \(kind)"

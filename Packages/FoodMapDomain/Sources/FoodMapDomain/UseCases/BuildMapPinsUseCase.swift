@@ -30,8 +30,24 @@ public struct BuildMapPinsUseCase: Sendable {
         self.places = places
     }
 
-    public func execute(bounds: MapBounds, filter: MapFilter) throws -> [PlaceCluster] {
-        let visible = try places.places(in: bounds).filter(filter.matches)
-        return PlaceClusterer.cluster(places: visible, in: bounds)
+    /// ADR-010: the friends layer enters here rather than being drawn over the top. One merge,
+    /// one filter, one clusterer — which is what makes "a friend's place is drawn as my own" a
+    /// fact about the code rather than a promise about the renderer.
+    ///
+    /// Friend stamps are cut to the viewport first. A stamp matching a place of the reader's that
+    /// is off screen is off screen itself, since matching requires the two to be metres apart.
+    public func execute(
+        bounds: MapBounds,
+        filter: MapFilter,
+        friendStamps: [FriendStamp] = [],
+        circle: FriendCircle = FriendCircle(),
+        layerEnabled: Bool = false
+    ) throws -> [PlaceCluster] {
+        let mine = try places.places(in: bounds)
+        let theirs = friendStamps.filter { bounds.contains($0.stamp.coordinate) }
+        let pins = MergeFriendStampsUseCase()
+            .mapPlaces(places: mine, friendStamps: theirs, circle: circle, layerEnabled: layerEnabled)
+            .filter(filter.matches)
+        return PlaceClusterer.cluster(places: pins, in: bounds)
     }
 }

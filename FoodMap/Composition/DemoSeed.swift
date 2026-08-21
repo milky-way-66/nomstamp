@@ -80,6 +80,7 @@ enum DemoSeed {
                 placeName: "Phở Thìn",
                 coordinate: Coordinate(latitude: 21.0181, longitude: 105.8554),
                 providerPlaceID: nil,
+                kind: .visited,
                 averageRating: 4.5,
                 visitCount: 3,
                 latestDish: "Phở bò",
@@ -98,6 +99,7 @@ enum DemoSeed {
                 placeName: "Chả cá Thăng Long",
                 coordinate: Coordinate(latitude: 21.0295, longitude: 105.8465),
                 providerPlaceID: nil,
+                kind: .visited,
                 averageRating: 4.0,
                 visitCount: 1,
                 latestDish: "Chả cá",
@@ -105,6 +107,18 @@ enum DemoSeed {
                 note: "Worth the queue",
                 thumbnailHash: nil,
                 version: "seed-2"
+            ),
+            // And somewhere he only means to go. ADR-010 lets a wishlist place travel, so the
+            // half of a friend's map that used to be invisible has something in it to find.
+            SharedStamp(
+                placeID: UUID(),
+                placeName: "Bánh Cuốn Bà Hoành",
+                // Far enough from his other stamp that the two never share a cluster cell at the
+                // opening zoom, so a journey can count pins without the grid moving under it.
+                coordinate: Coordinate(latitude: 21.0450, longitude: 105.8700),
+                providerPlaceID: nil,
+                kind: .wishlist,
+                version: "seed-3"
             )
         ], from: minh)
     }

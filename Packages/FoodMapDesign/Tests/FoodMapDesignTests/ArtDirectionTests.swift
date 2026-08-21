@@ -417,14 +417,18 @@ struct FriendInkTests {
         }
     }
 
-    @Test("TC-N-27 mine and theirs differ by cut, not only by colour")
+    @Test("TC-N-27 every ink has a word, so nothing is said in colour alone")
     func TC_N_27_colourIsNeverTheOnlySignal() {
-        let mine = StampEdge.forOwner(isMine: true)
-        let theirs = StampEdge.forOwner(isMine: false)
+        // ADR-010 took the perforated cut off the map along with the friend pin, so the cut no
+        // longer answers *mine or theirs*. What answers it is language: each of the eight inks
+        // has a name, and `FriendAttribution` speaks it beside the friend's own name.
+        let names = (0..<FriendInk.slotCount).map(FriendInk.name(forSlot:))
 
-        #expect(mine != theirs)
-        #expect(mine.perforations == 0)
-        #expect(theirs.perforations > 0)
+        #expect(names.count == FriendInk.slotCount)
+        #expect(Set(names).count == names.count, "two inks share a word, so speech cannot tell them apart")
+        #expect(names.allSatisfy { !$0.isEmpty })
+        // And it wraps rather than traps, so an out-of-range slot still has something to say.
+        #expect(FriendInk.name(forSlot: FriendInk.slotCount) == names[0])
     }
 
     /// Kept here rather than imported: the design package does not depend on the domain, and

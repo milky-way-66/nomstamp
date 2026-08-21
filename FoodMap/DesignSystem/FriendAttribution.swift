@@ -59,14 +59,18 @@ enum FriendAttribution {
         }
     }
 
-    /// The sentence for a map group, or nil where no friend is involved. Shared by the friend-only
-    /// pin and the countersigned one so the two can never drift apart.
+    /// The sentence for a map group, or nil where no friend is involved.
+    ///
+    /// ADR-010 stopped drawing any of this. It is now the only place a reader is told whose a
+    /// place is without opening it, which is why it names a friend in full and counts the rest
+    /// rather than going quiet (FR-12.10, NFR-6.3).
     @MainActor
     static func sentence(for group: MapStampGroup, store: FriendsStore, isOwnPin: Bool) -> String? {
-        guard let countersign = group.countersign,
-              let friend = store.friend(for: countersign.friend) else { return nil }
+        guard let first = group.friendStamps.first,
+              let friend = store.friend(for: first.friend) else { return nil }
+        let others = max(0, group.friendStamps.count - 1)
         return isOwnPin
-            ? alsoStampedBy(friend.assignedName, inkSlot: friend.inkSlot, others: group.additionalSignatureCount)
-            : stampedBy(friend.assignedName, inkSlot: friend.inkSlot, others: group.additionalSignatureCount)
+            ? alsoStampedBy(friend.assignedName, inkSlot: friend.inkSlot, others: others)
+            : stampedBy(friend.assignedName, inkSlot: friend.inkSlot, others: others)
     }
 }

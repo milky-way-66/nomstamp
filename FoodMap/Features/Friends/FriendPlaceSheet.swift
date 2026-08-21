@@ -13,7 +13,10 @@ struct FriendPlaceSheet: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    private var stamp: SharedStamp? { group.countersign?.stamp }
+    /// The stamp shown in the numbers below. Where several friends stamped one place they are
+    /// all named above; the figures are the first one's, in ink order, so they do not change
+    /// between syncs.
+    private var stamp: SharedStamp? { group.friendStamps.first?.stamp }
 
     var body: some View {
         NavigationStack {
@@ -65,15 +68,23 @@ struct FriendPlaceSheet: View {
                 // scores, and the interface should not print one.
                 detail(label: Text("Their rating"), value: Text(rating.formatted(.number.precision(.fractionLength(0...1)))) + Text(" of 5"))
             }
-            detail(
-                label: Text("Times they went"),
-                value: Text(stamp.visitCount.formatted())
-            )
+            if let count = stamp.visitCount {
+                detail(label: Text("Times they went"), value: Text(count.formatted()))
+            }
             if let dish = stamp.latestDish {
                 detail(label: Text("Last dish"), value: Text(dish))
             }
             // A month, never a day. The type has nowhere to keep one (FR-11.3, TC-9-04).
-            detail(label: Text("Last visit"), value: Text(stamp.lastVisitedMonth.description))
+            if let month = stamp.lastVisitedMonth {
+                detail(label: Text("Last visit"), value: Text(month.description))
+            }
+            // Somewhere they mean to go has no figures at all, and saying so is better than a
+            // sheet that is mostly blank space (ADR-010).
+            if stamp.kind == .wishlist {
+                Text("They want to try this one too.")
+                    .font(Theme.label())
+                    .foregroundStyle(Theme.inkSecondary)
+            }
         }
     }
 
@@ -93,7 +104,7 @@ struct FriendPlaceSheet: View {
     /// *now* — only what was held as of the last exchange (FR-12.6, FR-12.7).
     @ViewBuilder
     private var asOfLine: some View {
-        if let key = group.countersign?.friend,
+        if let key = group.friendStamps.first?.friend,
            let friend = store.friend(for: key),
            let reached = friend.lastReachedAt {
             Text("As of \(reached.formatted(date: .abbreviated, time: .omitted))")

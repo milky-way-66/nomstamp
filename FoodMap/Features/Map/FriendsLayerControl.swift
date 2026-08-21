@@ -149,77 +149,46 @@ private struct FriendLegendChip: View {
     }
 }
 
-/// A pin that exists only because a friend put it there — somewhere the reader has never been.
+/// The reader's own ink and a friend's, side by side in a list row.
 ///
-/// Drawn smaller than the reader's own stamps and with no photograph. It is a place a friend
-/// liked, not a memory of a meal, and the drawing should not pretend otherwise.
-struct FriendOnlyPin: View {
-    let group: MapStampGroup
-    let store: FriendsStore
-
-    private var inkSlot: Int {
-        group.countersign.flatMap { store.friend(for: $0.friend)?.inkSlot } ?? 0
-    }
-
-    private var freshness: Double {
-        group.countersign.map(store.freshness(of:)) ?? 0
-    }
-
-    private var accessibilitySentence: String {
-        guard let attribution = FriendAttribution.sentence(for: group, store: store, isOwnPin: false) else {
-            return group.name
-        }
-        return "\(group.name), \(attribution)"
-    }
-
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            FriendStampMark(inkSlot: inkSlot, size: 30, freshness: freshness)
-            if group.additionalSignatureCount > 0 {
-                numeral(group.additionalSignatureCount)
-            }
-        }
-        .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
-        .accessibilityElement(children: .ignore)
-        // The place *and* whose it is. A pin that says only where it is tells a VoiceOver reader
-        // nothing the map layer was switched on for (FR-12.10, TC-10-18).
-        .accessibilityLabel(Text(accessibilitySentence))
-        .accessibilityIdentifier("friendPin")
-    }
-}
-
-/// The countersign printed on the reader's own stamp: *we have both been here*.
-///
-/// One friend's mark and a numeral for the rest, never a fan of five overlapping stamps — which
-/// at pin size is the box of crayons the cap exists to prevent (FR-12.2, TC-10-06).
-struct CountersignBadge: View {
-    let group: MapStampGroup
+/// ADR-010 took the friend marks off the map. They still belong in a list, where there is room
+/// for a name and no risk of a pin turning into a legend to be decoded.
+struct FriendPlaceRow: View {
+    let pin: MapPlace
     let store: FriendsStore
 
     var body: some View {
-        if let countersign = group.countersign,
-           let friend = store.friend(for: countersign.friend) {
-            HStack(spacing: -6) {
+        HStack(spacing: Theme.Space.snug) {
+            if let first = pin.friendStamps.first,
+               let friend = store.friend(for: first.friend) {
                 FriendStampMark(
                     inkSlot: friend.inkSlot,
-                    size: 20,
-                    freshness: store.freshness(of: countersign)
+                    size: 30,
+                    freshness: store.freshness(of: first)
                 )
-                if group.additionalSignatureCount > 0 {
-                    numeral(group.additionalSignatureCount)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(pin.name)
+                    .font(Theme.label(.body))
+                    .foregroundStyle(Theme.ink)
+                if let attribution = FriendAttribution.sentence(
+                    for: MapStampGroup(
+                        ownPlace: nil,
+                        friendStamps: pin.friendStamps,
+                        coordinate: pin.coordinate,
+                        name: pin.name
+                    ),
+                    store: store,
+                    isOwnPin: false
+                ) {
+                    Text(attribution)
+                        .font(Theme.label(.footnote))
+                        .foregroundStyle(Theme.inkSecondary)
                 }
             }
-            .offset(x: -4, y: 6)
+            Spacer(minLength: 0)
         }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("friendPlaceRow")
     }
-}
-
-@ViewBuilder
-private func numeral(_ count: Int) -> some View {
-    Text(verbatim: "+\(count)")
-        .font(Theme.stamped(.caption2).bold())
-        .foregroundStyle(Theme.paperRaised)
-        .padding(.horizontal, 4)
-        .padding(.vertical, 1)
-        .background(Capsule().fill(Theme.ink))
 }

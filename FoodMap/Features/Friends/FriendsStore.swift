@@ -265,10 +265,11 @@ private struct Snapshot: Codable {
         var latitude: Double
         var longitude: Double
         var providerPlaceID: String?
+        var kind: String?
         var averageRating: Double?
-        var visitCount: Int
+        var visitCount: Int?
         var latestDish: String?
-        var month: String
+        var month: String?
         var note: String?
         var thumbnailHash: String?
         var version: String
@@ -281,10 +282,11 @@ private struct Snapshot: Codable {
             latitude = stamp.stamp.coordinate.latitude
             longitude = stamp.stamp.coordinate.longitude
             providerPlaceID = stamp.stamp.providerPlaceID
+            kind = stamp.stamp.kind.rawValue
             averageRating = stamp.stamp.averageRating
             visitCount = stamp.stamp.visitCount
             latestDish = stamp.stamp.latestDish
-            month = stamp.stamp.lastVisitedMonth.description
+            month = stamp.stamp.lastVisitedMonth?.description
             note = stamp.stamp.note
             thumbnailHash = stamp.stamp.thumbnailHash
             version = stamp.stamp.version
@@ -292,10 +294,18 @@ private struct Snapshot: Codable {
         }
 
         var domain: FriendStamp? {
-            let parts = month.split(separator: "-")
-            guard let key = FriendKey(bytes: Array(friend)),
-                  parts.count == 2, let year = Int(parts[0]), let monthNumber = Int(parts[1])
-            else { return nil }
+            guard let key = FriendKey(bytes: Array(friend)) else { return nil }
+            var lastVisited: YearMonth?
+            if let month {
+                let parts = month.split(separator: "-")
+                guard parts.count == 2, let year = Int(parts[0]), let number = Int(parts[1])
+                else { return nil }
+                lastVisited = YearMonth(year: year, month: number)
+            }
+            // A cache written before ADR-010 holds only visits. It is disposable either way, but
+            // reading it correctly saves a re-sync the reader did not ask for.
+            let resolvedKind = kind.flatMap(PlaceKind.init(rawValue:))
+                ?? (visitCount == nil ? .wishlist : .visited)
             return FriendStamp(
                 friend: key,
                 stamp: SharedStamp(
@@ -303,10 +313,11 @@ private struct Snapshot: Codable {
                     placeName: placeName,
                     coordinate: Coordinate(latitude: latitude, longitude: longitude),
                     providerPlaceID: providerPlaceID,
+                    kind: resolvedKind,
                     averageRating: averageRating,
                     visitCount: visitCount,
                     latestDish: latestDish,
-                    lastVisitedMonth: YearMonth(year: year, month: monthNumber),
+                    lastVisitedMonth: lastVisited,
                     note: note,
                     thumbnailHash: thumbnailHash,
                     version: version
