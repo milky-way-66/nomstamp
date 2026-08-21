@@ -41,8 +41,34 @@ public protocol BlobStorePort: Sendable {
 /// Who is in the room. The connect ceremony's only input to the domain, expressed as findings
 /// rather than as radios (FR-10.10, FR-10.11).
 public protocol ProximityPort: Sendable {
+    /// Starts advertising and scanning. Nothing is discoverable, and nothing is discovered, until
+    /// this is called — which is how FR-10.11's "only while the screen is open" is enforced by
+    /// construction rather than by a promise. A screen that reads `nearbyReaders()` without ever
+    /// beginning is reading an empty room (FR-10.12, TC-8-14).
+    func begin()
+
+    /// Stops both and forgets what was seen. Called when the screen leaves (FR-10.12, TC-8-15).
+    func end()
+
     /// Readers currently advertising nearby, while the *Add friend* screen is open.
     func nearbyReaders() async throws -> [NearbyReader]
+
+    /// Whether there is any point waiting. A radio that is off or unauthorised looks exactly like
+    /// an empty room from `nearbyReaders()`, and a reader left staring at a spinner has no way to
+    /// tell the difference (FR-10.13, TC-8-16).
+    func availability() async -> ProximityAvailability
+}
+
+/// Why the room looks empty.
+public enum ProximityAvailability: Equatable, Sendable {
+    /// The radio is on and listening. An empty list here really does mean nobody is there.
+    case searching
+    /// Bluetooth is switched off on this device.
+    case poweredOff
+    /// The reader has refused Bluetooth to this app, or has never been asked.
+    case unauthorized
+    /// No radio at all — the simulator, chiefly.
+    case unsupported
 }
 
 /// Someone advertising nearby, before any connection exists. Carries an **ephemeral** id rather

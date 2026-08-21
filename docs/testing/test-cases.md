@@ -188,6 +188,10 @@ reader sees is the one the reader wrote.
 | TC-8-11 | U | main | Given a first connection, when it completes, then the friend's `lastReachedAt` is the clock's now, not nil | **auto** |
 | TC-8-12 | E | main | Given two stubbed devices in range, when both confirm the word and name each other, then each map shows the other's shared stamps before the screen closes | spec |
 | TC-8-13 | I | 1b | Given no iCloud account, when the friends screen opens, then it explains and offers a way forward, and every other screen behaves exactly as before | spec |
+| TC-8-14 | U | main | Given a presence that has never been begun, when readers are asked for, then none are returned — and beginning is what makes a scan happen at all | **auto** |
+| TC-8-15 | U | main | Given a begun presence, when it ends, then the advertisement stops, what was seen is forgotten, and anyone mid-exchange is told they are gone | **auto** |
+| TC-8-16 | U | E3 | Given a radio that is off or unauthorised, when the screen looks for phones, then it reports *unavailable* with the reason, rather than an empty room | **auto** |
+| TC-8-17 | U | main | Given an advertisement whose local name arrived in an earlier packet and not this one, when it is seen again, then the reader keeps the name already known instead of vanishing from the list | **auto** |
 
 ---
 

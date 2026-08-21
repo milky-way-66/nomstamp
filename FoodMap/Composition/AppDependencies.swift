@@ -249,7 +249,12 @@ enum UIDeviceName {
 /// seeded directly, not against a ceremony that cannot happen in a simulator (TC-8-12 stays an
 /// on-device case for exactly this reason).
 struct StubProximity: ProximityPort, PeerHandshakePort {
+    func begin() {}
+    func end() {}
     func nearbyReaders() async throws -> [NearbyReader] { [] }
+    /// `.searching`, not `.unsupported`: a journey asserting on the *looking* copy must see the
+    /// screen a reader with a working radio sees, not the apology for a simulator.
+    func availability() async -> ProximityAvailability { .searching }
     func exchange(with reader: NearbyReader) async throws -> HandshakeResult {
         throw HandshakeFailure.unsupported
     }

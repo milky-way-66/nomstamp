@@ -44,9 +44,12 @@ public final class BluetoothPresence: NSObject, ProximityPort, PeerHandshakePort
     private var central: CBCentralManager?
     private var peripheral: CBPeripheralManager?
     private let lock = NSLock()
-    private var seen: [UUID: NearbyReader] = [:]
+    private var registry = PresenceRegistry()
     private var knownPeripherals: [UUID: CBPeripheral] = [:]
     private var pending: [UUID: Pending] = [:]
+    /// Set the moment `begin()` runs, cleared by `end()`. Without it there is no way to tell a
+    /// radio that found nobody from a radio nobody started (TC-8-14).
+    private var running = false
 
     private struct Pending {
         let reader: NearbyReader
@@ -61,11 +64,17 @@ public final class BluetoothPresence: NSObject, ProximityPort, PeerHandshakePort
     }
 
     /// Starts advertising and scanning. Called when the screen appears, and only then.
+    ///
+    /// Both managers are built here rather than in `init` because building a `CBCentralManager` is
+    /// what makes iOS ask the reader for Bluetooth. Asking at launch, for a screen most readers
+    /// never open, would be a permission prompt with no explanation attached to it.
     public func begin() {
         #if canImport(CoreBluetooth)
+        guard !lock.withLock({ running }) else { return }
         ephemeralID = UUID()
         lock.withLock {
-            seen.removeAll()
+            running = true
+            registry.forgetAll()
             knownPeripherals.removeAll()
         }
         central = CBCentralManager(delegate: self, queue: .main)
@@ -79,15 +88,21 @@ public final class BluetoothPresence: NSObject, ProximityPort, PeerHandshakePort
         #if canImport(CoreBluetooth)
         central?.stopScan()
         peripheral?.stopAdvertising()
+        peripheral?.removeAllServices()
         central = nil
         peripheral = nil
-        lock.withLock {
-            seen.removeAll()
+        let orphans = lock.withLock { () -> [Pending] in
+            running = false
+            registry.forgetAll()
             knownPeripherals.removeAll()
-            // Anyone still waiting is waiting on a screen that has closed.
-            for entry in pending.values { entry.continuation.resume(throwing: HandshakeFailure.gone) }
+            let waiting = Array(pending.values)
             pending.removeAll()
+            return waiting
         }
+        // Anyone still waiting is waiting on a screen that has closed. Resumed outside the lock:
+        // a continuation can run arbitrary code, and running it under our own lock invites a
+        // deadlock the first time that code asks us anything.
+        for entry in orphans { entry.continuation.resume(throwing: HandshakeFailure.gone) }
         #endif
     }
 
@@ -115,15 +130,35 @@ public final class BluetoothPresence: NSObject, ProximityPort, PeerHandshakePort
 
     public func nearbyReaders() async throws -> [NearbyReader] {
         #if canImport(CoreBluetooth)
-        // Ordered by how close they are, because in a room with four candidates the one being
-        // held up at arm's length is almost always the one meant.
-        lock.withLock {
-            seen.values.sorted { $0.proof.signalStrength > $1.proof.signalStrength }
-        }
+        lock.withLock { registry.readers }
         #else
         []
         #endif
     }
+
+    /// Why the room looks empty, so the screen can say it (FR-10.13).
+    public func availability() async -> ProximityAvailability {
+        #if canImport(CoreBluetooth)
+        guard lock.withLock({ running }), let central else { return .unsupported }
+        return Self.availability(for: central.state)
+        #else
+        return .unsupported
+        #endif
+    }
+
+    #if canImport(CoreBluetooth)
+    /// Kept static and pure so the mapping is testable without a radio (TC-8-16).
+    static func availability(for state: CBManagerState) -> ProximityAvailability {
+        switch state {
+        case .poweredOff: return .poweredOff
+        case .unauthorized: return .unauthorized
+        case .unsupported: return .unsupported
+        // `.unknown` and `.resetting` are both "ask again in a moment". Reporting them as a
+        // failure would accuse the reader of refusing something they have not been asked yet.
+        default: return .searching
+        }
+    }
+    #endif
 }
 
 #if canImport(CoreBluetooth)
@@ -144,14 +179,16 @@ extension BluetoothPresence: CBCentralManagerDelegate {
         advertisementData: [String: Any],
         rssi RSSI: NSNumber
     ) {
-        guard let name = advertisementData[CBAdvertisementDataLocalNameKey] as? String else { return }
-        let reader = NearbyReader(
-            ephemeralID: peripheral.identifier,
-            assertedName: name,
-            proof: ProximityProof(signalStrength: RSSI.intValue)
-        )
+        // 127 is CoreBluetooth's "no reading available", not a very strong signal.
+        guard RSSI.intValue != 127 else { return }
+        let advertised = advertisementData[CBAdvertisementDataLocalNameKey] as? String
         lock.withLock {
-            seen[peripheral.identifier] = reader
+            // The name may be absent from this particular packet — see `PresenceRegistry.record`.
+            registry.record(
+                id: peripheral.identifier,
+                advertisedName: advertised ?? peripheral.name,
+                signalStrength: RSSI.intValue
+            )
             // Held so the exchange can connect to it later. CoreBluetooth discards a peripheral
             // it holds no strong reference to, and a discarded one cannot be connected.
             knownPeripherals[peripheral.identifier] = peripheral
@@ -172,8 +209,19 @@ extension BluetoothPresence: CBPeripheralManagerDelegate {
                 permissions: [.readable]
             )
         ]
+        // Advertising waits for `didAdd` below. Adding a service is asynchronous, and a device
+        // that connects to an advertisement for a service the stack has not published yet
+        // discovers nothing and is told the reader refused.
+        manager.removeAllServices()
         manager.add(service)
+    }
 
+    public func peripheralManager(
+        _ manager: CBPeripheralManager,
+        didAdd service: CBService,
+        error: Error?
+    ) {
+        guard error == nil else { return }
         manager.startAdvertising([
             CBAdvertisementDataServiceUUIDsKey: [CBUUID(string: Self.serviceUUID)],
             // The name the other reader will see, and a suggestion they may overwrite — the name
@@ -206,6 +254,15 @@ extension BluetoothPresence: CBPeripheralDelegate {
         finish(peripheral.identifier, with: .failure(HandshakeFailure.gone))
     }
 
+    public func centralManager(
+        _ manager: CBCentralManager,
+        didDisconnectPeripheral peripheral: CBPeripheral,
+        error: Error?
+    ) {
+        // Harmless once the key has been read — `finish` only resumes someone still waiting.
+        finish(peripheral.identifier, with: .failure(HandshakeFailure.gone))
+    }
+
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let service = peripheral.services?.first else {
             return finish(peripheral.identifier, with: .failure(HandshakeFailure.refused))
@@ -231,6 +288,7 @@ extension BluetoothPresence: CBPeripheralDelegate {
         didReadRSSI RSSI: NSNumber,
         error: Error?
     ) {
+        guard RSSI.intValue != 127 else { return }
         lock.withLock {
             guard let entry = pending[peripheral.identifier] else { return }
             pending[peripheral.identifier] = Pending(

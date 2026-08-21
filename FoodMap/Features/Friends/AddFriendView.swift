@@ -13,6 +13,8 @@ struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var step: Step = .looking
     @State private var nearby: [NearbyReader] = []
+    /// Why the room looks empty, which is a different question from whether it is (FR-10.13).
+    @State private var availability: ProximityAvailability = .searching
     @State private var assignedName = ""
     @State private var refusal: CircleRefusal?
     @FocusState private var nameFocused: Bool
@@ -41,6 +43,10 @@ struct AddFriendView: View {
                 }
             }
             .task { await scan() }
+            // Discoverability lasts exactly as long as this screen, and not one moment longer
+            // (FR-10.11). `.task` is cancelled here too, but the radio is stopped explicitly:
+            // a cancelled loop that leaves an advertiser running would still be broadcasting.
+            .onDisappear { dependencies.proximity?.end() }
             .alert(
                 Text("Can't add them"),
                 isPresented: Binding(get: { refusal != nil }, set: { if !$0 { refusal = nil } })
@@ -64,7 +70,9 @@ struct AddFriendView: View {
 
     private var looking: some View {
         VStack(spacing: Theme.Space.loose) {
-            if nearby.isEmpty {
+            if availability != .searching {
+                radioTrouble
+            } else if nearby.isEmpty {
                 ProgressView()
                 Text("Looking for phones in the room…")
                     .font(Theme.label())
@@ -95,6 +103,52 @@ struct AddFriendView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(Theme.screenMargin)
+    }
+
+    /// A spinner that never resolves is the cruellest possible answer to *why can't I see them*.
+    /// Each of these says what is wrong and what to do about it (FR-10.13, TC-8-16).
+    private var radioTrouble: some View {
+        VStack(spacing: Theme.Space.regular) {
+            Image(systemName: "dot.radiowaves.left.and.right")
+                .font(.system(size: 40))
+                .foregroundStyle(Theme.inkSecondary)
+
+            switch availability {
+            case .poweredOff:
+                Text("Bluetooth is off")
+                    .font(Theme.display(.title3))
+                    .foregroundStyle(Theme.ink)
+                Text("Friends are added in person, over the radio. Turn Bluetooth on in Control Centre and this screen will start looking.")
+                    .font(Theme.label())
+                    .foregroundStyle(Theme.inkSecondary)
+                    .multilineTextAlignment(.center)
+            case .unauthorized:
+                Text("Nomstamp can't use Bluetooth")
+                    .font(Theme.display(.title3))
+                    .foregroundStyle(Theme.ink)
+                Text("Allow Bluetooth for Nomstamp in Settings. It is only ever used to find the phone across the table, and only while this screen is open.")
+                    .font(Theme.label())
+                    .foregroundStyle(Theme.inkSecondary)
+                    .multilineTextAlignment(.center)
+                Button {
+                    if let settings = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(settings)
+                    }
+                } label: {
+                    Text("Open Settings")
+                }
+                .buttonStyle(.bordered)
+            case .unsupported, .searching:
+                Text("No radio on this phone")
+                    .font(Theme.display(.title3))
+                    .foregroundStyle(Theme.ink)
+                Text("A friend is added by sitting next to them, so this needs a phone with Bluetooth.")
+                    .font(Theme.label())
+                    .foregroundStyle(Theme.inkSecondary)
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .frame(maxWidth: .infinity)
     }
 
     // MARK: - 2. The matching word
@@ -174,8 +228,15 @@ struct AddFriendView: View {
     // MARK: - Doing it
 
     private func scan() async {
-        guard let proximity = dependencies.proximity else { return }
+        guard let proximity = dependencies.proximity else {
+            availability = .unsupported
+            return
+        }
+        // The screen starts the radio. Reading `nearbyReaders()` without this found an empty room
+        // every time, on both phones, forever — the bug this whole path was built around.
+        proximity.begin()
         while !Task.isCancelled, case .looking = step {
+            availability = await proximity.availability()
             nearby = (try? await proximity.nearbyReaders()) ?? []
             try? await Task.sleep(for: .seconds(1))
         }

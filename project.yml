@@ -18,7 +18,7 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "7"
+    CURRENT_PROJECT_VERSION: "8"
   # Simulator builds and the test suites need no developer account; a Release archive for
   # TestFlight must be signed. See docs/deployment/testflight.md.
   configs:
@@ -53,6 +53,9 @@ targets:
         INFOPLIST_KEY_NSCameraUsageDescription: "Nomstamp uses the camera so you can photograph the food you are eating."
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "Nomstamp reads photos you choose so you can log meals you photographed earlier."
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Nomstamp uses your location to find the restaurant you are in and to show saved places near you."
+        # Without this key CoreBluetooth is refused outright — and iOS terminates the app the
+        # moment it needs to ask. It is the whole in-person connect ceremony (FR-10.2, FR-10.10).
+        INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription: "Nomstamp uses Bluetooth to find a friend's phone in the same room, which is the only way friends can be added."
 
   FoodMapUITests:
     type: bundle.ui-testing

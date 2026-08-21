@@ -206,6 +206,8 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-10.9 | The first sync shall run immediately on connecting, over the local radio link and without a network | UC-8 | TC-8-11 |
 | FR-10.10 | No part of the connect path shall use infrastructure networking — not the local network, not CloudKit, not the internet — so that proximity is enforced by radio range rather than by a check | UC-8/E1 | TC-8-08 |
 | FR-10.11 | The device shall be discoverable only while the *Add friend* screen is open, and shall advertise an ephemeral identifier rather than its public key | UC-8 | TC-8-12 |
+| FR-10.12 | The *Add friend* screen shall **start** discovery when it appears and **stop** it when it leaves; a screen that only reads the results of a scan nobody started shall be considered broken | UC-8 | TC-8-14, TC-8-15 |
+| FR-10.13 | Where the radio is off, unauthorised or unsupported, the screen shall say so and offer the way to fix it, rather than searching forever | UC-8/E3 | TC-8-16, TC-8-17 |
 
 ### FR-11 Sharing a place
 | ID | Requirement | UC | Tests |

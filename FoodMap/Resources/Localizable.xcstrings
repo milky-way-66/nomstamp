@@ -121,6 +121,23 @@
         }
       }
     },
+    "A friend is added by sitting next to them, so this needs a phone with Bluetooth.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A friend is added by sitting next to them, so this needs a phone with Bluetooth."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thêm bạn là ngồi cạnh nhau, nên việc này cần một điện thoại có Bluetooth."
+          }
+        }
+      }
+    },
     "Add a meal": {
       "extractionState": "manual",
       "localizations": {
@@ -253,6 +270,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tất cả"
+          }
+        }
+      }
+    },
+    "Allow Bluetooth for Nomstamp in Settings. It is only ever used to find the phone across the table, and only while this screen is open.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow Bluetooth for Nomstamp in Settings. It is only ever used to find the phone across the table, and only while this screen is open."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hãy cho phép Nomstamp dùng Bluetooth trong Cài đặt. Nó chỉ dùng để tìm chiếc điện thoại ở bên kia bàn, và chỉ khi màn hình này đang mở."
           }
         }
       }
@@ -405,6 +439,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ngon nhất vùng"
+          }
+        }
+      }
+    },
+    "Bluetooth is off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth is off"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bluetooth đang tắt"
           }
         }
       }
@@ -855,6 +906,23 @@
         }
       }
     },
+    "Friends are added in person, over the radio. Turn Bluetooth on in Control Centre and this screen will start looking.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Friends are added in person, over the radio. Turn Bluetooth on in Control Centre and this screen will start looking."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn bè chỉ được thêm khi gặp trực tiếp, qua sóng. Hãy bật Bluetooth trong Trung tâm điều khiển và màn hình này sẽ bắt đầu tìm."
+          }
+        }
+      }
+    },
     "Friends layer": {
       "extractionState": "manual",
       "localizations": {
@@ -1115,6 +1183,40 @@
         }
       }
     },
+    "No radio on this phone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No radio on this phone"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Điện thoại này không có sóng"
+          }
+        }
+      }
+    },
+    "Nomstamp can't use Bluetooth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nomstamp can't use Bluetooth"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nomstamp không dùng được Bluetooth"
+          }
+        }
+      }
+    },
     "Not for me": {
       "extractionState": "manual",
       "localizations": {
@@ -1281,6 +1383,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bật"
+          }
+        }
+      }
+    },
+    "Open Settings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mở Cài đặt"
           }
         }
       }

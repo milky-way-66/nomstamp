@@ -45,9 +45,9 @@ the specification was wrong, the document is corrected first — never left to d
 | SRS | draft v0.1, 2 open questions (OPEN-2, OPEN-3) |
 | Test cases | 148 specified (116 unit, 16 integration, 16 e2e) — 146 automated; 2 await two devices or a live iCloud account |
 | Domain code | **complete and green** — 125 tests, sub-second warm loop, no simulator. Includes the whole friends domain: redaction, manifest diff, matching, the cap and the ink |
-| Test totals | 205 automated, all passing — 125 domain, 21 design, 42 data, 17 e2e journeys |
+| Test totals | 240 automated, all passing — 129 domain, 24 design, 70 data, 17 e2e journeys |
 | UI/UX | decided — travel-journal/editorial, ADR-003; palette now enforced by TC-N-07 |
-| Friends | **domain complete and green** — ADR-009 supersedes ADR-008: connect in person over radio, sync through a sealed CloudKit shared zone, eight friends. 43 of 48 cases automated. `FoodMapData/Sharing`, `FoodMapData/Proximity` and the six screens are **not built**; OPEN-11 … OPEN-13 should land alongside them |
+| Friends | **built at every layer and green** — ADR-009 supersedes ADR-008: connect in person over radio, sync through a sealed CloudKit shared zone, eight friends. 47 of 52 cases automated. OPEN-13's floor moved to -70 on the first two-device trial; OPEN-11 and OPEN-12 remain, and the sync loop is not yet driven on a schedule |
 | Localisation | **Vietnamese and English**, String Catalog, verified by TC-N-01 |
 | Data adapters | **complete and green** — SwiftData, file system, ImageIO, Apple Maps |
 | App target | **built and running** — 6 screens, verified in the simulator, light and dark |
