@@ -33,6 +33,17 @@ enum DemoSeed {
         ProcessInfo.processInfo.arguments.contains("-SeedFullCircle")
     }
 
+    /// `-SeedOnePlace` stops after the first restaurant, so the map holds exactly one pin.
+    ///
+    /// For the cases that must read a *particular* pin. With the full seed, Phở Thìn — the
+    /// countersigned one — falls inside a cluster at the opening zoom, and a cluster describes
+    /// itself as "2 places here". Zooming in to break the cluster apart was tried and is flaky:
+    /// pinch a little too hard and every pin leaves the viewport, so the assertion reads an empty
+    /// list and fails for a reason that has nothing to do with what it is testing (TC-10-19).
+    static var onePlaceRequested: Bool {
+        ProcessInfo.processInfo.arguments.contains("-SeedOnePlace")
+    }
+
     /// One friend who has been where the reader has — the countersign — and one who has been
     /// somewhere the reader has not, which is the other half of what the layer is for.
     @MainActor
@@ -126,6 +137,8 @@ enum DemoSeed {
                 )
             )
         }
+
+        if onePlaceRequested { return }
 
         _ = try? dependencies.logMeal.execute(
             LogMealRequest(

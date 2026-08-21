@@ -110,21 +110,19 @@ final class FriendsJourneyTests: XCTestCase {
     /// and mentioned to nobody: the pin's description covered place, kind and meal count and
     /// stopped there.
     func test_TC_10_19_aCountersignedPinNamesTheFriend() {
-        let app = AppLauncher.launch(seeded: true, extraArguments: ["-SeedFriends"])
+        // One place on the map, so the countersigned pin is the pin — no cluster to break apart
+        // and no zooming, which is where the first version of this case went wrong.
+        let app = AppLauncher.launch(
+            seeded: true,
+            extraArguments: ["-SeedOnePlace", "-SeedFriends"]
+        )
         app.buttons["friendsLayerToggle"].tapWhenReady(timeout: 20)
 
         let pins = app.descendants(matching: .any).matching(identifier: "mapPin")
-        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10), "No pins of the reader's own")
+        XCTAssertTrue(pins.firstMatch.waitForExistence(timeout: 10), "No pin for the reader's own place")
 
-        // Phở Thìn — the countersigned one — sits inside a cluster at the opening zoom, and a
-        // cluster describes itself as "2 places here". Zoom until the pins stand alone, or the
-        // sentence under test is not on screen to be read.
-        var labels: [String] = []
-        for _ in 0..<4 {
-            labels = (0..<pins.count).map { pins.element(boundBy: $0).label }
-            if labels.contains(where: { $0.contains("Lan") }) { break }
-            app.maps.firstMatch.pinch(withScale: 3, velocity: 3)
-        }
+        let labels = (0..<pins.count).map { pins.element(boundBy: $0).label }
+        XCTAssertFalse(labels.isEmpty, "The map drew no pin at all — nothing was under test")
         XCTAssertTrue(
             labels.contains { $0.contains("Lan") },
             "No pin mentioned Lan's countersign. Labels were: \(labels)"
