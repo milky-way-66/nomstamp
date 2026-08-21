@@ -69,7 +69,7 @@ struct FriendPlaceSheet: View {
                 detail(label: Text("Their rating"), value: Text(rating.formatted(.number.precision(.fractionLength(0...1)))) + Text(" of 5"))
             }
             if let count = stamp.visitCount {
-                detail(label: Text("Times they went"), value: Text(count.formatted()))
+                detail(label: Text("Visits"), value: Text(count.formatted()))
             }
             if let dish = stamp.latestDish {
                 detail(label: Text("Last dish"), value: Text(dish))

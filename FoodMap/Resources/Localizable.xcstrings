@@ -18,19 +18,19 @@
         }
       }
     },
-    "%lld of 8. You can only add someone you are sitting with.": {
+    "%lld of 8. Everyone here is someone you sat down with.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld of 8. You can only add someone you are sitting with."
+            "value": "%lld of 8. Everyone here is someone you sat down with."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld trên 8. Bạn chỉ có thể thêm người đang ngồi cùng."
+            "value": "%lld trên 8. Mọi người ở đây đều là người bạn từng ngồi cùng."
           }
         }
       }
@@ -189,23 +189,6 @@
         }
       }
     },
-    "Add meal": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add meal"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thêm bữa"
-          }
-        }
-      }
-    },
     "Add someone here": {
       "extractionState": "manual",
       "localizations": {
@@ -291,23 +274,6 @@
         }
       }
     },
-    "Allow location access to see which of your saved places are nearby.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Allow location access to see which of your saved places are nearby."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cho phép truy cập vị trí để xem những địa điểm đã lưu ở gần bạn."
-          }
-        }
-      }
-    },
     "Already on your map": {
       "extractionState": "manual",
       "localizations": {
@@ -337,7 +303,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cũng được đóng tem bởi"
+            "value": "Cũng có tem của"
           }
         }
       }
@@ -376,7 +342,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Điểm trung bình"
+            "value": "Đánh giá trung bình"
           }
         }
       }
@@ -473,51 +439,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cả hai máy phải hiện bốn chữ cái này. Nếu không, hãy dừng lại — có người khác đang trả lời."
-          }
-        }
-      }
-    },
-    "Camera access is off": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Máy ảnh đang bị tắt quyền"
-          }
-        }
-      }
-    },
-    "Can't add them": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Can't add them"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Không thêm được"
-          }
-        }
-      }
-    },
-    "Can't tell where you are": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Can't tell where you are"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Không xác định được vị trí của bạn"
           }
         }
       }
@@ -680,23 +601,6 @@
         }
       }
     },
-    "Couldn't save": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Couldn't save"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Không lưu được"
-          }
-        }
-      }
-    },
     "Delete %@?": {
       "extractionState": "manual",
       "localizations": {
@@ -799,17 +703,6 @@
         }
       }
     },
-    "Dish, note and time": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tên món, ghi chú và thời gian"
-          }
-        }
-      }
-    },
     "Eaten at": {
       "extractionState": "manual",
       "localizations": {
@@ -827,19 +720,19 @@
         }
       }
     },
-    "Eight friends is the most. Remove someone first.": {
+    "Eight is the most. Make room by removing someone.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Eight friends is the most. Remove someone first."
+            "value": "Eight is the most. Make room by removing someone."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tối đa tám người bạn. Hãy xoá bớt một người trước."
+            "value": "Tối đa là tám. Hãy bỏ bớt một người để có chỗ."
           }
         }
       }
@@ -864,23 +757,6 @@
     "Finding where you are…": {
       "extractionState": "manual",
       "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Đang tìm vị trí của bạn…"
-          }
-        }
-      }
-    },
-    "Finding you…": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Finding you…"
-          }
-        },
         "vi": {
           "stringUnit": {
             "state": "translated",
@@ -953,6 +829,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ngon"
+          }
+        }
+      }
+    },
+    "Got it": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Got it"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đã hiểu"
           }
         }
       }
@@ -1070,6 +963,23 @@
         }
       }
     },
+    "Light": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Đèn"
+          }
+        }
+      }
+    },
     "Looking for phones in the room…": {
       "extractionState": "manual",
       "localizations": {
@@ -1082,7 +992,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Đang tìm các máy trong phòng…"
+            "value": "Đang tìm điện thoại trong phòng…"
           }
         }
       }
@@ -1099,7 +1009,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Từ đối chiếu"
+            "value": "Từ xác nhận"
           }
         }
       }
@@ -1138,34 +1048,6 @@
         }
       }
     },
-    "Nearby": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nearby"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gần đây"
-          }
-        }
-      }
-    },
-    "No camera here": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Máy này không có máy ảnh"
-          }
-        }
-      }
-    },
     "No friends yet": {
       "extractionState": "manual",
       "localizations": {
@@ -1183,36 +1065,53 @@
         }
       }
     },
-    "No radio on this phone": {
+    "Nomstamp hasn't been allowed Bluetooth": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No radio on this phone"
+            "value": "Nomstamp hasn't been allowed Bluetooth"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Điện thoại này không có sóng"
+            "value": "Nomstamp chưa được dùng Bluetooth"
           }
         }
       }
     },
-    "Nomstamp can't use Bluetooth": {
+    "Nomstamp hasn't been allowed the camera": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nomstamp chưa được dùng máy ảnh"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nomstamp hasn't been allowed the camera"
+          }
+        }
+      }
+    },
+    "Nomstamp hasn't been allowed your location": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nomstamp can't use Bluetooth"
+            "value": "Nomstamp hasn't been allowed your location"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nomstamp không dùng được Bluetooth"
+            "value": "Nomstamp chưa được dùng vị trí"
           }
         }
       }
@@ -1268,23 +1167,6 @@
         }
       }
     },
-    "Nothing found nearby.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nothing found nearby."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Không tìm thấy gì ở gần đây."
-          }
-        }
-      }
-    },
     "Nothing found. Many street food places aren't listed anywhere — you can still pin it from the map later.": {
       "extractionState": "manual",
       "localizations": {
@@ -1319,70 +1201,70 @@
         }
       }
     },
-    "Nothing saved near here": {
+    "Nothing of yours nearby": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nothing saved near here"
+            "value": "Nothing of yours nearby"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chưa lưu gì ở gần đây"
+            "value": "Chưa có địa điểm nào của bạn ở gần"
           }
         }
       }
     },
-    "OK": {
+    "Nothing of yours within %@. Try a wider radius.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "OK"
+            "value": "Nothing of yours within %@. Try a wider radius."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "OK"
+            "value": "Không có địa điểm nào của bạn trong vòng %@. Hãy thử bán kính rộng hơn."
           }
         }
       }
     },
-    "Off": {
+    "Nothing on your map yet": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Off"
+            "value": "Nothing on your map yet"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tắt"
+            "value": "Bản đồ của bạn chưa có gì"
           }
         }
       }
     },
-    "On": {
+    "Nothing was saved. Press the shutter again.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "On"
+            "value": "Nothing was saved. Press the shutter again."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bật"
+            "value": "Chưa có gì được lưu. Hãy bấm chụp lại."
           }
         }
       }
@@ -1421,23 +1303,6 @@
         }
       }
     },
-    "Photograph a meal where you are, or save a place someone told you about.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Photograph a meal where you are, or save a place someone told you about."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chụp bữa ăn ở nơi bạn đang ở, hoặc lưu một địa điểm ai đó giới thiệu."
-          }
-        }
-      }
-    },
     "Photograph of this meal": {
       "extractionState": "manual",
       "localizations": {
@@ -1445,6 +1310,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ảnh của bữa ăn này"
+          }
+        }
+      }
+    },
+    "Photograph what you're eating, or save somewhere you've been told about.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photograph what you're eating, or save somewhere you've been told about."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chụp món bạn đang ăn, hoặc lưu một nơi ai đó mách bạn."
+          }
+        }
+      }
+    },
+    "Photos taken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photos taken"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Số ảnh đã chụp"
           }
         }
       }
@@ -1462,17 +1361,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Trời mưa"
-          }
-        }
-      }
-    },
-    "Rate this meal": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Chấm điểm bữa này"
           }
         }
       }
@@ -1523,7 +1411,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Xoá"
+            "value": "Bỏ kết nối"
           }
         }
       }
@@ -1540,7 +1428,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Xoá bạn và xoá luôn tem của họ"
+            "value": "Bỏ kết nối và xoá tem của họ"
           }
         }
       }
@@ -1557,7 +1445,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Xoá người bạn này?"
+            "value": "Bỏ kết nối với người này?"
           }
         }
       }
@@ -1568,7 +1456,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bỏ ảnh này"
+            "value": "Xoá ảnh này"
           }
         }
       }
@@ -1692,23 +1580,6 @@
         }
       }
     },
-    "Show": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Show"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Hiển thị"
-          }
-        }
-      }
-    },
     "Show everyone": {
       "extractionState": "manual",
       "localizations": {
@@ -1739,6 +1610,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chỉ hiện %@"
+          }
+        }
+      }
+    },
+    "Show where I am": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show where I am"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiện vị trí của tôi"
           }
         }
       }
@@ -1783,7 +1671,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bỏ qua chấm điểm"
+            "value": "Bỏ qua đánh giá"
           }
         }
       }
@@ -1800,41 +1688,24 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Được đóng tem bởi"
+            "value": "Tem của"
           }
         }
       }
     },
-    "Step 2 of 3": {
+    "Switch camera": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Step 2 of 3"
+            "value": "Switch camera"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bước 2 / 3"
-          }
-        }
-      }
-    },
-    "Tags, comma separated": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tags, comma separated"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Thẻ, cách nhau bằng dấu phẩy"
+            "value": "Đổi máy ảnh"
           }
         }
       }
@@ -1846,6 +1717,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Chụp ảnh"
+          }
+        }
+      }
+    },
+    "That shot didn't come through": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That shot didn't come through"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chưa chụp được tấm này"
           }
         }
       }
@@ -1879,7 +1767,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Điểm của họ"
+            "value": "Đánh giá của họ"
           }
         }
       }
@@ -1897,23 +1785,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Tem của họ rời khỏi bản đồ của bạn, và tem của bạn ngừng đến với họ. Những gì họ đã nhận vẫn nằm trên máy họ."
-          }
-        }
-      }
-    },
-    "They are already on your map.": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "They are already on your map."
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Họ đã có trên bản đồ của bạn rồi."
           }
         }
       }
@@ -1986,6 +1857,40 @@
         }
       }
     },
+    "They want to try this one too.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They want to try this one too."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ cũng đang muốn thử nơi này."
+          }
+        }
+      }
+    },
+    "They're already here": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "They're already here"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Họ đã ở đây rồi"
+          }
+        }
+      }
+    },
     "This also deletes the photos you took there. It can't be undone.": {
       "extractionState": "manual",
       "localizations": {
@@ -2020,30 +1925,53 @@
         }
       }
     },
-    "Times they went": {
+    "This phone has no Bluetooth": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Times they went"
+            "value": "This phone has no Bluetooth"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Số lần họ đến"
+            "value": "Điện thoại này không có Bluetooth"
           }
         }
       }
     },
-    "Turn it on in Settings, or choose a photo from your library instead.": {
+    "This phone has no camera": {
       "extractionState": "manual",
       "localizations": {
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bật quyền trong Cài đặt, hoặc chọn một ảnh trong thư viện của bạn."
+            "value": "Điện thoại này không có máy ảnh"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This phone has no camera"
+          }
+        }
+      }
+    },
+    "Try again": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thử lại"
           }
         }
       }
@@ -2065,40 +1993,6 @@
         }
       }
     },
-    "Use a test photo": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use a test photo"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dùng ảnh thử"
-          }
-        }
-      }
-    },
-    "Use my exact spot": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use my exact spot"
-          }
-        },
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dùng đúng vị trí của tôi"
-          }
-        }
-      }
-    },
     "Use the photo's time": {
       "extractionState": "manual",
       "localizations": {
@@ -2116,6 +2010,23 @@
         }
       }
     },
+    "Use where I am": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use where I am"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dùng vị trí hiện tại"
+          }
+        }
+      }
+    },
     "Using the time and place from your photo": {
       "extractionState": "manual",
       "localizations": {
@@ -2129,6 +2040,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dùng thời gian và địa điểm từ ảnh của bạn"
+          }
+        }
+      }
+    },
+    "Visits": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visits"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Số lần đến"
           }
         }
       }
@@ -2163,6 +2091,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Muốn thử"
+          }
+        }
+      }
+    },
+    "What did you have?": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn đã ăn gì?"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What did you have?"
           }
         }
       }
@@ -2235,6 +2180,40 @@
         }
       }
     },
+    "You can allow it in Settings — or pick a photo you already took.": {
+      "extractionState": "manual",
+      "localizations": {
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn có thể bật trong Cài đặt — hoặc chọn một tấm ảnh đã chụp sẵn."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can allow it in Settings — or pick a photo you already took."
+          }
+        }
+      }
+    },
+    "You can allow it in Settings, and your nearby places will appear.": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can allow it in Settings, and your nearby places will appear."
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bạn có thể bật trong Cài đặt, những địa điểm ở gần sẽ hiện ra."
+          }
+        }
+      }
+    },
     "You can only add someone you are sitting with. Both phones have to be in the same room.": {
       "extractionState": "manual",
       "localizations": {
@@ -2252,36 +2231,36 @@
         }
       }
     },
-    "You have no saved places within %@ of where you are.": {
+    "You're already connected. Their stamps are on your map.": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You have no saved places within %@ of where you are."
+            "value": "You're already connected. Their stamps are on your map."
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bạn không có địa điểm nào đã lưu trong vòng %@ quanh vị trí hiện tại."
+            "value": "Bạn đã kết nối với họ rồi. Tem của họ đã có trên bản đồ."
           }
         }
       }
     },
-    "Your food map is empty": {
+    "Your meal didn't save": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your food map is empty"
+            "value": "Your meal didn't save"
           }
         },
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bản đồ ẩm thực của bạn còn trống"
+            "value": "Chưa lưu được bữa ăn"
           }
         }
       }
@@ -2315,7 +2294,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ và %2$lld người nữa cũng đã đóng dấu, mực %3$@"
+            "value": "cũng có tem của %1$@ và %2$lld người nữa, mực %3$@"
           }
         }
       }
@@ -2332,7 +2311,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ và một người nữa cũng đã đóng dấu, mực %2$@"
+            "value": "cũng có tem của %1$@ và một người nữa, mực %2$@"
           }
         }
       }
@@ -2349,7 +2328,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ cũng đã đóng dấu, mực %2$@"
+            "value": "cũng có tem của %1$@, mực %2$@"
           }
         }
       }
@@ -2367,6 +2346,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "ví dụ: Lan bảo thử bún chả"
+          }
+        }
+      }
+    },
+    "e.g. bún chả, Hà Nội": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "e.g. bún chả, Hà Nội"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ví dụ: bún chả, Hà Nội"
           }
         }
       }
@@ -2434,7 +2430,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "xanh lá"
+            "value": "lá non"
           }
         }
       }
@@ -2485,7 +2481,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ và %2$lld người nữa đã đóng dấu, mực %3$@"
+            "value": "tem của %1$@ và %2$lld người nữa, mực %3$@"
           }
         }
       }
@@ -2502,7 +2498,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ và một người nữa đã đóng dấu, mực %2$@"
+            "value": "tem của %1$@ và một người nữa, mực %2$@"
           }
         }
       }
@@ -2519,7 +2515,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%1$@ đã đóng dấu, mực %2$@"
+            "value": "tem của %1$@, mực %2$@"
           }
         }
       }
@@ -2536,7 +2532,7 @@
         "vi": {
           "stringUnit": {
             "state": "translated",
-            "value": "xanh mòng két"
+            "value": "mòng két"
           }
         }
       }
@@ -2554,17 +2550,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "tím"
-          }
-        }
-      }
-    },
-    "· %@ meals": {
-      "extractionState": "manual",
-      "localizations": {
-        "vi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "· %@ bữa"
           }
         }
       }

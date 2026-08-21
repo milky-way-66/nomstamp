@@ -48,16 +48,16 @@ struct AddFriendView: View {
             // a cancelled loop that leaves an advertiser running would still be broadcasting.
             .onDisappear { dependencies.proximity?.end() }
             .alert(
-                Text("Can't add them"),
+                Text("They're already here"),
                 isPresented: Binding(get: { refusal != nil }, set: { if !$0 { refusal = nil } })
             ) {
-                Button { refusal = nil } label: { Text("OK") }
+                Button { refusal = nil } label: { Text("Got it") }
             } message: {
                 switch refusal {
                 case .full:
-                    Text("Eight friends is the most. Remove someone first.")
+                    Text("Eight is the most. Make room by removing someone.")
                 case .alreadyConnected:
-                    Text("They are already on your map.")
+                    Text("You're already connected. Their stamps are on your map.")
                 case .notInPerson, .none:
                     // The one refusal that is a physical fact rather than a policy.
                     Text("They moved out of range. Sit closer and try again.")
@@ -123,7 +123,7 @@ struct AddFriendView: View {
                     .foregroundStyle(Theme.inkSecondary)
                     .multilineTextAlignment(.center)
             case .unauthorized:
-                Text("Nomstamp can't use Bluetooth")
+                Text("Nomstamp hasn't been allowed Bluetooth")
                     .font(Theme.display(.title3))
                     .foregroundStyle(Theme.ink)
                 Text("Allow Bluetooth for Nomstamp in Settings. It is only ever used to find the phone across the table, and only while this screen is open.")
@@ -139,7 +139,7 @@ struct AddFriendView: View {
                 }
                 .buttonStyle(.bordered)
             case .unsupported, .searching:
-                Text("No radio on this phone")
+                Text("This phone has no Bluetooth")
                     .font(Theme.display(.title3))
                     .foregroundStyle(Theme.ink)
                 Text("A friend is added by sitting next to them, so this needs a phone with Bluetooth.")

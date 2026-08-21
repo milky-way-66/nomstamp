@@ -42,6 +42,8 @@ struct AddMealView: View {
     @State private var rating: Int?
     @State private var note = ""
     @State private var isShowingDetails = false
+    /// The score is asked once per meal, however many photographs it has (FR-14.15).
+    @State private var hasAskedRating = false
     @State private var isSaving = false
     @State private var errorMessage: String?
 
@@ -68,16 +70,21 @@ struct AddMealView: View {
         InAppCameraView(
             onCapture: { data in
                 photoData.append(data)
-                advanceAfterCapture()
+                Task { await resolveContext() }
             },
-            // Backing out of the very first shot means backing out of the meal.
+            // Backing out of the very first shot means backing out of the meal. Otherwise
+            // leaving the camera is what ends the photographing, and the score is asked once
+            // on the way out — about the meal, not about a photograph (FR-14.15, FR-1.10).
             onClose: {
                 if photoData.isEmpty {
                     dismiss()
                 } else {
-                    step = .confirm
+                    step = hasAskedRating ? .confirm : .rate
                 }
-            }
+            },
+            shotCount: photoData.count,
+            latestShot: photoData.last,
+            onReviewShots: { step = .confirm }
         ) {
             captureAlternatives
         }
@@ -106,7 +113,7 @@ struct AddMealView: View {
                         .foregroundStyle(.white)
                         .frame(width: 46, height: 46)
                 }
-                .accessibilityLabel("Use a test photo")
+                .accessibilityLabel(Text(verbatim: "Use a test photo"))
                 .accessibilityIdentifier("useTestPhotoButton")
             }
         }
@@ -120,10 +127,10 @@ struct AddMealView: View {
         }
     }
 
-    /// The first photo earns the rating question; later ones just rejoin the confirm step.
+    /// Arriving from the library rather than the shutter: there is no viewfinder to stay in, so
+    /// the flow behaves as it always did.
     private func advanceAfterCapture() {
-        let isFirst = photoData.count <= 1
-        step = isFirst ? .rate : .confirm
+        step = hasAskedRating ? .confirm : .rate
         Task { await resolveContext() }
     }
 
@@ -156,12 +163,8 @@ struct AddMealView: View {
                 }
 
                 VStack(spacing: Theme.Space.snug) {
-                    // Where you are in the three steps, stamped rather than styled as a
-                    // progress bar: this is a form, not a download.
-                    Text("Step 2 of 3")
-                        .font(Theme.stamped(.caption))
-                        .foregroundStyle(Theme.inkSecondary)
-
+                    // No step counter: the question is the whole screen, and a form that
+                    // narrates its own length is a form that feels long (voice note, 21 Aug).
                     Text("How was it?")
                         .font(Theme.display(.title2))
                         .foregroundStyle(Theme.ink)
@@ -173,7 +176,10 @@ struct AddMealView: View {
                         // Long enough to see the word land, short enough not to feel held up.
                         Task {
                             try? await Task.sleep(for: .milliseconds(520))
-                            if rating == score { step = .confirm }
+                            if rating == score {
+                                hasAskedRating = true
+                                step = .confirm
+                            }
                         }
                     }, size: 46)
                     .padding(.top, Theme.Space.tight)
@@ -205,6 +211,7 @@ struct AddMealView: View {
                     Spacer()
 
                     Button {
+                        hasAskedRating = true
                         step = .confirm
                     } label: {
                         Text("Skip")
@@ -244,11 +251,11 @@ struct AddMealView: View {
                         .disabled(!canSave || isSaving)
                 }
             }
-            .alert("Couldn't save", isPresented: .init(
+            .alert("Your meal didn't save", isPresented: .init(
                 get: { errorMessage != nil },
                 set: { if !$0 { errorMessage = nil } }
             )) {
-                Button("OK", role: .cancel) {}
+                Button("Try again", role: .cancel) {}
             } message: {
                 Text(errorMessage ?? "")
             }
@@ -393,7 +400,7 @@ struct AddMealView: View {
                     Image(systemName: "text.alignleft")
                         .font(.system(size: 13))
                         .foregroundStyle(Theme.inkSecondary)
-                    Text("Dish, note and time")
+                    Text("What did you have?")
                         .font(Theme.label(.body))
                         .foregroundStyle(Theme.ink)
                 }

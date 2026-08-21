@@ -33,7 +33,7 @@ struct FriendsLayerControl: View {
                     )
             }
             .accessibilityLabel(Text("Friends layer"))
-            .accessibilityValue(store.layerEnabled ? Text("On") : Text("Off"))
+            .accessibilityValue(store.layerEnabled ? Text("Showing") : Text("Hidden"))
             .accessibilityHint(store.circle.friends.isEmpty ? Text("Add friend") : Text("Friends layer"))
             .accessibilityIdentifier("friendsLayerToggle")
 

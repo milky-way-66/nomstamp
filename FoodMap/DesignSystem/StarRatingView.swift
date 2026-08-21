@@ -57,7 +57,7 @@ struct StarRatingView: View {
             // Every star crossed under the finger is felt, not just the one released on.
             .sensoryFeedback(.selection, trigger: dragging)
             .accessibilityElement(children: .contain)
-            .accessibilityLabel("Rate this meal")
+            .accessibilityLabel("How was it?")
             .accessibilityIdentifier("starRating")
         } else {
             HStack(spacing: 3) {

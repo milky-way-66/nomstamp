@@ -52,7 +52,7 @@ struct PlacePickerView: View {
             }
 
             if searchText.isEmpty {
-                Section("Nearby") {
+                Section("Near me") {
                     if isLoading {
                         ProgressView()
                     } else if searchFailed {
@@ -60,7 +60,7 @@ struct PlacePickerView: View {
                             .font(Theme.label(.footnote))
                             .foregroundStyle(Theme.inkSecondary)
                     } else if nearby.isEmpty {
-                        Text("Nothing found nearby.")
+                        Text("Nothing found. Many street food places aren't listed anywhere — you can still pin it from the map later.")
                             .font(Theme.label(.footnote))
                             .foregroundStyle(Theme.inkSecondary)
                     }
@@ -77,7 +77,7 @@ struct PlacePickerView: View {
                 Button {
                     pickManual()
                 } label: {
-                    Label("Use my exact spot", systemImage: "mappin.and.ellipse")
+                    Label("Use where I am", systemImage: "mappin.and.ellipse")
                         .accessibilityIdentifier("useMySpotButton")
                 }
                 .disabled(manualName.trimmingCharacters(in: .whitespaces).isEmpty || around == nil)

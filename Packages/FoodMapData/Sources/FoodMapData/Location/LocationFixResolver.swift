@@ -16,9 +16,10 @@ actor LocationFixResolver {
         case denied
     }
 
-    /// A fix looser than the radius we would match a place within cannot tell two neighbouring
-    /// shops apart, so it is not worth reporting at all (FR-1.13).
-    static let maxAccuracy: Double = SuggestMealPlaceUseCase.radius
+    /// Freshness and validity are properties of the *fix*, and belong here. Precision is a
+    /// property of the *question* — only place preselection needs 120 m — and belongs to
+    /// `SuggestMealPlaceUseCase`. Filtering coarse fixes out here left Near Me, the appearance
+    /// and the map with no position at all in any ordinary restaurant (ADR-004, 21 Aug).
 
     /// Long enough that walking in from the street reuses the fix, short enough that a fix from
     /// the last restaurant never does (FR-1.14).
@@ -40,6 +41,7 @@ actor LocationFixResolver {
     private let authorization: @Sendable () -> Authorization
     private let requestPermission: @Sendable () -> Void
     private let requestFix: @Sendable () -> Void
+    private let stopFix: @Sendable () -> Void
     private let now: @Sendable () -> Date
 
     private var lastReport: Report?
@@ -50,12 +52,14 @@ actor LocationFixResolver {
         authorization: @escaping @Sendable () -> Authorization,
         requestPermission: @escaping @Sendable () -> Void,
         requestFix: @escaping @Sendable () -> Void,
+        stopFix: @escaping @Sendable () -> Void = {},
         now: @escaping @Sendable () -> Date = { Date() }
     ) {
         self.timeout = timeout
         self.authorization = authorization
         self.requestPermission = requestPermission
         self.requestFix = requestFix
+        self.stopFix = stopFix
         self.now = now
     }
 
@@ -80,20 +84,38 @@ actor LocationFixResolver {
         }
     }
 
-    /// A fix arrived. Coarse and invalid ones are dropped rather than cached: a 1.5 km
-    /// cell-tower fix must not become the answer just because it came first.
+    /// A fix arrived. Only Core Location's own invalid marker — a negative accuracy — is
+    /// dropped. A coarse fix is reported *with* its accuracy so the caller can weigh it; it is
+    /// not withheld. Withholding it is what left a reader with permission granted, GPS working
+    /// and no position (ADR-004, 21 Aug).
+    ///
+    /// Updates keep arriving until the request is satisfied, so a first coarse fix is replaced
+    /// by the finer one that follows a few seconds later rather than ending the request.
     func received(_ reports: [Report]) {
-        let usable = reports
-            .filter { $0.accuracy >= 0 && $0.accuracy <= Self.maxAccuracy }
+        let arrived = reports
+            .filter { $0.accuracy >= 0 }
             .max { $0.timestamp < $1.timestamp }
 
-        guard let usable else { return }
-        lastReport = usable
-        resumeWaiting(with: LocationFix(coordinate: usable.coordinate, accuracy: usable.accuracy))
+        guard let arrived else { return }
+        guard isBetter(arrived, than: lastReport) else { return }
+
+        lastReport = arrived
+        resumeWaiting(with: LocationFix(coordinate: arrived.coordinate, accuracy: arrived.accuracy))
     }
 
-    /// Core Location gave up. Anything cached and still fresh is better than nothing.
-    func failed() {
+    /// Newer wins outright; at equal age, tighter wins. A fix that is both older and looser than
+    /// what we hold is not an improvement and must not overwrite it.
+    private func isBetter(_ candidate: Report, than held: Report?) -> Bool {
+        guard let held else { return true }
+        if candidate.timestamp > held.timestamp { return true }
+        return candidate.timestamp == held.timestamp && candidate.accuracy < held.accuracy
+    }
+
+    /// Core Location reported a failure. `kCLErrorLocationUnknown` is documented as transient —
+    /// the framework is still trying — so only a denial ends the wait. Everything else lets the
+    /// timeout do its job, because ending here turns a delay into a failure (ADR-004, 21 Aug).
+    func failed(isTerminal: Bool = false) {
+        guard isTerminal else { return }
         resumeWaiting(with: freshFix())
     }
 
@@ -130,6 +152,9 @@ actor LocationFixResolver {
     private func resumeWaiting(with fix: LocationFix?) {
         let pending = waiting
         waiting.removeAll()
+        // Updates run only while somebody is asking: this is a foreground app that wants a
+        // position now, not a tracker.
+        if !pending.isEmpty { stopFix() }
         for continuation in pending {
             continuation.resume(returning: fix)
         }

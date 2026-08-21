@@ -69,7 +69,7 @@ struct SavePlaceView: View {
                     TextField("e.g. Lan said try the bún chả", text: $note, axis: .vertical)
                         .accessibilityIdentifier("placeNoteField")
                         .lineLimit(1...4)
-                    TextField("Tags, comma separated", text: $tagText)
+                    TextField("e.g. bún chả, Hà Nội", text: $tagText)
                 }
             }
             .scrollContentBackground(.hidden)
@@ -94,7 +94,7 @@ struct SavePlaceView: View {
                 get: { message != nil },
                 set: { if !$0 { message = nil } }
             )) {
-                Button("OK") { dismiss() }
+                Button("Got it") { dismiss() }
             } message: {
                 Text(message ?? "")
             }

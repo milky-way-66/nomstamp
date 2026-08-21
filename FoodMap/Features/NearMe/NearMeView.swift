@@ -20,7 +20,7 @@ struct NearMeView: View {
         NavigationStack {
             Group {
                 if isLoading {
-                    ProgressView("Finding you…")
+                    ProgressView("Finding where you are…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     switch outcome {
@@ -28,15 +28,15 @@ struct NearMeView: View {
                         // Distinct from "nothing nearby" — the user must never be told they
                         // saved nothing when the truth is we cannot locate them (TC-5-04).
                         ContentUnavailableView(
-                            "Can't tell where you are",
+                            "Nomstamp hasn't been allowed your location",
                             systemImage: "location.slash",
-                            description: Text("Allow location access to see which of your saved places are nearby.")
+                            description: Text("You can allow it in Settings, and your nearby places will appear.")
                         )
                     case .located(let results) where results.isEmpty:
                         ContentUnavailableView(
-                            "Nothing saved near here",
+                            "Nothing of yours nearby",
                             systemImage: "mappin.slash",
-                            description: Text("You have no saved places within \(DistanceFormatter.string(fromMeters: radius)) of where you are.")
+                            description: Text("Nothing of yours within \(DistanceFormatter.string(fromMeters: radius)). Try a wider radius.")
                         )
                     case .located(let results):
                         List(results, id: \.place.id) { entry in

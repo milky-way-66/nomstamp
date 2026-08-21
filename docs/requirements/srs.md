@@ -106,7 +106,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-1.10 | Logging shall proceed camera → rating → confirm: the camera shall open immediately on **Add meal**, the score shall be asked once **on leaving the camera** — about the meal, not about a photograph, so several dishes may be photographed first (FR-14.15) — and every derived value shall be editable on the confirm step | UC-1 | TC-1-19, TC-1-33 |
 | FR-1.11 | The system shall preselect the place from the meal's coordinate — the nearest saved place within 120 m, else the nearest search candidate within 120 m — without the user choosing one | UC-1/3 | TC-1-16, TC-1-17 |
 | FR-1.12 | A failure or absence of the place directory, or of any coordinate, shall leave the place unset rather than raise an error | UC-1/E1, UC-1/6a | TC-1-18 |
-| FR-1.13 | A device fix shall be used only when its reported horizontal accuracy is valid and no coarser than the 120 m preselection radius; a coarser fix shall count as no coordinate rather than as a guess | UC-1/3, UC-1/E1 | TC-1-21, TC-1-22 |
+| FR-1.13 | **Place preselection** shall use a device fix only when its reported horizontal accuracy is valid and no coarser than the 120 m radius; a coarser fix shall preselect nothing rather than guess. The ceiling shall be applied **by the preselection**, not by the location adapter, so that callers which only need a point still receive one (ADR-004 amendment, 21 Aug) | UC-1/3, UC-1/E1 | TC-1-21, TC-1-22, TC-1-35 |
 | FR-1.14 | A device fix older than 60 s shall not be reused, including when the wait for a new fix times out | UC-1/3 | TC-1-23 |
 | FR-1.15 | While location permission is undecided, the system shall ask for it and await the answer before concluding that no coordinate is available | UC-1/E1 | TC-1-24 |
 | FR-1.16 | Where a meal's photographs disagree, its time and coordinate shall both be taken from the earliest photograph that carries a coordinate | UC-1/1a | TC-1-25 |
@@ -134,6 +134,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-3.8 | The user shall filter the map by visited or wishlist | UC-2/5a | TC-2-08 |
 | FR-3.9 | With no places saved, the map shall show an explanatory empty state | UC-2/1a | TC-2-10 |
 | FR-3.10 | Tapping a pin shall open that place, exactly as tapping its row does; tapping a cluster shall list the places inside it, and choosing one shall open it | UC-2/6, UC-3 | TC-2-11 |
+| FR-3.11 | The map shall offer a control that returns it to the reader's own position, available at any time. Opening a place moves the camera, and nothing else shall be required to move it back (ADR-004 amendment, 21 Aug) | UC-2 | TC-2-12 |
 
 ### FR-4 Place detail
 | ID | Requirement | UC | Tests |
@@ -163,6 +164,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-6.3 | Having nothing saved nearby shall be reported as an explicit, successful empty result | UC-5/2a | TC-5-03 |
 | FR-6.4 | An unavailable location shall be reported distinctly from an empty result | UC-5 | TC-5-04 |
 | FR-6.5 | Both visited and wishlist places shall be included | UC-5 | TC-5-05 |
+| FR-6.6 | Near me shall work from a coarse fix. Only place preselection weighs precision; a fix good to a few hundred metres still sorts a list of saved places usefully | UC-5 | TC-1-35, TC-5-06 |
 
 ### FR-7 Place search
 | ID | Requirement | UC | Tests |

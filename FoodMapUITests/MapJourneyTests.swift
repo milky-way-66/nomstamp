@@ -9,7 +9,7 @@ final class MapJourneyTests: XCTestCase {
     func test_TC_2_10_emptyMapOffersBothWaysIn() {
         let app = AppLauncher.launch(seeded: false)
 
-        XCTAssertTrue(app.staticTexts["Your food map is empty"].exists)
+        XCTAssertTrue(app.staticTexts["Nothing on your map yet"].exists)
         XCTAssertTrue(app.buttons["addMealButton"].exists, "The empty map must offer logging a meal")
         XCTAssertTrue(app.buttons["savePlaceButton"].exists, "The empty map must offer saving a place")
     }
@@ -37,6 +37,33 @@ final class MapJourneyTests: XCTestCase {
             app.staticTexts["Cà phê Giảng"].exists,
             "Non-matching places should be filtered out"
         )
+    }
+
+    /// TC-2-12 — the map has a way back to the reader (FR-3.11, ADR-004 amendment 21 Aug).
+    ///
+    /// Opening a place reassigns the camera to a region, and before this control nothing ever
+    /// assigned it back: after the first place opened, the map had no relationship to where the
+    /// reader was for the rest of the session.
+    func test_TC_2_12_theMapCanReturnToTheReader() {
+        let app = AppLauncher.launch(seeded: true)
+
+        XCTAssertTrue(app.staticTexts["Cà phê Giảng"].waitForExistence(timeout: 15))
+
+        let recentre = app.buttons["recentreButton"]
+        XCTAssertTrue(
+            recentre.waitForExistence(timeout: 5),
+            "The map must offer a way back to the reader at all times (FR-3.11)"
+        )
+
+        // Move the camera by opening a place, exactly as the bug report did.
+        app.staticTexts["Cà phê Giảng"].tapWhenReady(timeout: 15)
+        XCTAssertTrue(app.staticTexts["placeKindLabel"].waitForExistence(timeout: 10))
+        app.buttons["Back"].tapWhenReady(timeout: 5)
+
+        // The control is still there, and still works, after the camera has been moved.
+        XCTAssertTrue(recentre.waitForExistence(timeout: 5))
+        recentre.tap()
+        XCTAssertTrue(recentre.isHittable, "Recentring must not leave the map in a broken state")
     }
 
     /// TC-N-15 — the drawn filter tabs behave like the picker they replaced: one selection at a

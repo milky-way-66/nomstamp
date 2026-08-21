@@ -186,6 +186,23 @@ struct MapScreen: View {
         VStack(spacing: Theme.Space.snug) {
             Spacer(minLength: 0)
 
+            // Opening a place reassigns `camera` to a region, and nothing used to assign it
+            // back — so after the first place the map lost its relationship to the reader for
+            // the rest of the session (ADR-004, 21 Aug). This is the way back.
+            FloatingActionButton(
+                glyph: .needle,
+                label: "Show where I am",
+                identifier: "recentreButton"
+            ) {
+                withAnimation(.easeInOut(duration: 0.4)) {
+                    camera = .userLocation(fallback: .region(MKCoordinateRegion(
+                        center: CLLocationCoordinate2D(latitude: 21.0285, longitude: 105.8542),
+                        latitudinalMeters: 4000,
+                        longitudinalMeters: 4000
+                    )))
+                }
+            }
+
             // Hidden, not disabled: on an empty map a ghosted button read as a rendering fault
             // rather than as "nothing saved yet" (design review, 19 Aug).
             if !model.isEmpty {
@@ -204,7 +221,7 @@ struct MapScreen: View {
 
             FloatingActionButton(
                 glyph: .camera,
-                label: "Add meal",
+                label: "Add a meal",
                 identifier: "addMealButton",
                 style: .primary
             ) { model.action = .addMeal }

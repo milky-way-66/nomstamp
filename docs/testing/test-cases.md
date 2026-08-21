@@ -64,6 +64,9 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-1-32 | E | main | Given the viewfinder, when three photographs are taken in one visit, then the thumbnail and count follow each one, the camera is never left, and discarding one leaves the other two | **auto** |
 | TC-1-33 | E | main | Given several photographs taken in one visit, when the reader leaves the camera, then the rating is asked exactly once, about the meal, and the confirm step carries every shot in order | **auto** |
 | TC-1-34 | U | ADR-011, NFR-8.1 | Given a captured photograph larger than the storage cap, when it is stored, then it is downsampled to 2048 px on the longest side — the cap applies after capture, never to the capture | **auto** |
+| TC-1-35 | U | FR-1.13, ADR-004 | Given only a fix coarser than 120 m, when a coordinate is asked for, then it **is** returned with its accuracy — and place preselection still declines to guess from it. The adapter reports; the use case judges | **auto** |
+| TC-1-36 | U | ADR-004 | Given a coarse fix followed by a fine one, when a coordinate is asked for, then the wait ends on something usable and the better fix replaces the worse — a first coarse fix never ends the request | **auto** |
+| TC-1-37 | U | ADR-004 | Given a transient Core Location failure, when it is reported, then the wait continues; only a denial ends it | **auto** |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
 > naive implementation leaves an orphaned meal row when the photo write fails.
@@ -84,6 +87,7 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-2-08 | U | 5a | Given a visited and a wishlist place, when filtering by `wishlist`, then only the wishlist place is returned | **auto** |
 | TC-2-09 | U | step 4 | Given 200 places in one city, when clustered, then the cluster count stays far below 200 and every place appears in exactly one cluster | **auto** |
 | TC-2-11 | E | 6 / FR-3.10 | Given a place's pin on screen, when the pin is tapped, then that place opens — the same screen a row opens | **auto** |
+| TC-2-12 | E | UC-2 | Given the map has been moved by opening a place, when the recentre control is used, then the camera returns to the reader's own position | **auto** |
 | TC-2-10 | E | 1a | Given no places, when the map opens, then the empty state and its two actions are shown | **auto** |
 
 > TC-2-09's real assertion is **conservation**: no place may be dropped or duplicated by

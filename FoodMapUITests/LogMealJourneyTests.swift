@@ -10,7 +10,7 @@ final class LogMealJourneyTests: XCTestCase {
         let app = AppLauncher.launch(seeded: false)
 
         XCTAssertTrue(
-            app.staticTexts["Your food map is empty"].exists,
+            app.staticTexts["Nothing on your map yet"].exists,
             "A fresh install should show the empty state"
         )
 
@@ -34,7 +34,7 @@ final class LogMealJourneyTests: XCTestCase {
             app.staticTexts["Phở Thìn"].waitForExistence(timeout: 10),
             "The logged meal's place should appear in the sheet"
         )
-        XCTAssertFalse(app.staticTexts["Your food map is empty"].exists)
+        XCTAssertFalse(app.staticTexts["Nothing on your map yet"].exists)
     }
 
     /// TC-1-19 — the whole point of the rework: `+`, a photo, one star, Save. The place is
@@ -60,7 +60,7 @@ final class LogMealJourneyTests: XCTestCase {
             app.staticTexts["Cà phê Giảng"].waitForExistence(timeout: 10),
             "The meal's place should appear on the map"
         )
-        XCTAssertFalse(app.staticTexts["Your food map is empty"].exists)
+        XCTAssertFalse(app.staticTexts["Nothing on your map yet"].exists)
     }
 
     /// TC-7-06 — scoring a meal already logged, from the place screen, with no edit screen.

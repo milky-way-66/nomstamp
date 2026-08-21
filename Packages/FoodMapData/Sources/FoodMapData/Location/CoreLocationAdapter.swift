@@ -26,7 +26,22 @@ public final class CoreLocationAdapter: NSObject, LocationPort, CLLocationManage
                 manager.requestWhenInUseAuthorization()
                 #endif
             },
-            requestFix: { manager.requestLocation() }
+            // `startUpdatingLocation`, not `requestLocation`: the one-shot API delivers whatever
+            // it has and stops, so a cold indoor first fix — routinely 100–500 m — was the only
+            // fix the app ever saw. Updates let it tighten, and are stopped the moment somebody
+            // has their answer (ADR-004, 21 Aug).
+            requestFix: {
+                #if os(iOS)
+                manager.startUpdatingLocation()
+                #else
+                manager.requestLocation()
+                #endif
+            },
+            stopFix: {
+                #if os(iOS)
+                manager.stopUpdatingLocation()
+                #endif
+            }
         )
         super.init()
         manager.delegate = self
@@ -84,7 +99,10 @@ public final class CoreLocationAdapter: NSObject, LocationPort, CLLocationManage
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        Task { await resolver.failed() }
+        // `kCLErrorLocationUnknown` means "still trying", not "cannot". Only a denial is an
+        // answer; anything else leaves the timeout in charge (ADR-004, 21 Aug).
+        let isTerminal = (error as? CLError)?.code == .denied
+        Task { await resolver.failed(isTerminal: isTerminal) }
     }
 
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
