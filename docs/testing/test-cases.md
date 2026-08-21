@@ -324,7 +324,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-27 | U | ADR-010, NFR-6.3, NFR-5.6 | Given the eight friend inks **in every localisation**, then each has a distinct word — first word included — so whose a stamp is can always be said rather than only shown. Checking the English alone let three Vietnamese inks share `xanh` | **auto** |
 | TC-N-30 | U | NFR-4.5, NFR-5.1 | Given the shipped string catalogue, then every key has a Vietnamese unit and no two keys share an English value — one idea has one string | **auto** |
 | TC-N-31 | U | NFR-5.5 | Given every Vietnamese value, then none uses the `được … bởi` passive, none states a phone's radio as a bare `sóng`, and every stamp is a `tem` rather than a `dấu` | **auto** |
-| TC-N-32 | U | NFR-4.6 | Given every error and empty-state string, then each names an action the reader can take rather than ending at the failure | **auto** |
+| TC-N-32 | U | NFR-4.6 | Given every error and empty-state string, then each names an action the reader can take rather than ending at the failure | **owed** — the catalogue does not mark which strings are errors, so this needs a convention before it can be linted; the rewrites themselves are done |
 | TC-N-33 | U | NFR-4.5 | Given the lexicon of the voice note, then no shipped string uses a retired synonym | **auto** |
 
 Copy is linted, not judged. TC-N-30 … TC-N-33 read the catalogue as data and can prove a string
