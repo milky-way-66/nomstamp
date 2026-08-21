@@ -251,6 +251,21 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-13.5 | Failure to reach a friend shall never surface as an error, only as staleness | UC-10/E1 | TC-10-10 |
 | FR-13.6 | The whole friends feature shall be optional; with no friends or no network the app shall behave exactly as before | UC-10 | TC-10-14 |
 
+### FR-14 Capture *(ADR-011)*
+| ID | Requirement | UC | Tests |
+|---|---|---|---|
+| FR-14.1 | The reader shall be able to photograph with either the front or the back camera, switching between them from the viewfinder | UC-1 | TC-1-27, TC-1-31 |
+| FR-14.2 | The back camera shall be chosen by discovery — triple, then dual-wide, then wide-angle — so that automatic macro switching is available for close-ups of food. `default(for:)` shall not be used, because it returns the one device that cannot focus close | UC-1 | TC-1-27 |
+| FR-14.3 | The front camera shall be chosen as TrueDepth, then wide-angle | UC-1 | TC-1-27 |
+| FR-14.4 | The chosen side shall not persist between meals; each meal shall open on the back camera | UC-1 | TC-1-31 |
+| FR-14.5 | The viewfinder shall support pinch zoom, clamped to the device maximum, and a 1x/2x tap where the device offers it | UC-1 | TC-1-31 |
+| FR-14.6 | A tap on the preview shall set focus **and** exposure at that point, and shall be shown; a second tap or a camera flip shall return to continuous auto | UC-1 | TC-1-31 |
+| FR-14.7 | Where the device has a torch, an off/on/auto control shall be offered, defaulting to off and not persisting. Where it has none, the control shall be absent rather than disabled | UC-1 | TC-1-31 |
+| FR-14.8 | The capture connection's rotation shall be set from the device orientation at the moment of capture, so a photograph taken sideways is not stored with portrait orientation | UC-1 | TC-1-28, TC-1-31 |
+| FR-14.9 | Every capture shall confirm itself with a haptic and a viewfinder dim before the photograph is processed | UC-1 | TC-1-31 |
+| FR-14.10 | A capture that yields no data shall tell the reader and invite a retry, never fail silently | UC-1/E2, NFR-4.4 | TC-1-29 |
+| FR-14.11 | The app shall not offer filters, grids, timers, burst, video or RAW. The camera serves the notebook; it is not the product | ADR-011 | — |
+
 ---
 
 ## 4. Non-functional requirements
@@ -291,12 +306,21 @@ Each requirement names the use case it comes from and the test cases that prove 
 - **NFR-4.2** Every destructive action shall be confirmed or undoable.
 - **NFR-4.3** Empty states shall explain what to do next, never show a blank screen.
 - **NFR-4.4** Error messages shall state what happened and what the user can do.
+- **NFR-4.5** No two shipped strings shall carry the same meaning under different words. One idea
+  has one word, recorded in the lexicon of the voice note (21 Aug). *(TC-N-30, TC-N-33)*
+- **NFR-4.6** Every error and every empty state shall name an action the reader can take.
+  *(TC-N-32)*
+- **NFR-4.7** A message about a permission or a limit shall name what the app has not been allowed
+  or cannot do, never phrase it as the reader's failing. *(voice note, 21 Aug)*
 
 ### NFR-5 Localisation and internationalisation
 - **NFR-5.1** The interface shall support **Vietnamese and English**.
 - **NFR-5.2** Vietnamese text, including diacritics, shall render correctly throughout.
 - **NFR-5.3** Text matching and search shall be diacritic- and case-insensitive (FR-5.5).
 - **NFR-5.4** Distances shall use the metric system.
+- **NFR-5.5** Vietnamese shall be written rather than translated: no `được … bởi` passive
+  construction, and no English sentence rendered word-for-word. Where the two languages want
+  different sentences, they shall get different sentences. *(TC-N-31)*
 
 ### NFR-6 Accessibility
 - **NFR-6.1** The interface shall support Dynamic Type up to the accessibility sizes.

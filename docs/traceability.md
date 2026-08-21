@@ -8,7 +8,7 @@ tests, 32 e2e journeys** — 145 domain, 72 data, 24 design.
 
 | Story | Use case | Requirements | Automated tests | Implementation |
 |---|---|---|---|---|
-| **US-1** photograph the food I eat | UC-1 Log a meal | FR-1.1 … FR-1.17, FR-2.1 … FR-2.4 | TC-1-01 … TC-1-26 | `LogMealUseCase`, `SuggestMealContextUseCase`, `SuggestMealPlaceUseCase`, `LocationFixResolver`, `ImageMetadataReader`, `InAppCameraView` |
+| **US-1** photograph the food I eat | UC-1 Log a meal | FR-1.1 … FR-1.17, FR-2.1 … FR-2.4, **FR-14.1 … FR-14.11** | TC-1-01 … TC-1-31 | `LogMealUseCase`, `SuggestMealContextUseCase`, `SuggestMealPlaceUseCase`, `LocationFixResolver`, `ImageMetadataReader`, `InAppCameraView` |
 | **US-2** see my food on a map | UC-2 Browse the map | FR-3.1 … FR-3.9 | TC-2-01 … TC-2-09 | `BuildMapPinsUseCase`, `PlaceClusterer` |
 | | UC-3 Place detail | FR-4.1 … FR-4.5 | TC-3-01 … TC-3-03 | `Place.mealsNewestFirst`, `DeleteMealUseCase` |
 | **US-3** save a place I heard about | UC-4 Save a place | FR-5.1 … FR-5.6, FR-7.1 … FR-7.5 | TC-4-01 … TC-4-08 | `SavePlaceUseCase`, `PlaceMatcher`, `AppleMapsPlaceSearchAdapter` |
@@ -18,6 +18,16 @@ tests, 32 e2e journeys** — 145 domain, 72 data, 24 design.
 | **US-4** see where my friends have eaten | UC-8 Connect a friend | FR-10.1 … FR-10.13 | TC-8-01 … TC-8-11, TC-8-14 … TC-8-18 | `ConnectFriendUseCase`, `FriendCircle`, `FriendKey`, `VerificationWord`, `ProximityProof`, `BluetoothPresence`, `PresenceRegistry` |
 | | UC-9 Share a place | FR-11.1 … FR-11.6, FR-13.3a … FR-13.3c | TC-9-01 … TC-9-17 | `BuildSharedStampUseCase`, `SharedStamp`, `YearMonth`, `SharingSettings` |
 | | UC-10 Friends on the map | FR-12.1 … FR-12.12, FR-13.1 … FR-13.6 | TC-10-01 … TC-10-27, TC-N-25 … TC-N-27 | `MergeFriendStampsUseCase`, `MapPlace`, `PlaceClusterer`, `BuildMapPinsUseCase`, `ReconcileManifestUseCase`, `FriendsLayer`, `FriendInk` |
+
+## Cross-cutting: the words themselves
+
+| Concern | Requirements | Automated tests | Implementation |
+|---|---|---|---|
+| Voice, lexicon and Vietnamese | NFR-4.4 … NFR-4.7, NFR-5.1 … NFR-5.5 | TC-N-01, TC-N-30 … TC-N-33 | `Localizable.xcstrings`, voice note 21 Aug |
+
+Copy traces to a design note rather than to a type, because it has no implementation of its own —
+it lives in the catalogue and in every view that reads a key from it. The four lint cases are what
+give it a place in this table at all.
 
 ## Current gaps
 

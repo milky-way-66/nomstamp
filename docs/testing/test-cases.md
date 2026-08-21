@@ -56,6 +56,11 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-1-24 | U | E1 | Given permission is undecided, when a coordinate is asked for, then permission is requested and the answer is awaited — a later grant yields the fix, a denial yields nil | **auto** |
 | TC-1-25 | U | 1a | Given two photos whose times and coordinates differ, when the context is derived, then both the time and the coordinate come from the earliest photo carrying a coordinate | **auto** |
 | TC-1-26 | I | 1a | Given a JPEG whose GPS block reads 0°, 0°, when metadata is read, then the coordinate is nil | **auto** |
+| TC-1-27 | U | ADR-011 | Given a set of available capture devices, when the camera picks one, then the back side takes triple → dual-wide → wide-angle in that order and the front takes TrueDepth → wide-angle, choosing the first that exists | **auto** |
+| TC-1-28 | U | ADR-011 | Given each device orientation, when the rotation for capture is computed, then it matches the orientation the phone was held at — portrait is not assumed | **auto** |
+| TC-1-29 | E | E2 | Given a capture that yields no data, when the shutter is pressed, then the reader is told the shot did not come through and can try again — the shutter never does nothing | **auto** |
+| TC-1-30 | E | main | Given a device with no camera, when the capture step opens, then the unavailable message and the library button are both present and the flow still completes | **auto** |
+| TC-1-31 | — | main | Given a real iPhone, when a meal is photographed, then the flip, pinch zoom, tap-to-focus, torch and shutter haptic all behave as ADR-011 describes, and a sideways shot is stored sideways | **manual** |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
 > naive implementation leaves an orphaned meal row when the photo write fails.
@@ -310,6 +315,15 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-26 | U | ADR-009 | Given the plate of eight, then it is identical under every skin — a friend's ink is not re-inked by the weather | **auto** |
 | TC-N-28 | U | ADR-003, NFR-6.4 | Given the night palette, then the page and a card separate as two surfaces, no ink glares against the page, and every stamp paper clears the component floor on both grounds | **auto** |
 | TC-N-27 | U | ADR-010, NFR-6.3 | Given the eight friend inks, then each has a distinct word, so whose a stamp is can always be said rather than only shown | **auto** |
+| TC-N-30 | U | NFR-4.5, NFR-5.1 | Given the shipped string catalogue, then every key has a Vietnamese unit and no two keys share an English value — one idea has one string | **auto** |
+| TC-N-31 | U | NFR-5.5 | Given every Vietnamese value, then none uses the `được … bởi` passive and none calls Bluetooth `sóng` | **auto** |
+| TC-N-32 | U | NFR-4.6 | Given every error and empty-state string, then each names an action the reader can take rather than ending at the failure | **auto** |
+| TC-N-33 | U | NFR-4.5 | Given the lexicon of the voice note, then no shipped string uses a retired synonym | **auto** |
+
+Copy is linted, not judged. TC-N-30 … TC-N-33 read the catalogue as data and can prove a string
+is *consistent*, *actionable* and *not translationese*; no assertion can prove it is friendly. They
+exist to stop the four faults in the voice note (21 Aug) returning one string at a time, which is
+how they arrived.
 
 Two requirements stay deliberately unautomated: **NFR-2.2's frame rate itself** (a unit test can
 bound the work per frame, as TC-N-03 does, but only a device measurement can prove 55 fps), and
