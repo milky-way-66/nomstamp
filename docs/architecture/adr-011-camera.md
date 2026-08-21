@@ -89,10 +89,81 @@ Every capture produces feedback before the photo is processed: a **haptic** and 
 **viewfinder dim**. A capture that fails produces a message — *That shot didn't come through. Try
 again.* (see the voice note, 21 Aug) — rather than nothing at all.
 
-### 6. What is deliberately not built
+### 6. The volume buttons take the photograph
 
-- **No filters, no grid, no level, no timer, no burst.** The app is not a camera app; it is a
-  notebook that needs one good photograph.
+Both volume buttons fire the shutter, as they do in every iPhone camera since the 4S. This is not a
+nicety: the drawn shutter sits at the bottom-centre of a 6-inch screen, and the reader is holding
+the phone over a bowl with one hand while the other holds chopsticks. A physical button is the only
+control on this screen that can be found without looking at it.
+
+### 7. A quick lens picker, not just pinch
+
+Pinch is a fine gesture and a poor control — it cannot be aimed at a number. Where the device has
+more than one back lens, the viewfinder offers **0.5× / 1× / 2×** as three small marks beside the
+shutter, showing which is live. `0.5×` is the one that matters here: the ultra-wide is both the
+wide shot of a laden table *and* the lens the system uses for macro, so the reader who wants the
+whole spread and the reader who wants one dumpling reach for the same mark.
+
+Pinch still works, and moves the marks with it.
+
+### 8. Exposure is draggable, and lockable
+
+After a tap sets focus and exposure, a **vertical drag adjusts exposure bias** — the standard iOS
+camera gesture, and the one thing that saves a photograph of a dark bowl under a warm lamp. A
+**long press locks focus and exposure** (`AE/AF LOCK`), so the reader can meter on the food, then
+recompose without the camera re-metering on the tablecloth.
+
+Both reset when the camera flips or the meal is saved.
+
+### 9. The shot stays on screen
+
+After a capture the viewfinder shows a **thumbnail of what was just taken**. Tapping it reviews the
+shot full-screen; from there it can be discarded. Today the only feedback that a photograph exists
+is that the app has moved to a different screen.
+
+This changes the flow's shape slightly, and deliberately. FR-1.9 allows several photographs on one
+meal, and a meal is often several dishes arriving over half an hour — but the current flow leaves
+the viewfinder after the **first** shot and makes the reader come back through *Add another meal*.
+Instead: **the viewfinder is not left until the reader leaves it.** A shot counter sits by the
+thumbnail; the rating is asked once, on the way out, about the meal rather than the photograph.
+FR-1.10's *camera → rating → confirm* is preserved — what changes is that the camera step can hold
+more than one press of the shutter.
+
+### 10. A flat-lay guide, which is the one guide worth drawing
+
+ADR-011's first pass refused a grid, and that stands — a rule-of-thirds grid is a photographer's
+tool on a diner's screen. But the shot this app exists to take has a shape: **straight down at the
+table.** When the phone is within a few degrees of level and facing down, a small mark settles to
+confirm it. Nothing is enforced, nothing is blocked, and the mark is absent the rest of the time.
+
+This is the one place the camera is allowed to be art-directed (ADR-005): the mark is a printer's
+registration cross, not a spirit level.
+
+### 11. Light is suggested, never assumed
+
+In low light the torch control **surfaces itself** — it does not switch on. Firing a phone torch at
+a plate produces a worse photograph than the ambient light nearly every time, so the app's opinion
+is *you may want this*, not *I have decided this for you*. Consistent with the app's voice
+(voice note, 21 Aug, rule 3): the app offers, the reader decides.
+
+### 12. Capture quality is set, rather than defaulted
+
+`photoQualityPrioritization` is set to `.quality` and `maxPhotoDimensions` to the device's
+supported maximum. NFR-8.1 caps what is *stored* at 2048 px on the longest side, which is a storage
+decision, not a reason to capture badly — downsampling a good exposure beats storing a hurried one.
+
+### 13. The front camera is not mirrored in the file
+
+The front preview is mirrored, because a reader expects to move left and see the image move left.
+The **stored photograph is not**, because the text on the menu behind them should be readable. This
+is what the system camera does, and it is worth stating because getting it backwards is a one-line
+mistake that nobody notices until a photograph of a signboard is unreadable.
+
+### 14. What is deliberately not built
+
+- **No filters, no rule-of-thirds grid, no timer, no burst.** The app is not a camera app; it is a
+  notebook that needs one good photograph. The flat-lay mark of §10 is the single exception, and it
+  is admitted because it is about *this* app's one recurring shot rather than about photography.
 - **No video.** A meal is a photograph. Nothing in the domain models a duration.
 - **No RAW.** NFR-8.1 caps stored images at 2048 px; RAW would be discarded on the next line.
 - **No custom exposure or white-balance sliders.** Tap-to-expose covers the case; sliders are for a

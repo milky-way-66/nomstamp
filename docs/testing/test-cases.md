@@ -61,6 +61,9 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-1-29 | E | E2 | Given a capture that yields no data, when the shutter is pressed, then the reader is told the shot did not come through and can try again — the shutter never does nothing | **auto** |
 | TC-1-30 | E | main | Given a device with no camera, when the capture step opens, then the unavailable message and the library button are both present and the flow still completes | **auto** |
 | TC-1-31 | — | main | Given a real iPhone, when a meal is photographed, then the flip, pinch zoom, tap-to-focus, torch and shutter haptic all behave as ADR-011 describes, and a sideways shot is stored sideways | **manual** |
+| TC-1-32 | E | main | Given the viewfinder, when three photographs are taken in one visit, then the thumbnail and count follow each one, the camera is never left, and discarding one leaves the other two | **auto** |
+| TC-1-33 | E | main | Given several photographs taken in one visit, when the reader leaves the camera, then the rating is asked exactly once, about the meal, and the confirm step carries every shot in order | **auto** |
+| TC-1-34 | U | ADR-011, NFR-8.1 | Given a captured photograph larger than the storage cap, when it is stored, then it is downsampled to 2048 px on the longest side — the cap applies after capture, never to the capture | **auto** |
 
 > TC-1-08 is the one worth writing first. Saving a meal touches disk *and* the database; a
 > naive implementation leaves an orphaned meal row when the photo write fails.
@@ -314,7 +317,7 @@ audit found 28 of the 31 SRS non-functional requirements had no case at all.
 | TC-N-25 | U | ADR-009, NFR-6.4 | Given the plate of eight friend inks, then each clears the contrast floor over paper in both appearances, and no two are the same ink | **auto** |
 | TC-N-26 | U | ADR-009 | Given the plate of eight, then it is identical under every skin — a friend's ink is not re-inked by the weather | **auto** |
 | TC-N-28 | U | ADR-003, NFR-6.4 | Given the night palette, then the page and a card separate as two surfaces, no ink glares against the page, and every stamp paper clears the component floor on both grounds | **auto** |
-| TC-N-27 | U | ADR-010, NFR-6.3 | Given the eight friend inks, then each has a distinct word, so whose a stamp is can always be said rather than only shown | **auto** |
+| TC-N-27 | U | ADR-010, NFR-6.3, NFR-5.6 | Given the eight friend inks **in every localisation**, then each has a distinct word — first word included — so whose a stamp is can always be said rather than only shown. Checking the English alone let three Vietnamese inks share `xanh` | **auto** |
 | TC-N-30 | U | NFR-4.5, NFR-5.1 | Given the shipped string catalogue, then every key has a Vietnamese unit and no two keys share an English value — one idea has one string | **auto** |
 | TC-N-31 | U | NFR-5.5 | Given every Vietnamese value, then none uses the `được … bởi` passive, none states a phone's radio as a bare `sóng`, and every stamp is a `tem` rather than a `dấu` | **auto** |
 | TC-N-32 | U | NFR-4.6 | Given every error and empty-state string, then each names an action the reader can take rather than ending at the failure | **auto** |

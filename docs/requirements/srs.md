@@ -103,7 +103,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-1.7 | Logging a meal shall succeed when no network is available | UC-1/6a | TC-1-10 |
 | FR-1.8 | If storing any photograph fails, the meal shall not be persisted and no orphaned file shall remain | UC-1/E2 | TC-1-08 |
 | FR-1.9 | Multiple photographs shall be attachable to one meal, preserving their order | UC-1 | TC-1-09 |
-| FR-1.10 | Logging shall proceed camera → rating → confirm: the camera shall open immediately on **Add meal**, the score shall be asked once a photo exists, and every derived value shall be editable on the confirm step | UC-1 | TC-1-19 |
+| FR-1.10 | Logging shall proceed camera → rating → confirm: the camera shall open immediately on **Add meal**, the score shall be asked once **on leaving the camera** — about the meal, not about a photograph, so several dishes may be photographed first (FR-14.15) — and every derived value shall be editable on the confirm step | UC-1 | TC-1-19, TC-1-33 |
 | FR-1.11 | The system shall preselect the place from the meal's coordinate — the nearest saved place within 120 m, else the nearest search candidate within 120 m — without the user choosing one | UC-1/3 | TC-1-16, TC-1-17 |
 | FR-1.12 | A failure or absence of the place directory, or of any coordinate, shall leave the place unset rather than raise an error | UC-1/E1, UC-1/6a | TC-1-18 |
 | FR-1.13 | A device fix shall be used only when its reported horizontal accuracy is valid and no coarser than the 120 m preselection radius; a coarser fix shall count as no coordinate rather than as a guess | UC-1/3, UC-1/E1 | TC-1-21, TC-1-22 |
@@ -225,7 +225,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-12.1 | Friends' stamps shall appear as their own map layer, off by default | UC-10 | TC-10-01 |
 | FR-12.2 | A friend's place matching one the user has also stamped shall render as **one pin, drawn exactly as the user's own** — no countersignature, no numeral. Who stamped it is a question the place page answers (ADR-010) | UC-10 | TC-10-05, TC-10-06 |
 | FR-12.3 | Matching shall use `providerPlaceID` first, then name-and-distance, then stand alone | UC-10 | TC-10-02, TC-10-03 |
-| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from a fixed plate of eight that the skin does not re-ink. The ink shall identify them **where they are named** — the place page, the friends list, the filter — and shall not be drawn on a map pin (ADR-010) | UC-10 | TC-8-03, TC-N-25 |
+| FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from a fixed plate of eight that the skin does not re-ink. The ink shall identify them **where they are named** — the place page, the friends list, the filter — and shall not be drawn on a map pin (ADR-010). Its name shall be distinct from the other seven **in every language**, first word included (NFR-5.6) | UC-10 | TC-8-03, TC-N-25, TC-N-27 |
 | FR-12.5 | A friend's place shall be drawn **identically** to the user's own: same pin, same cut, same ink, same wishlist bookmark. The map answers *where is worth eating*, not *whose is this* (ADR-010) | UC-10 | TC-10-24 |
 | FR-12.5a | A friend's **wishlist** shall travel and be drawn, as a wishlist place — a recommendation is at least as useful as a memory (ADR-010) | UC-10 | TC-10-25 |
 | FR-12.6 | A friend's stamps shall be shown with the date that friend was last reached, never implied to be current. The date shall belong to the friend, not to individual stamps | UC-10 | TC-10-08 |
@@ -264,7 +264,16 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-14.8 | The capture connection's rotation shall be set from the device orientation at the moment of capture, so a photograph taken sideways is not stored with portrait orientation | UC-1 | TC-1-28, TC-1-31 |
 | FR-14.9 | Every capture shall confirm itself with a haptic and a viewfinder dim before the photograph is processed | UC-1 | TC-1-31 |
 | FR-14.10 | A capture that yields no data shall tell the reader and invite a retry, never fail silently | UC-1/E2, NFR-4.4 | TC-1-29 |
-| FR-14.11 | The app shall not offer filters, grids, timers, burst, video or RAW. The camera serves the notebook; it is not the product | ADR-011 | — |
+| FR-14.11 | Either volume button shall fire the shutter, so the one control on the viewfinder that can be found without looking is available to a reader holding the phone over a bowl one-handed | UC-1 | TC-1-31 |
+| FR-14.12 | Where the device has more than one back lens, the viewfinder shall offer 0.5x / 1x / 2x marks showing which is live; pinch shall continue to work and shall move them | UC-1 | TC-1-31 |
+| FR-14.13 | After a tap sets focus and exposure, a vertical drag shall adjust exposure bias, and a long press shall lock focus and exposure until the camera is flipped or the meal saved | UC-1 | TC-1-31 |
+| FR-14.14 | After a capture the viewfinder shall show a thumbnail of the shot just taken, with a count; tapping it shall review the shot full-screen, from where it may be discarded | UC-1 | TC-1-32 |
+| FR-14.15 | The viewfinder shall not be left until the reader leaves it: several photographs may be taken in one visit, and the rating shall be asked once on the way out, about the meal rather than the photograph | UC-1 | TC-1-32, TC-1-33 |
+| FR-14.16 | Where the phone is within a few degrees of level and facing down, a mark shall confirm it. Nothing shall be enforced or blocked, and the mark shall be absent otherwise | UC-1 | TC-1-31 |
+| FR-14.17 | In low light the torch control shall surface itself and shall not switch itself on | UC-1, NFR-4.7 | TC-1-31 |
+| FR-14.18 | Capture shall set quality prioritisation and maximum photo dimensions explicitly rather than accepting the defaults; NFR-8.1's storage cap shall be applied after capture, never before | UC-1 | TC-1-34 |
+| FR-14.19 | The front preview shall be mirrored and the stored photograph shall not, so that text behind the reader remains readable | UC-1 | TC-1-31 |
+| FR-14.20 | The app shall not offer filters, a rule-of-thirds grid, timers, burst, video or RAW. The camera serves the notebook; it is not the product | ADR-011 | — |
 
 ---
 
@@ -321,6 +330,9 @@ Each requirement names the use case it comes from and the test cases that prove 
 - **NFR-5.5** Vietnamese shall be written rather than translated: no `được … bởi` passive
   construction, and no English sentence rendered word-for-word. Where the two languages want
   different sentences, they shall get different sentences. *(TC-N-31)*
+- **NFR-5.6** A property the interface guarantees in one language shall be guaranteed in **every**
+  language. Tests that read the string catalogue shall read all of it, not the English alone.
+  *(TC-N-27, extended; voice note 21 Aug §6)*
 
 ### NFR-6 Accessibility
 - **NFR-6.1** The interface shall support Dynamic Type up to the accessibility sizes.
