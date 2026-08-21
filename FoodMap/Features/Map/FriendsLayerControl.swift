@@ -38,23 +38,21 @@ struct FriendsLayerControl: View {
             .accessibilityIdentifier("friendsLayerToggle")
 
             if store.layerEnabled {
-                ForEach(store.circle.friends) { friend in
-                    Button {
-                        if store.hiddenFriends.contains(friend.key) {
-                            store.hiddenFriends.remove(friend.key)
-                        } else {
-                            store.hiddenFriends.insert(friend.key)
-                        }
-                    } label: {
-                        FriendStampMark(inkSlot: friend.inkSlot, size: 24)
-                            // Hidden is drawn as *unprinted*, not as greyed out: the stamp is
-                            // still there, the ink simply has not been laid down.
-                            .opacity(store.hiddenFriends.contains(friend.key) ? 0.22 : 1)
+                // Names made every entry roughly four times wider, and eight of them cannot fit
+                // across a phone in one row at any readable size. `ViewThatFits` keeps the strip
+                // hugging its contents while they fit — two or three friends look exactly as they
+                // did before names arrived — and falls back to a scrolling row when the circle
+                // outgrows the screen (FR-12.9, TC-10-23).
+                //
+                // Measuring the row and capping the scroll view to it was tried instead, and is a
+                // trap: the measurement comes from inside the container whose width the
+                // measurement sets, and the loop settles with every name squeezed to nothing.
+                ViewThatFits(in: .horizontal) {
+                    HStack(spacing: Theme.Space.tight) { legend }
+                    ScrollView(.horizontal) {
+                        HStack(spacing: Theme.Space.tight) { legend }
                     }
-                    .accessibilityLabel(Text(friend.assignedName))
-                    .accessibilityValue(
-                        store.hiddenFriends.contains(friend.key) ? Text("Hidden") : Text("Showing")
-                    )
+                    .scrollIndicators(.hidden)
                 }
 
                 Button(action: onOpenFriends) {
@@ -73,6 +71,81 @@ struct FriendsLayerControl: View {
         )
         .overlay(Capsule().strokeBorder(Theme.ink, lineWidth: Theme.contour))
         .background(Capsule().fill(Theme.ink.opacity(0.7)).offset(y: 2))
+        // The capsule floats over the map, so nothing else would stop it growing past the edge.
+        .padding(.horizontal, Theme.screenMargin)
+        // And this is what gives `ViewThatFits` above a real width to fit *into*. Without it the
+        // strip is proposed an unbounded width, every candidate "fits", and the first one — the
+        // non-scrolling row — wins however wide it has become.
+        .frame(maxWidth: .infinity)
+    }
+
+    @ViewBuilder
+    private var legend: some View {
+        ForEach(store.circle.friends) { friend in
+            FriendLegendChip(friend: friend, store: store)
+        }
+    }
+}
+
+/// One friend in the legend: their stamp, their name, and the two ways to filter by them.
+///
+/// Its own view rather than a closure inside the strip, because the strip is already a switch, a
+/// row and an overflow button, and SwiftUI's type checker gives up on the lot in one expression.
+private struct FriendLegendChip: View {
+    let friend: Friend
+    let store: FriendsStore
+
+    private var isHidden: Bool { store.isHidden(friend.key) }
+
+    var body: some View {
+        HStack(spacing: 3) {
+            FriendStampMark(inkSlot: friend.inkSlot, size: 24)
+            // The name, drawn and not merely announced. This strip is the only place the
+            // ink-to-person mapping is taught, and eight unlabelled colours teach nothing
+            // (FR-12.9).
+            Text(friend.assignedName)
+                .font(Theme.label(.caption))
+                .foregroundStyle(Theme.ink)
+                .lineLimit(1)
+                // A long name must not push the other friends off the strip; the stamp beside it
+                // stays the anchor either way.
+                .frame(maxWidth: 68, alignment: .leading)
+        }
+        // Hidden is drawn as *unprinted*, not as greyed out: the stamp is still there, the ink
+        // simply has not been laid down.
+        .opacity(isHidden ? 0.22 : 1)
+        .contentShape(Rectangle())
+        // Two gestures on a plain view rather than a Button with a press modifier bolted on. A
+        // Button keeps its own tap whatever else is attached, so a long press arrived as *both*
+        // an isolate and a hide, and the second undid the first — the entry could be isolated but
+        // never restored.
+        .onLongPressGesture {
+            withAnimation(.easeInOut(duration: 0.2)) { store.toggleIsolation(friend.key) }
+        }
+        .onTapGesture {
+            withAnimation(.easeInOut(duration: 0.15)) { store.toggleHidden(friend.key) }
+        }
+        // Gestures are invisible to assistive technology, so the traits and both actions are
+        // spelled out rather than inherited from a control that no longer exists (FR-12.12).
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel(Text(friend.assignedName))
+        .accessibilityValue(isHidden ? Text("Hidden") : Text("Showing"))
+        .accessibilityAction {
+            store.toggleHidden(friend.key)
+        }
+        .accessibilityAction(named: isolationActionName) {
+            store.toggleIsolation(friend.key)
+        }
+        .accessibilityIdentifier("friendLegend")
+    }
+
+    /// One control, two sentences — the reader should never have to work out which state they are
+    /// in before choosing the action.
+    private var isolationActionName: Text {
+        store.isIsolated(friend.key)
+            ? Text("Show everyone")
+            : Text("Show only \(friend.assignedName)")
     }
 }
 
@@ -92,6 +165,13 @@ struct FriendOnlyPin: View {
         group.countersign.map(store.freshness(of:)) ?? 0
     }
 
+    private var accessibilitySentence: String {
+        guard let attribution = FriendAttribution.sentence(for: group, store: store, isOwnPin: false) else {
+            return group.name
+        }
+        return "\(group.name), \(attribution)"
+    }
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             FriendStampMark(inkSlot: inkSlot, size: 30, freshness: freshness)
@@ -101,7 +181,9 @@ struct FriendOnlyPin: View {
         }
         .frame(minWidth: Theme.minimumTouchTarget, minHeight: Theme.minimumTouchTarget)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(group.name))
+        // The place *and* whose it is. A pin that says only where it is tells a VoiceOver reader
+        // nothing the map layer was switched on for (FR-12.10, TC-10-18).
+        .accessibilityLabel(Text(accessibilitySentence))
         .accessibilityIdentifier("friendPin")
     }
 }

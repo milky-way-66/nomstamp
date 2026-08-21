@@ -226,10 +226,15 @@ Each requirement names the use case it comes from and the test cases that prove 
 | FR-12.2 | A friend's stamp matching a place the user has also stamped shall render as a countersignature on one pin: the reader's stamp, at most one countersign, and a numeral for any others | UC-10 | TC-10-05, TC-10-06 |
 | FR-12.3 | Matching shall use `providerPlaceID` first, then name-and-distance, then stand alone | UC-10 | TC-10-02, TC-10-03 |
 | FR-12.4 | Each friend shall have a deterministic ink derived from their public key, drawn from a fixed plate of eight that the skin does not re-ink | UC-10 | TC-8-03, TC-N-25 |
-| FR-12.5 | Friend stamps shall be distinguishable without colour (NFR-6.3) | UC-10 | TC-N-27 |
+| FR-12.5 | A friend's stamp shall be distinguishable from the reader's own **without colour** — the perforated cut, not the ink (NFR-6.3) | UC-10 | TC-N-27 |
+| FR-12.5a | Telling one friend from another on the map **may** rest on ink alone. The map is an overview; identity is carried by the legend, which names every friend beside their stamp, and by the place page one tap away. This is a decision, not an omission: eight cuts distinguishable at pin size would cost more legibility than it buys | UC-10 | TC-10-17 |
 | FR-12.6 | A friend's stamps shall be shown with the date that friend was last reached, never implied to be current. The date shall belong to the friend, not to individual stamps | UC-10 | TC-10-08 |
 | FR-12.7 | The interface shall never state what a friend shares now, only what was held as of the last exchange | UC-10 | TC-10-08 |
 | FR-12.8 | A place's own page shall name every friend who has also stamped it, in ink order. Unlike the map layer, this list shall not depend on the layer switch — the switch governs the drawing, and a page the user opened deliberately is a different question | UC-10 | TC-10-16 |
+| FR-12.9 | The friends layer control shall show each friend's **name** beside their stamp, not the stamp alone. It is the only place the ink-to-person mapping is taught, and a strip of eight unlabelled colours teaches nothing | UC-10 | TC-10-17 |
+| FR-12.10 | Every friend-attributed element shall name that friend to VoiceOver, and shall name their ink — a reader who cannot see the hue is exactly the reader for whom the strip of colours does no work (NFR-6.2) | UC-10 | TC-10-18, TC-10-19 |
+| FR-12.11 | A reader shall be able to hide any friend's stamps, and to **isolate** one — *show only Lan* — without switching the other seven off one at a time. Isolating shall be reversible in a single action | UC-10 | TC-10-20, TC-10-21 |
+| FR-12.12 | Isolating shall be reachable without a gesture that cannot be seen: whatever the pointer affordance, VoiceOver shall offer it as a named action | UC-10/NFR-6.2 | TC-10-22 (manual) |
 
 ### FR-13 Synchronising
 | ID | Requirement | UC | Tests |
@@ -295,7 +300,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 ### NFR-6 Accessibility
 - **NFR-6.1** The interface shall support Dynamic Type up to the accessibility sizes.
 - **NFR-6.2** All controls and map pins shall carry VoiceOver labels.
-- **NFR-6.3** Colour shall never be the only means of distinguishing visited from wishlist pins.
+- **NFR-6.3** Colour shall never be the only means of distinguishing visited from wishlist pins, nor the reader's own stamps from a friend's. Telling *one friend from another* on the map is the single deliberate exception, and is covered by FR-12.5a.
 - **NFR-6.4** Text contrast shall meet WCAG **AAA** (7:1) for body text and AA (4.5:1) for text on filled controls; enforced by TC-N-07.
 
 ### NFR-7 Maintainability and testability

@@ -20,9 +20,10 @@ final class FriendsStore {
     /// Off by default, and the map is exactly what it was before the feature existed while it is
     /// (FR-12.1).
     var layerEnabled = false
-    /// Which friends are showing. Empty means all of them — the row of inks is a filter, not a
-    /// requirement to choose.
-    var hiddenFriends: Set<FriendKey> = []
+    /// Which friends are showing. Nothing hidden means all of them — the row of inks is a filter,
+    /// not a requirement to choose. The rules live in the domain because *show only Lan* is one
+    /// (FR-12.11).
+    var visibility = FriendVisibility()
 
     /// When the reader last looked at the map, so an arriving stamp can be marked fresh and then
     /// fade (FR-13.1a). Deliberately coarse: it is a feeling, not a read receipt.
@@ -47,7 +48,7 @@ final class FriendsStore {
 
     var visibleStamps: [FriendStamp] {
         guard layerEnabled else { return [] }
-        return stamps.filter { !hiddenFriends.contains($0.friend) }
+        return stamps.filter { !visibility.isHidden($0.friend) }
     }
 
     func groups(for places: [Place]) -> [MapStampGroup] {
@@ -95,8 +96,27 @@ final class FriendsStore {
     func remove(_ key: FriendKey) {
         circle = connect.remove(key, from: circle)
         stamps.removeAll { $0.friend == key }
-        hiddenFriends.remove(key)
+        visibility.forget(key)
         save()
+    }
+
+    // MARK: - Filtering the layer (FR-12.11)
+
+    func isHidden(_ key: FriendKey) -> Bool { visibility.isHidden(key) }
+
+    func toggleHidden(_ key: FriendKey) { visibility.toggle(key) }
+
+    /// True when this friend is the only one drawn, which is what lets one control both isolate
+    /// and restore.
+    func isIsolated(_ key: FriendKey) -> Bool { visibility.isIsolated(key, within: circle) }
+
+    /// *Show only Lan* — and, when Lan is already the only one, everybody back.
+    func toggleIsolation(_ key: FriendKey) {
+        if visibility.isIsolated(key, within: circle) {
+            visibility.showEveryone()
+        } else {
+            visibility.isolate(key, within: circle)
+        }
     }
 
     func stampCount(for key: FriendKey) -> Int {

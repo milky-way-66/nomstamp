@@ -93,6 +93,19 @@ struct MapScreen: View {
         return friendGroups.first { $0.ownPlace?.id == place.id && !$0.friendStamps.isEmpty }
     }
 
+    /// The pin's own sentence, plus the countersign where there is one. *We have both been here*
+    /// is the moment the feature exists for, and until now it was drawn on the pin and said to
+    /// nobody (FR-12.10, TC-10-19).
+    private func pinDescription(for cluster: PlaceCluster) -> String {
+        let base = StampPin(cluster: cluster).accessibilityDescription
+        guard let group = countersign(for: cluster),
+              let attribution = FriendAttribution.sentence(
+                  for: group, store: dependencies.friends, isOwnPin: true
+              )
+        else { return base }
+        return "\(base), \(attribution)"
+    }
+
     private var map: some View {
         Map(position: $camera, selection: $selectedPinID) {
             UserAnnotation()
@@ -106,7 +119,7 @@ struct MapScreen: View {
                                 CountersignBadge(group: group, store: dependencies.friends)
                             }
                         }
-                        .accessibilityLabel(StampPin(cluster: cluster).accessibilityDescription)
+                        .accessibilityLabel(pinDescription(for: cluster))
                         .accessibilityIdentifier("mapPin")
                 }
                 // Selection is MapKit's own, not a Button or a tap gesture on the pin: with the

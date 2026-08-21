@@ -1709,6 +1709,40 @@
         }
       }
     },
+    "Show everyone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show everyone"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hiện tất cả"
+          }
+        }
+      }
+    },
+    "Show only %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show only %@"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chỉ hiện %@"
+          }
+        }
+      }
+    },
     "Showing": {
       "extractionState": "manual",
       "localizations": {
@@ -2269,6 +2303,57 @@
         }
       }
     },
+    "also stamped by %1$@ and %2$lld others, %3$@ ink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "also stamped by %1$@ and %2$lld others, %3$@ ink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ và %2$lld người nữa cũng đã đóng dấu, mực %3$@"
+          }
+        }
+      }
+    },
+    "also stamped by %1$@ and one other, %2$@ ink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "also stamped by %1$@ and one other, %2$@ ink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ và một người nữa cũng đã đóng dấu, mực %2$@"
+          }
+        }
+      }
+    },
+    "also stamped by %1$@, %2$@ ink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "also stamped by %1$@, %2$@ ink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ cũng đã đóng dấu, mực %2$@"
+          }
+        }
+      }
+    },
     "e.g. Lan said try the bún chả": {
       "extractionState": "manual",
       "localizations": {
@@ -2282,6 +2367,193 @@
           "stringUnit": {
             "state": "translated",
             "value": "ví dụ: Lan bảo thử bún chả"
+          }
+        }
+      }
+    },
+    "gold": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gold"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vàng đồng"
+          }
+        }
+      }
+    },
+    "harbour": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "harbour"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "xanh biển"
+          }
+        }
+      }
+    },
+    "jade": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "jade"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ngọc bích"
+          }
+        }
+      }
+    },
+    "leaf": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "leaf"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "xanh lá"
+          }
+        }
+      }
+    },
+    "rose": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rose"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "hồng"
+          }
+        }
+      }
+    },
+    "rust": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "rust"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "nâu gỉ"
+          }
+        }
+      }
+    },
+    "stamped by %1$@ and %2$lld others, %3$@ ink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stamped by %1$@ and %2$lld others, %3$@ ink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ và %2$lld người nữa đã đóng dấu, mực %3$@"
+          }
+        }
+      }
+    },
+    "stamped by %1$@ and one other, %2$@ ink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stamped by %1$@ and one other, %2$@ ink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ và một người nữa đã đóng dấu, mực %2$@"
+          }
+        }
+      }
+    },
+    "stamped by %1$@, %2$@ ink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "stamped by %1$@, %2$@ ink"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ đã đóng dấu, mực %2$@"
+          }
+        }
+      }
+    },
+    "teal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "teal"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "xanh mòng két"
+          }
+        }
+      }
+    },
+    "violet": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "violet"
+          }
+        },
+        "vi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "tím"
           }
         }
       }

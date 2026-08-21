@@ -23,6 +23,14 @@ enum DemoSeed {
     /// two-device part of the ceremony (TC-8-12) stays an on-device case for that reason.
     static var friendsRequested: Bool {
         ProcessInfo.processInfo.arguments.contains("-SeedFriends")
+            || fullCircleRequested
+    }
+
+    /// `-SeedFullCircle` fills the circle to its cap of eight, with names long enough to be
+    /// realistic. The crowded case is the one that breaks layouts, and two friends never showed
+    /// it — the named legend fits comfortably at two and cannot possibly fit at eight (TC-10-23).
+    static var fullCircleRequested: Bool {
+        ProcessInfo.processInfo.arguments.contains("-SeedFullCircle")
     }
 
     /// One friend who has been where the reader has — the countersign — and one who has been
@@ -39,6 +47,20 @@ enum DemoSeed {
 
         try? store.connectFriend(key: lan, named: "Lan", proof: proof)
         try? store.connectFriend(key: minh, named: "Minh", proof: proof)
+
+        if fullCircleRequested {
+            // Six more, to the cap. The names are the length real ones are — a reader types
+            // "Huy from work", not "Huy" — because that is what the strip has to survive.
+            let others = [
+                "Huy from work", "Chị Mai", "Thảo", "Bác Dũng", "Ngọc Anh", "Tuấn"
+            ]
+            for (index, name) in others.enumerated() {
+                guard let key = FriendKey(
+                    bytes: [UInt8(index + 7)] + Array(repeating: UInt8(0x33 &+ index), count: FriendKey.byteCount - 1)
+                ) else { continue }
+                try? store.connectFriend(key: key, named: name, proof: proof)
+            }
+        }
 
         // Lan has been to Phở Thìn, which the reader has stamped too.
         store.receive([

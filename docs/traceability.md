@@ -17,7 +17,7 @@ tests, 14 e2e journeys** — 125 domain, 42 data, 21 design.
 | **US-1** remember which meals were good | UC-7 Rate a meal | FR-9.1 … FR-9.5 | TC-7-01 … TC-7-06 | `RateMealUseCase`, `Place.averageRating`, `StarRatingView` |
 | **US-4** see where my friends have eaten | UC-8 Connect a friend | FR-10.1 … FR-10.13 | TC-8-01 … TC-8-11, TC-8-14 … TC-8-18 | `ConnectFriendUseCase`, `FriendCircle`, `FriendKey`, `VerificationWord`, `ProximityProof`, `BluetoothPresence`, `PresenceRegistry` |
 | | UC-9 Share a place | FR-11.1 … FR-11.6, FR-13.3a … FR-13.3c | TC-9-01 … TC-9-15 | `BuildSharedStampUseCase`, `SharedStamp`, `YearMonth`, `SharingSettings` |
-| | UC-10 Friends on the map | FR-12.1 … FR-12.8, FR-13.1 … FR-13.6 | TC-10-01 … TC-10-16, TC-N-25 … TC-N-27 | `MergeFriendStampsUseCase`, `ReconcileManifestUseCase`, `FriendsLayer`, `FriendInk`, `StampEdge` |
+| | UC-10 Friends on the map | FR-12.1 … FR-12.12, FR-13.1 … FR-13.6 | TC-10-01 … TC-10-23, TC-N-25 … TC-N-27 | `MergeFriendStampsUseCase`, `ReconcileManifestUseCase`, `FriendsLayer`, `FriendInk`, `StampEdge` |
 
 ## Current gaps
 

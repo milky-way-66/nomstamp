@@ -246,6 +246,13 @@ domain, where it can be proved in milliseconds — not in a transport adapter wh
 | TC-10-14 | U | main | Given a friend's stamps and no network, then the map opens and a meal can still be logged | **auto** |
 | TC-10-16 | U | main | Given a place two friends have stamped, then its own page names both in ink order, and does so with the map layer switched off | **auto** |
 | TC-10-15 | E | main | Given a friend with shared stamps, when the layer is turned on, then their pins appear in their own ink and a shared place shows a countersign | **auto** |
+| TC-10-17 | E | main | Given two friends and the layer on, then each legend entry is wide enough to be a stamp *and* a name, not a stamp alone — the ink-to-person mapping occupies space where a reader can see it | **auto** — a layout assertion. That the name is legible, and correct, is a design-sweep judgement rather than a test |
+| TC-10-18 | E | main | Given a place only a friend has stamped, then its pin tells VoiceOver whose it is and in which ink, rather than only where it is | **auto** |
+| TC-10-19 | E | main | Given a place the reader and a friend have both stamped, then the pin tells VoiceOver that a friend countersigned it, and who | **auto** |
+| TC-10-20 | U | main | Given a circle of several friends, when one is isolated, then every other friend is hidden and that one is shown — and restoring brings all of them back, including any hidden before the isolation | **auto** |
+| TC-10-21 | E | main | Given two friends on the map, when one is isolated from the layer control, then only their stamps remain, and isolating them again shows everyone | **auto** |
+| TC-10-23 | E | main | Given a full circle of eight friends with realistic names, when the layer is on, then the legend stays inside the screen — the crowded case is the one a named legend breaks | **auto** |
+| TC-10-22 | I | main | Given the layer control under VoiceOver, then each friend offers a named *show only* action, so isolating never depends on a gesture that cannot be seen | spec — XCUITest cannot enumerate accessibility custom actions, so this is a rotor check by hand. The action is wired at `FriendsLayerControl.swift` and moves the same store method TC-10-20 covers |
 
 ---
 
