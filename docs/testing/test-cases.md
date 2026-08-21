@@ -205,6 +205,7 @@ domain, where it can be proved in milliseconds — not in a transport adapter wh
 |---|---|---|---|---|
 | TC-9-01 | U | E1 | Given a map of places and nothing shared, then the outgoing manifest is empty — sharing is never a side effect of any other action | **auto** |
 | TC-9-02 | U | main | Given a shared place, then its stamp carries exactly place name, coordinate, provider id, average, visit count, latest dish, month and thumbnail hash — and the type has nowhere to put anything else | **auto** |
+| TC-9-17 | U | main | Given a wishlist place being shared, when the stamp is built, then it carries the kind and leaves rating, visit count, dish and month empty rather than defaulted | **auto** |
 | TC-9-03 | U | main | Given meals carrying prices and per-meal ratings, when the stamp is built, then neither appears anywhere in it | **auto** |
 | TC-9-04 | U | main | Given a place last visited on 2026-08-19, then the stamp says `2026-08` and no day can be recovered from it | **auto** |
 | TC-9-05 | U | main | Given meals rated 5 and 4 and one unrated, then the stamp's average is 4.5 and the unrated meal is ignored rather than counted as zero | **auto** |
@@ -251,6 +252,10 @@ domain, where it can be proved in milliseconds — not in a transport adapter wh
 | TC-10-19 | E | main | Given a place the reader and a friend have both stamped, then the pin tells VoiceOver that a friend countersigned it, and who | **auto** |
 | TC-10-20 | U | main | Given a circle of several friends, when one is isolated, then every other friend is hidden and that one is shown — and restoring brings all of them back, including any hidden before the isolation | **auto** |
 | TC-10-21 | E | main | Given two friends on the map, when one is isolated from the layer control, then only their stamps remain, and isolating them again shows everyone | **auto** |
+| TC-10-24 | E | main | Given a place only a friend has stamped and one the reader has, when both are drawn, then the two pins are indistinguishable — no perforated cut, no friend ink, no countersign badge | **auto** |
+| TC-10-25 | U | main | Given a friend who shared a wishlist place, when the layer is on, then it appears as a wishlist place, with no rating, visit count or dish invented for it | **auto** |
+| TC-10-26 | U | main | Given a mixture of visited and wishlist places, when the kind filter is set, then only that kind is returned — and *both* returns everything | **auto** |
+| TC-10-27 | E | main | Given a friend's wishlist and the reader's own visited places, when Lan is isolated and the filter set to want-to-try, then the two compose: only Lan's wishlist remains | **auto** |
 | TC-10-23 | E | main | Given a full circle of eight friends with realistic names, when the layer is on, then the legend stays inside the screen — the crowded case is the one a named legend breaks | **auto** |
 | TC-10-22 | I | main | Given the layer control under VoiceOver, then each friend offers a named *show only* action, so isolating never depends on a gesture that cannot be seen | spec — XCUITest cannot enumerate accessibility custom actions, so this is a rotor check by hand. The action is wired at `FriendsLayerControl.swift` and moves the same store method TC-10-20 covers |
 
