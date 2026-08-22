@@ -144,6 +144,8 @@ offline (NFR-7.5). Run them deliberately with `RUN_NETWORK_TESTS=1 swift test`.
 | TC-5-05 | U | main | Given both visited and wishlist places nearby, then both are returned (travelling users want their old favourites too) | **auto** |
 | TC-5-06 | E | main+2a | Given a seeded city, then a place is listed with its distance; given an empty city, then the explicit "nothing saved near here" message is shown | **auto** |
 
+| TC-2-13 | E | main | Given the map shows both location actions, then returning to the reader and finding saved places nearby use distinct marks and accessible labels | **auto** |
+
 > TC-5-03 vs TC-5-04 is the distinction that makes this feature trustworthy: "you saved
 > nothing here" and "I don't know where you are" must never look the same to the user.
 

@@ -190,7 +190,7 @@ struct MapScreen: View {
             // back — so after the first place the map lost its relationship to the reader for
             // the rest of the session (ADR-004, 21 Aug). This is the way back.
             FloatingActionButton(
-                glyph: .needle,
+                glyph: .crosshair,
                 label: "Show where I am",
                 identifier: "recentreButton"
             ) {

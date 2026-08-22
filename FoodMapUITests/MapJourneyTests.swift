@@ -39,6 +39,19 @@ final class MapJourneyTests: XCTestCase {
         )
     }
 
+    /// TC-2-13 — location actions remain distinct and clearly labelled (FR-3.11, UC-5).
+    func test_TC_2_13_locationActionsHaveDistinctLabels() {
+        let app = AppLauncher.launch(seeded: true)
+
+        let recentre = app.buttons["recentreButton"]
+        let nearMe = app.buttons["nearMeButton"]
+        XCTAssertTrue(recentre.waitForExistence(timeout: 10))
+        XCTAssertTrue(nearMe.waitForExistence(timeout: 10))
+        XCTAssertEqual(recentre.label, "Show where I am")
+        XCTAssertEqual(nearMe.label, "Saved places near me")
+        XCTAssertNotEqual(recentre.label, nearMe.label)
+    }
+
     /// TC-2-12 — the map has a way back to the reader (FR-3.11, ADR-004 amendment 21 Aug).
     ///
     /// Opening a place reassigns the camera to a region, and before this control nothing ever
