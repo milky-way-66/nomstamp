@@ -1,33 +1,17 @@
 import Foundation
 
-/// Which places the reader has chosen to share, and where they opted a note in as well.
+/// The fields a reader may still keep private when place projections are shared automatically.
 ///
-/// Nothing is shared by default and nothing is shared as a side effect of any other action
-/// (FR-11.1, TC-9-01). An empty settings object therefore produces an empty manifest, which is
-/// the state every reader starts in and most readers stay in.
+/// Place identity and the coarsened stamp projection are shared for every saved place after a
+/// friend is connected. Notes remain a separate opt-in because they are personal writing.
 public struct SharingSettings: Equatable, Sendable {
-    public var sharedPlaceIDs: Set<UUID>
     public var noteOptInPlaceIDs: Set<UUID>
 
-    public init(sharedPlaceIDs: Set<UUID> = [], noteOptInPlaceIDs: Set<UUID> = []) {
-        self.sharedPlaceIDs = sharedPlaceIDs
+    public init(noteOptInPlaceIDs: Set<UUID> = []) {
         self.noteOptInPlaceIDs = noteOptInPlaceIDs
     }
 
-    public func shares(_ placeID: UUID) -> Bool { sharedPlaceIDs.contains(placeID) }
     public func sharesNote(for placeID: UUID) -> Bool { noteOptInPlaceIDs.contains(placeID) }
-}
-
-/// What a bulk share would do, stated before it does it.
-///
-/// The count comes first because "share all my visited places" is the one action in the app that
-/// can move a lot of private material at once, and a reader deserves to know how much (FR-11.7,
-/// TC-9-15).
-public struct BulkSharePlan: Equatable, Sendable {
-    public let placeIDs: [UUID]
-    public var count: Int { placeIDs.count }
-
-    public init(placeIDs: [UUID]) { self.placeIDs = placeIDs }
 }
 
 /// UC-9 — the projection, and the redaction rules.
@@ -42,14 +26,13 @@ public struct BuildSharedStampUseCase: Sendable {
         self.digest = digest
     }
 
-    /// Returns nil only for a place the reader has not shared.
+    /// Projects every saved place into the fields permitted to leave the device.
     ///
     /// ADR-010: a wishlist place travels too. It carries strictly less than a visited one — no
     /// rating, no count, no dish, no month, because none of those exist for somewhere nobody has
     /// been — so the branch here is not a special case bolted on, it is the same projection with
     /// the visit half absent.
     public func execute(place: Place, settings: SharingSettings) -> SharedStamp? {
-        guard settings.shares(place.id) else { return nil }
         let visits = place.mealsNewestFirst
         let latest = visits.first
 
@@ -106,15 +89,6 @@ public struct BuildSharedStampUseCase: Sendable {
         let stillShared = Set(stamps.map(\.placeID))
         let retractions = previouslyShared.subtracting(stillShared).sorted { $0.uuidString < $1.uuidString }
         return OutgoingShare(stamps: stamps, retractions: retractions)
-    }
-
-    /// Visited places not already shared — what "share all my visited places" would actually add.
-    public func planBulkShare(places: [Place], settings: SharingSettings) -> BulkSharePlan {
-        BulkSharePlan(
-            placeIDs: places
-                .filter { $0.kind == .visited && !settings.shares($0.id) }
-                .map(\.id)
-        )
     }
 
     /// To the half star. A friend does not need the exact mean of a reader's private scores.

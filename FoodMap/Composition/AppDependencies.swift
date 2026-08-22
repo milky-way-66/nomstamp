@@ -32,6 +32,7 @@ final class AppDependencies {
     let proximity: (any ProximityPort)?
     let handshake: (any PeerHandshakePort)?
     let digest: any DigestPort
+    let friendSync: FriendSyncCoordinator?
 
     /// Nil under UI testing, where location is stubbed and there is nothing to ask for.
     private let coreLocation: CoreLocationAdapter?
@@ -123,6 +124,16 @@ final class AppDependencies {
             digest: digest,
             directory: Self.friendsDirectory()
         )
+        if let identity {
+            let transport: any StampSyncPort = CloudKitStampSync(
+                identity: identity,
+                containerIdentifier: "iCloud.com.longnv.foodmap.app",
+                recipients: { [weak friends] in friends?.circle.friends.map(\.key) ?? [] }
+            )
+            friendSync = FriendSyncCoordinator(friends: friends, places: places, transport: transport)
+        } else {
+            friendSync = nil
+        }
 
         appearanceStore = AppearanceStore(weather: weather, location: location, clock: clock)
 

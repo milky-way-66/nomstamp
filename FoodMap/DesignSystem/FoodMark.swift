@@ -17,8 +17,6 @@ struct FoodMark: Shape {
         case ribbon
         /// Saved places near me: a needle in its rose.
         case needle
-        /// Return the map to the reader: a crosshair.
-        case crosshair
         /// Nothing here yet: a bowl with its steam.
         case bowl
         /// A score: one point of a rating.
@@ -71,20 +69,6 @@ struct FoodMark: Shape {
             path.addLine(to: point(0.34, 0.66))
             path.addLine(to: point(0.56, 0.56))
             path.closeSubpath()
-
-        case .crosshair:
-            path.addEllipse(in: CGRect(
-                x: point(0.18, 0.18).x, y: point(0.18, 0.18).y,
-                width: rect.width * 0.64, height: rect.height * 0.64
-            ))
-            path.move(to: point(0.50, 0.02))
-            path.addLine(to: point(0.50, 0.30))
-            path.move(to: point(0.70, 0.50))
-            path.addLine(to: point(0.98, 0.50))
-            path.move(to: point(0.50, 0.70))
-            path.addLine(to: point(0.50, 0.98))
-            path.move(to: point(0.02, 0.50))
-            path.addLine(to: point(0.30, 0.50))
 
         case .bowl:
             path.move(to: point(0.10, 0.48))

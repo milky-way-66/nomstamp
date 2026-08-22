@@ -263,6 +263,7 @@ struct AddFriendView: View {
                 named: assignedName.trimmingCharacters(in: .whitespaces),
                 proof: result.proof
             )
+            Task { await dependencies.friendSync?.sync() }
             dismiss()
         } catch let refused as CircleRefusal {
             refusal = refused

@@ -192,45 +192,27 @@ struct PlaceDetailView: View {
         }
     }
 
-    /// Sharing is per place, off, and never a side effect of anything else (FR-11.1).
-    ///
-    /// It sits at the foot of the page rather than in the toolbar on purpose: it is a decision
-    /// about this place made after reading it, not a verb to reach for.
+    /// Place projections are shared automatically after a friend is connected; notes remain a
+    /// separate opt-in because they are personal writing (FR-11.1, FR-11.4).
     @ViewBuilder
     private var sharing: some View {
-        if !dependencies.friends.circle.friends.isEmpty, current.kind == .visited {
+        if !dependencies.friends.circle.friends.isEmpty, let note = current.note, !note.isEmpty {
             let store = dependencies.friends
             VStack(alignment: .leading, spacing: Theme.Space.tight) {
+                Text("Your place details are shared automatically with connected friends. Photos, prices and exact dates stay private.")
+                    .font(Theme.label(.footnote))
+                    .foregroundStyle(Theme.inkSecondary)
+
                 Toggle(isOn: Binding(
-                    get: { store.isShared(current) },
-                    set: { store.setShared($0, for: current) }
+                    get: { store.sharesNote(for: current) },
+                    set: { store.setSharesNote($0, for: current) }
                 )) {
-                    Text("Share this place with friends")
+                    Text("Include my note")
                 }
-                .accessibilityIdentifier("sharePlaceToggle")
-
-                if store.isShared(current) {
-                    // Stated in full, because a reader deciding what to share deserves the list
-                    // rather than a promise (FR-11.3).
-                    Text("They see the name, roughly where it is, your rating to the half star, how many times you have been, the last dish and the month. Never your photos, your prices or the dates.")
-                        .font(Theme.label(.footnote))
-                        .foregroundStyle(Theme.inkSecondary)
-
-                    if let note = current.note, !note.isEmpty {
-                        // A note is a second, separate opt-in: it is the one field that is
-                        // writing rather than data (FR-11.4).
-                        Toggle(isOn: Binding(
-                            get: { store.sharesNote(for: current) },
-                            set: { store.setSharesNote($0, for: current) }
-                        )) {
-                            Text("Include my note")
-                        }
-                        .accessibilityIdentifier("shareNoteToggle")
-                        Text(note)
-                            .font(Theme.displayItalic(.footnote))
-                            .foregroundStyle(Theme.inkSecondary)
-                    }
-                }
+                .accessibilityIdentifier("shareNoteToggle")
+                Text(note)
+                    .font(Theme.displayItalic(.footnote))
+                    .foregroundStyle(Theme.inkSecondary)
             }
             .padding(.top, Theme.Space.loose)
         }

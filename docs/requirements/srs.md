@@ -68,7 +68,7 @@ unlisted street food are first-order design concerns, not localisation afterthou
 |---|---|---|
 | CON-1 | No backend we run, no server to deploy, no account we hold. An Apple ID is required for the friends feature and for nothing else | Product decision, amended by ADR-009 |
 | CON-2 | No paid APIs and no API keys shipped in the app | ADR-001 |
-| CON-3 | Nothing leaves the device except by an explicit per-place share, and never more than a shared stamp defines | Privacy decision, ADR-008, carried by ADR-009 |
+| CON-3 | Once a friend is connected, eligible place projections leave the device automatically, and never more than a shared stamp defines | Privacy decision, ADR-009 |
 | CON-4 | iPhone only; no iPad or Android. Since ADR-009 this is permanent rather than a current choice — CloudKit closes the door | Product decision, ADR-009 |
 | CON-5 | Clean architecture with domain logic free of Apple frameworks | ADR-002 |
 | CON-6 | Every use-case flow covered by an automated test | ADR-002 |
@@ -214,7 +214,7 @@ Each requirement names the use case it comes from and the test cases that prove 
 ### FR-11 Sharing a place
 | ID | Requirement | UC | Tests |
 |---|---|---|---|
-| FR-11.1 | No place shall be shared unless the user explicitly shares it | UC-9 | TC-9-01 |
+| FR-11.1 | Once a friend is connected, every saved place shall be projected automatically; no per-place sharing action shall be required | UC-9 | TC-9-01, TC-9-18 |
 | FR-11.2 | A shared stamp shall carry only place, **kind** (been there or want to try), average rating, visit count, latest dish, month last visited and one thumbnail. Everything but place and kind shall be optional, because a place nobody has been to has none of them (ADR-010) | UC-9 | TC-9-02, TC-9-17 |
 | FR-11.3 | A shared stamp shall never carry price, per-meal ratings, exact dates or full-size photographs | UC-9 | TC-9-03, TC-9-04 |
 | FR-11.4 | A note shall be shared only where the user opted in for that place | UC-9/1a | TC-9-10 |

@@ -38,7 +38,6 @@ struct FloatingActionButton: View {
     private var character: (shape: AnyInsettableShape, tilt: Double) {
         switch glyph {
         case .needle: (AnyInsettableShape(WobbleCircle()), -3)
-        case .crosshair: (AnyInsettableShape(WobbleCircle()), 3)
         case .ribbon: (AnyInsettableShape(TagShape()), 4)
         default: (AnyInsettableShape(BlobShape()), -2.5)
         }
@@ -77,7 +76,7 @@ struct FloatingActionButton: View {
     /// place, bright leaf for the camera.
     private var paint: ActionInk {
         switch glyph {
-        case .needle, .crosshair: .sun
+        case .needle: .sun
         case .ribbon: .berry
         default: .leaf
         }

@@ -125,35 +125,11 @@ final class FriendsStore {
 
     // MARK: - Sharing
 
-    func isShared(_ place: Place) -> Bool { settings.shares(place.id) }
     func sharesNote(for place: Place) -> Bool { settings.sharesNote(for: place.id) }
-
-    func setShared(_ shared: Bool, for place: Place) {
-        if shared {
-            settings.sharedPlaceIDs.insert(place.id)
-        } else {
-            settings.sharedPlaceIDs.remove(place.id)
-            // Unsharing a place also withdraws its note. Leaving the opt-in behind would mean a
-            // note quietly travelling again the day the place was re-shared.
-            settings.noteOptInPlaceIDs.remove(place.id)
-        }
-        save()
-    }
 
     func setSharesNote(_ shares: Bool, for place: Place) {
         if shares { settings.noteOptInPlaceIDs.insert(place.id) }
         else { settings.noteOptInPlaceIDs.remove(place.id) }
-        save()
-    }
-
-    /// The count comes first, always: this is the one action that can move a lot of private
-    /// material at once (FR-11.7).
-    func bulkSharePlan(_ places: [Place]) -> BulkSharePlan {
-        buildStamp.planBulkShare(places: places, settings: settings)
-    }
-
-    func applyBulkShare(_ plan: BulkSharePlan) {
-        settings.sharedPlaceIDs.formUnion(plan.placeIDs)
         save()
     }
 
@@ -204,7 +180,6 @@ final class FriendsStore {
         let snapshot = Snapshot(
             friends: circle.friends.map(Snapshot.StoredFriend.init),
             stamps: stamps.map(Snapshot.StoredStamp.init),
-            shared: Array(settings.sharedPlaceIDs),
             noteOptIn: Array(settings.noteOptInPlaceIDs),
             published: Array(publishedPlaceIDs)
         )
@@ -217,10 +192,7 @@ final class FriendsStore {
         else { return }
         circle = FriendCircle(snapshot.friends.compactMap(\.domain))
         stamps = snapshot.stamps.compactMap(\.domain)
-        settings = SharingSettings(
-            sharedPlaceIDs: Set(snapshot.shared),
-            noteOptInPlaceIDs: Set(snapshot.noteOptIn)
-        )
+        settings = SharingSettings(noteOptInPlaceIDs: Set(snapshot.noteOptIn))
         publishedPlaceIDs = Set(snapshot.published)
     }
 }
@@ -230,7 +202,6 @@ final class FriendsStore {
 private struct Snapshot: Codable {
     var friends: [StoredFriend]
     var stamps: [StoredStamp]
-    var shared: [UUID]
     var noteOptIn: [UUID]
     var published: [UUID]
 

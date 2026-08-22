@@ -36,20 +36,17 @@ struct SharedStampTests {
     }
 
     private func shared(_ place: Place, notes: Bool = false) -> SharingSettings {
-        SharingSettings(
-            sharedPlaceIDs: [place.id],
-            noteOptInPlaceIDs: notes ? [place.id] : []
-        )
+        SharingSettings(noteOptInPlaceIDs: notes ? [place.id] : [])
     }
 
-    @Test("TC-9-01 nothing is shared by default, so the outgoing manifest is empty")
-    func TC_9_01_nothingSharedByDefault() {
-        let places = [richPlace(), richPlace(), richPlace()]
+    @Test("TC-9-01 every saved place is shared automatically")
+    func TC_9_01_everyPlaceIsSharedByDefault() {
+        let places = [richPlace(), Fixture.place(name: "Chả Cá", meals: [])]
 
         let outgoing = sut.outgoingShare(places: places, settings: SharingSettings())
 
-        #expect(outgoing.stamps.isEmpty)
-        #expect(outgoing.manifest.isEmpty)
+        #expect(outgoing.stamps.map(\.placeID) == places.map(\.id))
+        #expect(outgoing.manifest.entries.count == 2)
         #expect(outgoing.retractions.isEmpty)
     }
 
@@ -267,29 +264,20 @@ struct SharedStampTests {
         #expect(outgoing.retractions == [place.id])
     }
 
-    @Test("TC-9-15 a bulk share states its count before it acts")
-    func TC_9_15_bulkShareCountsFirst() {
-        let visited = (0..<62).map { _ in richPlace() }
-        let wishlist = Fixture.place(name: "Somewhere I heard about", meals: [])
-        let alreadyShared = visited[0]
+    @Test("automatic sharing has no bulk confirmation step")
+    func automaticSharingHasNoBulkPlan() {
+        let places = (0..<62).map { _ in richPlace() }
+        let outgoing = sut.outgoingShare(places: places, settings: SharingSettings())
 
-        let plan = sut.planBulkShare(
-            places: visited + [wishlist],
-            settings: SharingSettings(sharedPlaceIDs: [alreadyShared.id])
-        )
-
-        #expect(plan.count == 61)
-        #expect(!plan.placeIDs.contains(wishlist.id))
-        #expect(!plan.placeIDs.contains(alreadyShared.id))
+        #expect(outgoing.stamps.count == places.count)
     }
 
-    @Test("an unshared place has no stamp, whatever kind it is")
-    func unsharedPlacesAreNotStamps() {
-        // ADR-009 refused a wishlist place outright; ADR-010 lets it travel, so consent is now
-        // the only thing standing between a place and the radio. This is that check.
-        #expect(sut.execute(place: Fixture.place(meals: []), settings: SharingSettings()) == nil)
-        #expect(sut.execute(place: richPlace(), settings: SharingSettings()) == nil)
+    @Test("every place kind has a stamp")
+    func everyPlaceKindIsAStamp() throws {
+        #expect(try #require(sut.execute(place: Fixture.place(meals: []), settings: SharingSettings())).kind == .wishlist)
+        #expect(try #require(sut.execute(place: richPlace(), settings: SharingSettings())).kind == .visited)
     }
+
 
     @Test("two places with identical content still have distinct stamps")
     func identityIsPartOfTheContent() throws {
